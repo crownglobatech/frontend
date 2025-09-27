@@ -3,6 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --secondary-color: #F2994A;
+  --primary-color: #1E5AA8;
+  --neutral-black: #000000;
+  --neutral-white: #ffffff;
+  --font-norm: 18px;
+  --font-lg: 30px;
+  --font-md: 24px;
 }
 
 body {
