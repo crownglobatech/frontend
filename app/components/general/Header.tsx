@@ -25,7 +25,7 @@ export default function Header () {
           href='/'
           className={
             isActive('/')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -35,7 +35,7 @@ export default function Header () {
           href='/about'
           className={
             isActive('/about')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -45,7 +45,7 @@ export default function Header () {
           href='/buy'
           className={
             isActive('/buy')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -55,7 +55,7 @@ export default function Header () {
           href='/rent'
           className={
             isActive('/rent')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -65,7 +65,7 @@ export default function Header () {
           href='/services'
           className={
             isActive('/services')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -75,7 +75,7 @@ export default function Header () {
           href='/contact'
           className={
             isActive('/contact')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
