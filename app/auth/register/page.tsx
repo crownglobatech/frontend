@@ -15,7 +15,7 @@ export default function SignUp () {
         {/* logo */}
         <div className='text-[var(--font-md)]'>
           <span className='font-thin text-[var(--neutral-white)]/70'>
-            Crown-11111
+            Crown-
           </span>
           <span className='font-extrabold text-[var(--neutral-white)]'>
             Haven
