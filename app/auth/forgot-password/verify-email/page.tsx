@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 
 export default function VerifyOtp () {
@@ -75,12 +76,12 @@ export default function VerifyOtp () {
 
       {/* Verify button */}
       <div>
-        <button
+        <Link href= '/auth/forgot-password/reset-password'
           onClick={handleVerify}
           className='bg-[var(--primary-color)] hover:opacity-90 shadow px-6 py-2 rounded-md font-medium text-[13px] text-white transition cursor-pointer'
         >
           Verify OTP
-        </button>
+        </Link >
       </div>
 
       {/* Resend code & timer */}

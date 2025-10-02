@@ -37,7 +37,7 @@ export default function ApartmentCard ({
         />
 
         {/* overlay */}
-        <div className='absolute inset-0 bg-[#1E5AA882] rounded-md' />
+        <div className='absolute inset-0 bg-gradient-to-b from-[#1E5AA882] via-[#1E5AA882] via-[51%] to-[#0C2342F0] to-[94%] rounded-md' />
         <span className='top-3 left-3 absolute bg-white shadow px-3 py-1 rounded-md font-medium text-[12px] text-[var(--text-body)]'>
           {status}
         </span>

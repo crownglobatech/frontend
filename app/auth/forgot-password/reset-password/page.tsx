@@ -38,7 +38,7 @@ export default function ResetPassword () {
       <div className='mt-2'>
         <Link
           href='/auth/forgot-password/success'
-          className='bg-[var(--primary-color)] px-4 py-2 rounded-md font-semibold text-[13px] text-white'
+          className='bg-[var(--primary-color)] px-6 py-2 rounded-md font-semibold text-[13px] text-white'
         >
           Reset Password
         </Link>
