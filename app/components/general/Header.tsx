@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Button from './Button'
 import { usePathname } from 'next/navigation'
 
 export default function Header () {
@@ -25,7 +24,7 @@ export default function Header () {
           href='/'
           className={
             isActive('/')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -35,7 +34,7 @@ export default function Header () {
           href='/about'
           className={
             isActive('/about')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -45,7 +44,7 @@ export default function Header () {
           href='/buy'
           className={
             isActive('/buy')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -55,7 +54,7 @@ export default function Header () {
           href='/rent'
           className={
             isActive('/rent')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -65,7 +64,7 @@ export default function Header () {
           href='/services'
           className={
             isActive('/services')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -75,7 +74,7 @@ export default function Header () {
           href='/contact'
           className={
             isActive('/contact')
-              ? 'text-[var(--secondary-color)] font-semibold'
+              ? 'text-[var(--secondary-color)] border-b-2 border-[var(--secondary-color)] font-semibold'
               : 'text-[var(--neutral-black)]'
           }
         >
@@ -85,8 +84,20 @@ export default function Header () {
 
       {/* CTAs */}
       <div className='flex space-x-4'>
-        <Button styles='bg-transparent font-semibold px-4 py-2' title='Login' />
-        <Button styles='bg-[var(--primary-color)] text-white font-semibold rounded-md border px-4 py-2' title='Sign Up' />
+        <Link
+          href='/auth/login'
+          className='bg-transparent px-4 py-2 font-semibold'
+          aria-label='Login'
+        >
+          Login
+        </Link>
+        <Link
+          href='auth/register'
+          className='bg-[var(--primary-color)] px-4 py-2 border rounded-md font-semibold text-white'
+          aria-label='Sign up'
+        >
+          Sign up
+        </Link>
       </div>
     </header>
   )
