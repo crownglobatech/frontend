@@ -1,51 +1,273 @@
 'use client'
 import Nav from '@/app/components/pages/auth/SignupNav'
 import Link from 'next/link'
-import { useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useRouter } from 'next/navigation'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { AppDispatch, RootState } from '@/app/store'
+import { motion, spring } from 'motion/react'
+import {
+  setAuthError,
+  setUserId,
+  setPendingEmailVerify
+} from '@/app/features/auth/authSlice'
+import LoadingDots from '@/app/components/general/LoadingDots'
+import PhoneInput, { CountryData } from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+import EmailVerifyModal from '@/app/components/pages/auth/EmailVerifyModal'
+import VerificationSuccessModal from '@/app/components/pages/auth/VerificationSuccessModal'
 
+type RegisterResponse = {
+  message: string
+  user_id: number
+}
 export default function SignUp () {
   const [step, setStep] = useState<'general' | 'provider'>('general')
-  const [isACusomer, setIsACustomer] = useState(false)
+  const [isACustomer, setIsACustomer] = useState(false)
   const [isAProvider, setIsAProvider] = useState(false)
+  const [fname, setFname] = useState('')
+  const [lname, setLname] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [fullPhone, setFullPhone] = useState('')
+  const [countryIso, setCountryIso] = useState('')
+
+  // Provider form state
+  const [businessName, setBusinessName] = useState('')
+  const [categoryId, setCategoryId] = useState<number | null>(null)
+  const [businessAddress1, setBusinessAddress1] = useState('')
+  const [businessAddress2, setBusinessAddress2] = useState('')
+  const [businessCity, setBusinessCity] = useState('')
+  const [businessState, setBusinessState] = useState('')
+  const [businessCountry, setBusinessCountry] = useState('')
+
+  const { pendingEmailVerify, userId } = useSelector(
+    (state: RootState) => state.auth
+  )
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const dispatch = useDispatch<AppDispatch>()
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  // display updated userId
+  useEffect(() => {
+    console.log('Updated userId:', userId)
+  }, [userId])
+  const handleCustomerSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (
+      !email ||
+      !fname ||
+      !lname ||
+      !password ||
+      !passwordConfirm ||
+      !fullPhone ||
+      !countryIso
+    ) {
+      setError('All fields are required')
+    }
+    if (password !== passwordConfirm) {
+      setError('Passwords do not match')
+    }
+    setError('')
+    setLoading(true)
+
+    try {
+      //  send request to backend
+      const res = await fetch(
+        'https://crownglobaltechltd.com/newbackend/api/auth/register',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            first_name: fname,
+            last_name: lname,
+            password: password,
+            password_confirmation: passwordConfirm,
+            phone_country_iso: countryIso.toUpperCase(),
+            phone_e164: `+${fullPhone}`,
+            role: 'customer'
+          })
+        }
+      )
+      // error validation
+      if (!res.ok) {
+        const error = await res.json()
+        setError(error.message)
+        toast.error(error.message)
+        console.log(error)
+      }
+      const data: RegisterResponse = await res.json()
+      // save user id in the global state
+      dispatch(setUserId({ userId: data.user_id }))
+      // set pending email verfiication to true
+      dispatch(setPendingEmailVerify({ verify: true }))
+      toast.success('Registration successful!')
+      // empty all fields
+      // debug
+      console.log(data)
+      // console.log(userId)
+    } catch (err: unknown) {
+      let errorMessage
+      if (err instanceof Error) {
+        errorMessage = err
+      }
+      console.error(errorMessage?.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleProviderSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (
+      !email ||
+      !fname ||
+      !lname ||
+      !password ||
+      !passwordConfirm ||
+      !fullPhone ||
+      !countryIso ||
+      !businessName ||
+      !businessAddress1 ||
+      !businessCity ||
+      !businessState ||
+      !businessCountry
+    ) {
+      setError('All fields are required')
+    }
+    if (password !== passwordConfirm) {
+      setError('Passwords do not match')
+    }
+    setError('')
+    setLoading(true)
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/register`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            first_name: fname,
+            last_name: lname,
+            password,
+            password_confirmation: passwordConfirm,
+            phone_country_iso: countryIso.toUpperCase(),
+            phone_e164: `+${fullPhone}`,
+            role: 'service_provider',
+            business_name: businessName,
+            category_id: categoryId,
+            business_address_line1: businessAddress1,
+            business_address_line2: businessAddress2 || null,
+            business_city: businessCity,
+            business_state: businessState,
+            business_country: businessCountry
+          }),
+          credentials: 'include'
+        }
+      )
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.message || 'Registration failed')
+      }
+      const data = await res.json()
+      console.log(data)
+      dispatch(setPendingEmailVerify({ verify: true }))
+      toast.success('Registration successful!')
+      // empty all fields
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+      dispatch(setAuthError(errorMessage))
+      console.error(errorMessage)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className='relative flex md:flex-row flex-col w-full min-h-screen'>
       {/* Left side */}
       <div className='top-0 sticky flex flex-col justify-between bg-[var(--primary-color)] px-8 py-16 w-full md:w-1/2 min-h-screen'>
-        {/* logo */}
-        <div className='text-[var(--font-md)]'>
+        <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            duration: 0.8,
+            delay: 0.5,
+            ease: [0, 0.71, 0.2, 1.01]
+          }}
+          className='text-[var(--font-md)]'
+        >
           <span className='font-thin text-[var(--neutral-white)]/70'>
             Crown-
           </span>
           <span className='font-extrabold text-[var(--neutral-white)]'>
             Haven
           </span>
-        </div>
-
-        {/* auth intro */}
+        </motion.div>
         <div>
-          <h2 className='max-w-[90%] font-bold text-[32px] text-white md:text-[50px] leading-tight'>
+          <motion.h2
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.6,
+              ease: [0, 0.71, 0.2, 1.01]
+            }}
+            className='max-w-[90%] font-bold text-[32px] text-white md:text-[50px] leading-tight'
+          >
             Start Something New with Crown-Haven
-          </h2>
-          <p className='pt-4 max-w-[90%] font-thin text-white/70'>
+          </motion.h2>
+          <motion.p
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.7,
+              ease: [0, 0.71, 0.2, 1.01]
+            }}
+            className='pt-4 max-w-[90%] font-thin text-white/70'
+          >
             Join a community built on trust and opportunity. Whether you’re
             searching for a home or offering your services, Crown-Haven connects
             you with the right people. Enjoy secure transactions, verified
             profiles, and reliable support. Your journey to growth begins here.
-          </p>
+          </motion.p>
         </div>
-
-        {/* footnote */}
-        <div>
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            duration: 0.8,
+            delay: 0.5,
+            ease: [0, 0.71, 0.2, 1.01]
+          }}
+        >
           <span className='text-[12px] text-[var(--neutral-white)]/70'>
             &copy; 2025 Crown-Haven. All rights reserved.
           </span>
-        </div>
+        </motion.div>
       </div>
 
       {/* Right side */}
-      <div className='relative flex-1 bg-white px-8 py-16 w-full md:w-1/2 h-screen overflow-y-auto'>
-        {/* cta */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: 0.8,
+          delay: 0.5,
+          ease: 'easeIn'
+        }}
+        className='relative flex-1 bg-white px-8 py-16 w-full md:w-1/2 h-screen overflow-y-auto'
+      >
         <div className='top-4 right-8 absolute'>
           <span className='text-[12px] text-[var(--foundation-neutral)]'>
             Already have an account?{' '}
@@ -58,13 +280,14 @@ export default function SignUp () {
           </span>
         </div>
 
-        {/* step navigation */}
         <Nav step={step} />
 
         {/* General Step */}
         {step === 'general' && (
-          <form className='flex flex-col gap-4 mt-8'>
-            {/* First/Last Name */}
+          <form
+            className='flex flex-col gap-4 mt-8'
+            onSubmit={handleCustomerSubmit}
+          >
             <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>
               <div className='flex flex-col'>
                 <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
@@ -73,7 +296,10 @@ export default function SignUp () {
                 <input
                   type='text'
                   placeholder='Oluwapelumi'
+                  value={fname}
+                  onChange={e => setFname(e.target.value)}
                   className='px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--primary-color)] focus:ring-2 text-sm'
+                  required
                 />
               </div>
               <div className='flex flex-col'>
@@ -83,12 +309,13 @@ export default function SignUp () {
                 <input
                   type='text'
                   placeholder='Oluwapelumi'
+                  value={lname}
+                  onChange={e => setLname(e.target.value)}
                   className='px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--primary-color)] focus:ring-2 text-sm'
+                  required
                 />
               </div>
             </div>
-
-            {/* Email */}
             <div className='flex flex-col'>
               <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
                 Email Address <span className='text-red-500'>*</span>
@@ -96,44 +323,65 @@ export default function SignUp () {
               <input
                 type='email'
                 placeholder='example@gmail.com'
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 className='px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--primary-color)] focus:ring-2 text-sm'
+                required
               />
             </div>
-
-            {/* Phone */}
             <div className='flex flex-col'>
               <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
                 Phone Number <span className='text-red-500'>*</span>
               </label>
-              <input
-                type='tel'
-                placeholder='+234 91 2148 2621'
-                className='px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--primary-color)] focus:ring-2 text-sm'
+              <PhoneInput
+                country={'ng'} // default Nigeria
+                value={fullPhone}
+                onChange={(val, country: CountryData) => {
+                  setFullPhone(val) // e.g. "2349121482621"
+                  setCountryIso(country?.countryCode.toUpperCase()) // e.g. "NG"
+                }} // val comes like "2349121482621"
+                enableSearch={true}
+                inputStyle={{
+                  width: '100%',
+                  height: '40px',
+                  fontSize: '14px'
+                }}
+                buttonStyle={{
+                  border: 'none',
+                  background: 'transparent'
+                }}
+                dropdownStyle={{
+                  maxHeight: '200px'
+                }}
               />
             </div>
 
-            {/* Password */}
             <div className='flex flex-col'>
               <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
                 Password <span className='text-red-500'>*</span>
               </label>
               <input
                 type='password'
+                value={password}
+                onChange={e => setPassword(e.target.value)}
                 className='px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--primary-color)] focus:ring-2 text-sm'
+                required
+                placeholder='@Peter2001'
               />
             </div>
-
             <div className='flex flex-col'>
               <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
                 Confirm Password <span className='text-red-500'>*</span>
               </label>
               <input
                 type='password'
+                value={passwordConfirm}
+                onChange={e => setPasswordConfirm(e.target.value)}
                 className='px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--primary-color)] focus:ring-2 text-sm'
+                required
+                placeholder='@Peter2001'
               />
             </div>
-
-            {/* Role */}
             <div className='flex flex-col'>
               <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
                 I’m a … <span className='text-red-500'>*</span>
@@ -144,6 +392,7 @@ export default function SignUp () {
                     type='radio'
                     name='role'
                     value='customer'
+                    checked={isACustomer}
                     onChange={() => {
                       setIsAProvider(false)
                       setIsACustomer(true)
@@ -157,6 +406,7 @@ export default function SignUp () {
                     type='radio'
                     name='role'
                     value='provider'
+                    checked={isAProvider}
                     onChange={() => {
                       setIsACustomer(false)
                       setIsAProvider(true)
@@ -167,46 +417,53 @@ export default function SignUp () {
                 </label>
               </div>
             </div>
+            <div className='flex flex-col gap-4 mt-8'>
+              <div className='flex justify-end'>
+                {isAProvider ? (
+                  <button
+                    type='button'
+                    className='bg-[var(--primary-color)] px-6 py-2 rounded-md font-semibold text-white text-sm cursor-pointer'
+                    onClick={() => setStep('provider')}
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <button
+                    type='submit'
+                    className='bg-[var(--primary-color)] disabled:opacity-30 px-6 py-2 rounded-md font-semibold text-white text-sm cursor-pointer disabled:cursor-not-allowed'
+                    disabled={!isACustomer || loading}
+                  >
+                    {loading ? <LoadingDots /> : 'Submit'}
+                  </button>
+                )}
+              </div>
+            </div>
           </form>
         )}
-
-        {/* Customer Step */}
-        {step === 'general' && (
-          <div className='flex flex-col gap-4 mt-8'>
-            <div className='flex justify-between'>
-              <button
-                type='button'
-                onClick={() => setStep('general')}
-                className='px-6 py-2 border border-gray-300 rounded-md text-sm'
-              >
-                Back
-              </button>
-              {isAProvider ? (
-                <button
-                  type='button'
-                  className='bg-[var(--primary-color)] px-6 py-2 rounded-md font-semibold text-white text-sm'
-                  onClick={() => setStep('provider')}
-                >
-                  {' '}
-                  Next{' '}
-                </button>
-              ) : (
-                <button
-                  type='submit'
-                  className='bg-[var(--primary-color)] px-6 py-2 rounded-md font-semibold text-white text-sm'
-                >
-                  {' '}
-                  Submit{' '}
-                </button>
-              )}
-            </div>
-          </div>
+        {pendingEmailVerify && (
+          <EmailVerifyModal
+            userEmail={email}
+            onOpenChange={open =>
+              dispatch(setPendingEmailVerify({ verify: open }))
+            }
+            open={pendingEmailVerify}
+            onSuccess={() => {
+              dispatch(setPendingEmailVerify({ verify: false }))
+              setShowSuccessModal(true)
+            }}
+          />
         )}
+        <VerificationSuccessModal
+          open={showSuccessModal}
+          onOpenChange={setShowSuccessModal}
+        />
 
         {/* Provider Step */}
         {step === 'provider' && (
-          <form className='flex flex-col gap-4 mt-16'>
-            {/* Service Providers Form */}
+          <form
+            className='flex flex-col gap-4 mt-16'
+            onSubmit={handleProviderSubmit}
+          >
             <div className='flex flex-col'>
               <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
                 Business Name <span className='text-red-500'>*</span>
@@ -214,19 +471,30 @@ export default function SignUp () {
               <input
                 type='text'
                 placeholder='Business name'
+                value={businessName}
+                onChange={e => setBusinessName(e.target.value)}
                 className='px-3 py-2 border border-gray-300 rounded-md text-sm'
+                required
               />
             </div>
-
             <div className='flex flex-col'>
               <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
                 Business Type / Category <span className='text-red-500'>*</span>
               </label>
-              <select className='px-3 py-2 border border-gray-300 rounded-md text-sm'>
-                <option>Select Business Type</option>
+              <select
+                value={categoryId || ''}
+                onChange={e => setCategoryId(Number(e.target.value))}
+                className='px-3 py-2 border border-gray-300 rounded-md text-sm'
+                required
+              >
+                <option value='' disabled>
+                  Select Business Type
+                </option>
+                <option value={1}>Category 1</option>
+                <option value={2}>Category 2</option>
+                {/* Add actual categories from backend */}
               </select>
             </div>
-
             <div className='flex flex-col'>
               <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
                 Business Address 1 <span className='text-red-500'>*</span>
@@ -234,10 +502,12 @@ export default function SignUp () {
               <input
                 type='text'
                 placeholder='Address line 1'
+                value={businessAddress1}
+                onChange={e => setBusinessAddress1(e.target.value)}
                 className='px-3 py-2 border border-gray-300 rounded-md text-sm'
+                required
               />
             </div>
-
             <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>
               <div className='flex flex-col'>
                 <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
@@ -245,6 +515,8 @@ export default function SignUp () {
                 </label>
                 <input
                   type='text'
+                  value={businessAddress2}
+                  onChange={e => setBusinessAddress2(e.target.value)}
                   className='px-3 py-2 border border-gray-300 rounded-md text-sm'
                 />
               </div>
@@ -254,51 +526,75 @@ export default function SignUp () {
                 </label>
                 <input
                   type='text'
+                  value={businessCity}
+                  onChange={e => setBusinessCity(e.target.value)}
                   className='px-3 py-2 border border-gray-300 rounded-md text-sm'
+                  required
                 />
               </div>
             </div>
-
             <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>
               <div className='flex flex-col'>
                 <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
                   Country <span className='text-red-500'>*</span>
                 </label>
-                <select className='px-3 py-2 border border-gray-300 rounded-md text-sm'>
-                  <option>Nigeria</option>
+                <select
+                  value={businessCountry}
+                  onChange={e => setBusinessCountry(e.target.value)}
+                  className='px-3 py-2 border border-gray-300 rounded-md text-sm'
+                  required
+                >
+                  <option value='' disabled>
+                    Select Country
+                  </option>
+                  <option value='NG'>Nigeria</option>
+                  <option value='US'>United States</option>
+                  {/* Add more countries */}
                 </select>
               </div>
               <div className='flex flex-col'>
                 <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
                   State <span className='text-red-500'>*</span>
                 </label>
-                <select className='px-3 py-2 border border-gray-300 rounded-md text-sm'>
-                  <option>Oyo</option>
+                <select
+                  value={businessState}
+                  onChange={e => setBusinessState(e.target.value)}
+                  className='px-3 py-2 border border-gray-300 rounded-md text-sm'
+                  required
+                >
+                  <option value='' disabled>
+                    Select State
+                  </option>
+                  <option value='OY'>Oyo</option>
+                  <option value='LA'>Lagos</option>
+                  {/* Add more states */}
                 </select>
               </div>
             </div>
-
-            {/* Actions */}
             <div className='flex justify-between mt-6'>
               <button
                 type='button'
-                onClick={() => {setStep('general')
+                onClick={() => {
+                  setStep('general')
                   setIsAProvider(false)
                 }}
-                className='px-6 py-2 border border-gray-300 rounded-md text-sm'
+                className='px-6 py-2 border border-gray-300 rounded-md text-sm cursor-pointer'
               >
                 Previous
               </button>
               <button
                 type='submit'
-                className='bg-[var(--primary-color)] px-6 py-2 rounded-md font-semibold text-white text-sm'
+                className='bg-[var(--primary-color)] px-6 py-2 rounded-md font-semibold text-white text-sm cursor-pointer'
+                disabled={loading}
               >
-                Submit
+                {loading ? <LoadingDots /> : 'Submit'}
               </button>
             </div>
+            {/* {error && <p className='text-red-600'>{error}</p>} */}
           </form>
         )}
-      </div>
+      </motion.div>
+      <ToastContainer />
     </div>
   )
 }

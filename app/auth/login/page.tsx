@@ -1,43 +1,150 @@
 'use client'
 import Link from 'next/link'
-import { useState } from 'react'
+import React, { FormEvent, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '@/app/store'
+import LoadingDots from '@/app/components/general/LoadingDots'
+import { setAuthSuccess } from '@/app/features/auth/authSlice'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
+import { motion } from 'motion/react'
 
+type LoginResponse = {
+  message: string
+  user: any
+  token: string
+}
 export default function SignUp () {
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const dispatch = useDispatch<AppDispatch>()
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth
+  )
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!email || !password) {
+      toast.error('Enter email and password')
+    }
+    setError('')
+    setLoading(true)
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+          credentials: 'include'
+        }
+      )
+
+      if (!res.ok) {
+        const errorData = await res.json()
+        setError(errorData.message)
+        toast.error(errorData.message)
+        throw new Error(
+          errorData.message || `Login failed (status ${res.status})`
+        )
+      }
+      const data: LoginResponse = await res.json()
+      dispatch(setAuthSuccess({ user: data.user, token: data.token }))
+      console.log(data.user, data.token)
+
+      toast.success('Login successful!')
+      router.push('/dashboard')
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+      console.error('Login error:', errorMessage)
+      // toast.error(errorMessage)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className='relative flex md:flex-row flex-col w-full min-h-screen'>
       {/* Left side */}
       <div className='top-0 sticky flex flex-col justify-between bg-[var(--primary-color)] px-8 py-16 w-full md:w-1/2 min-h-screen'>
         {/* logo */}
-        <div className='text-[var(--font-md)]'>
+        <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            duration: 0.8,
+            delay: 0.5,
+            ease: [0, 0.71, 0.2, 1.01]
+          }}
+          className='text-[var(--font-md)]'
+        >
           <span className='font-thin text-[var(--neutral-white)]/70'>
             Crown-
           </span>
           <span className='font-extrabold text-[var(--neutral-white)]'>
             Haven
           </span>
-        </div>
+        </motion.div>
 
         {/* auth intro */}
         <div>
-          <h2 className='max-w-[90%] font-bold text-[32px] text-white md:text-[50px] leading-tight'>
+          <motion.h2
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.7,
+              ease: [0, 0.71, 0.2, 1.01]
+            }}
+            className='max-w-[90%] font-bold text-[32px] text-white md:text-[50px] leading-tight'
+          >
             Welcome Back to Crown-Haven{' '}
-          </h2>
-          <p className='pt-4 max-w-[90%] font-thin text-white/70'>
+          </motion.h2>
+          <motion.p
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.8,
+              ease: [0, 0.71, 0.2, 1.01]
+            }}
+            className='pt-4 max-w-[90%] font-thin text-white/70'
+          >
             Your trusted space for living, renting, or offering services. Log in
             to stay connected and keep moving forward.
-          </p>
+          </motion.p>
         </div>
 
         {/* footnote */}
-        <div>
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            duration: 0.8,
+            delay: 0.5,
+            ease: [0, 0.71, 0.2, 1.01]
+          }}
+        >
           <span className='text-[12px] text-[var(--neutral-white)]/70'>
             &copy; 2025 Crown-Haven. All rights reserved.
           </span>
-        </div>
+        </motion.div>
       </div>
 
       {/* Right side */}
-      <div className='relative flex flex-1 justify-center items-center bg-white px-8 py-16 w-full md:w-1/2 h-screen overflow-y-auto'>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: 0.8,
+          delay: 0.9,
+          ease: 'easeIn'
+        }}
+        className='relative flex flex-1 justify-center items-center bg-white px-8 py-16 w-full md:w-1/2 h-screen overflow-y-auto'
+      >
         {/* cta */}
         <div className='relative py-8 w-full'>
           <div className='top-0 right-8 absolute'>
@@ -61,7 +168,10 @@ export default function SignUp () {
                 Welcome back! Please login to your account.
               </p>
             </div>
-            <form className='flex flex-col items-center gap-[20px] mt-12'>
+            <form
+              className='flex flex-col items-center gap-[20px] mt-12'
+              onSubmit={handleSubmit}
+            >
               {/* Email */}
               <div className='flex flex-col w-full'>
                 <label className='mb-1 font-semibold text-[var(--heading-color)] text-sm'>
@@ -70,6 +180,8 @@ export default function SignUp () {
                 <input
                   type='email'
                   placeholder='example@gmail.com'
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
                   className='px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--primary-color)] focus:ring-2 text-sm'
                 />
               </div>
@@ -80,6 +192,8 @@ export default function SignUp () {
                 </label>
                 <input
                   type='password'
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
                   className='px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--primary-color)] focus:ring-2 text-sm'
                 />
                 <Link
@@ -90,18 +204,19 @@ export default function SignUp () {
                 </Link>
               </div>
 
-              <div className='flex justify-center items-center mt-8'>
+              <div className='flex flex-col justify-center items-center gap-2 mt-8'>
                 <button
                   type='submit'
-                  className='bg-[var(--primary-color)] px-12 py-3 rounded-md font-semibold text-white text-sm'
+                  className='bg-[var(--primary-color)] px-12 py-3 rounded-md font-semibold text-white text-sm cursor-pointer'
                 >
-                  Login
+                  {loading ? <LoadingDots /> : 'Login'}
                 </button>
+                {/* {error && <p className='text-[12px] text-red-600'>{error}</p>} */}
               </div>
             </form>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

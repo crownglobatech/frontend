@@ -1,5 +1,48 @@
+'use client'
 import Link from 'next/link'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
+import LoadingDots from '@/app/components/general/LoadingDots'
+
 export default function ForgotPassword () {
+  const [userEmail, setUserEmail] = useState<string>('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  const handleSubmit = async () => {
+    if (userEmail) {
+      localStorage.setItem('userEmail', userEmail)
+      // navigate to verify email
+      setLoading(true)
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/forgot-password`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail }),
+            credentials: 'include'
+          } 
+        )
+        if (!res.ok) {
+          const error = await res.json()
+          toast.error(error.message)
+          console.log(error.message);
+          
+          return
+        }
+        const data = await res.json()
+        toast.success(data.message)
+        localStorage.setItem('userEmail', userEmail)
+        router.push('/auth/forgot-password/verify-email')
+      } catch (error) {
+      } finally {
+        setLoading(false)
+      }
+    }
+  }
+
   return (
     <div className='flex flex-col justify-center items-center gap-8'>
       <div>
@@ -19,17 +62,19 @@ export default function ForgotPassword () {
         <input
           type='email'
           placeholder='example@gmail.com'
+          value={userEmail}
+          onChange={e => setUserEmail(e.target.value)}
           className='px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--primary-color)] focus:ring-2 text-sm'
         />
       </div>
 
       <div className='flex flex-col items-center gap-4'>
-        <Link
-          href='/auth/forgot-password/verify-email'
-          className='bg-[var(--primary-color)] px-4 py-2 rounded-md font-semibold text-[13px] text-white'
+        <button
+          onClick={handleSubmit}
+          className='bg-[var(--primary-color)] px-4 py-2 rounded-md font-semibold text-[13px] text-white cursor-pointer'
         >
-          Reset Password
-        </Link>
+          {loading ? <LoadingDots /> : 'Reset Password'}
+        </button>
         <Link
           href='/auth/login'
           className='bg-transparent font-semibold text-[13px] text-[var(--primary-color)]'

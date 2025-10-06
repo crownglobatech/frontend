@@ -12,7 +12,7 @@ interface ApartmentCardProps {
   baths: number
   rating: number
   providerVerified?: boolean
-  status?: string // e.g. "For Sale", "For Rent"
+  status?: string
 }
 
 export default function ApartmentCard ({
