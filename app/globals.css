@@ -14,9 +14,15 @@
   --foundation-neutral: #454545;
   --foundation-primary: #E9EFF6;
   --foundation-accent-color: #DDBF5F;
+  --brand-accent-color: #D4AF37;
+  --accent-color: #F2E6C1;
   --foundation-neutral-8: #595959;
+  --foundation-neutral-6: #BFBFBF;
+  --foundation-neutral-7: #8C8C8C;
   --foundation-neutral-4: #F0F0F0;
+  --foundation-neutral-3: #F5F5F5;
   --success-color: #28A745;
+  --danger-color: #E63946;
   --text-body: #334155;
   --font-norm: 18px;
   --font-lg: 30px;

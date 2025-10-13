@@ -1,3 +1,4 @@
+'use client'
 import ApartmentCard from './components/general/ApartmentCard'
 import Button from './components/general/Button'
 import Footer from './components/general/Footer'
@@ -5,6 +6,7 @@ import Header from './components/general/Header'
 import HomeFilter from './components/pages/home/HomeFilter'
 import ServiceGallery from './components/pages/home/ServiceGallery'
 import Services from './components/pages/home/Services'
+import { motion } from 'motion/react'
 
 export default function LandingPage () {
   return (
@@ -14,27 +16,47 @@ export default function LandingPage () {
         {/* overlay bg */}
         <div className='absolute inset-0 bg-gradient-to-b from-[#1E5AA882] via-[#1E5AA882] via-[51%] to-[#0C2342F0] to-[94%] w-full h-full' />
         <div className='z-10 relative flex justify-center px-4 pt-8 w-full'>
-          <div className='flex justify-between items-center w-full max-w-[80%]'>
+          <motion.div
+            initial={{ y: -50, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 100 }}
+            transition={{ duration: 0.5, type: 'tween', delay: 0.2 }}
+            className='flex justify-between items-center w-full max-w-[80%]'
+          >
             <Header />
-          </div>
+          </motion.div>
         </div>
 
         {/* hero content */}
         <div className='z-10 relative flex flex-col justify-center items-center px-8 md:px-20 h-full'>
           <div className='z-10 relative flex flex-col justify-center items-center mx-auto max-w-[60%] text-center'>
-            <h1 className='font-bold text-[45px] text-white leading-tight'>
+            <motion.h1
+              initial={{ y: 100, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 100 }}
+              transition={{ duration: 0.5, type: 'tween' }}
+              className='font-bold text-[45px] text-white leading-tight'
+            >
               Find Your Perfect{' '}
               <span className='text-[var(--secondary-color)]'>Property</span>{' '}
               And Trusted Service
-            </h1>
-            <h3 className='mt-4 font-normal text-white text-lg'>
+            </motion.h1>
+            <motion.h3
+              initial={{ y: 100, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 100 }}
+              transition={{ duration: 0.5, type: 'spring', delay: 0.2 }}
+              className='mt-4 font-normal text-white text-lg'
+            >
               Search properties, connect with verified agents, and access
               reliable real estate services all in one platform.
-            </h3>
+            </motion.h3>
           </div>
 
           {/* Optional CTA buttons */}
-          <div className='flex justify-center items-center gap-4 mt-4'>
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 100 }}
+            transition={{ duration: 0.5, type: 'spring' }}
+            className='flex justify-center items-center gap-4 mt-4'
+          >
             <Button
               styles='text-white font-semibold border-none rounded-md text-[14px] px-4 py-2 bg-[var(--primary-color)]'
               title='View Property'
@@ -43,22 +65,32 @@ export default function LandingPage () {
               styles='text-white font-semibold border-white border rounded-md text-[14px] px-4 py-2 bg-transparent'
               title='Contact Now'
             />
-          </div>
+          </motion.div>
         </div>
       </section>
 
       <section className='relative my-8'>
         {/* categories + filter section */}
         <div className='-top-24 left-1/2 absolute w-full max-w-[900px] -translate-x-1/2'>
-          <div className='flex flex-col justify-center items-center'>
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 100 }}
+            transition={{ duration: 0.5, type: 'tween', delay: 0.3 }}
+            className='flex flex-col justify-center items-center'
+          >
             <HomeFilter />
-          </div>
+          </motion.div>
         </div>
 
         <div className='flex flex-col items-center py-[100px]'>
-          <h2 className='font-bold text-[30px] text-[var(--heading-color)]'>
+          <motion.h2
+            initial={{ y: -50, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 100 }}
+            transition={{ duration: 0.5, type: 'tween', delay: 0.2 }}
+            className='font-bold text-[30px] text-[var(--heading-color)]'
+          >
             Quick Categories
-          </h2>
+          </motion.h2>
           <div className='px-16'>
             <Services />
           </div>
@@ -67,9 +99,14 @@ export default function LandingPage () {
 
       <section className='flex flex-col items-center bg-[var(--foundation-primary)] mx-4 my-8 py-8'>
         {/* Featured Properties */}
-        <h2 className='mb-8 font-bold text-[30px] text-[var(--heading-color)]'>
+        <motion.h2
+          initial={{ y: -50, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 100 }}
+          transition={{ duration: 0.5, type: 'tween', delay: 0.2 }}
+          className='mb-8 font-bold text-[30px] text-[var(--heading-color)]'
+        >
           Featured Properties
-        </h2>
+        </motion.h2>
         {/* display apartment cards */}
         <div className='gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
           <ApartmentCard
@@ -115,9 +152,14 @@ export default function LandingPage () {
 
       <section className='flex flex-col items-center my-8 py-4'>
         {/* reliable service */}
-        <h2 className='mb-8 font-bold text-[30px] text-[var(--heading-color)]'>
+        <motion.h2
+          initial={{ y: -50, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 100 }}
+          transition={{ duration: 0.5, type: 'tween', delay: 0.2 }}
+          className='mb-8 font-bold text-[30px] text-[var(--heading-color)]'
+        >
           Need a reliable service?
-        </h2>
+        </motion.h2>
 
         <div className='bg-transparent px-16 w-full'>
           <ServiceGallery />
@@ -126,16 +168,31 @@ export default function LandingPage () {
 
       <section className='flex flex-col justify-center items-center gap-4 bg-[var(--foundation-neutral-4)] mx-20 my-8 py-4 rounded-md'>
         {/* banner */}
-        <h2 className='font-bold text-[30px] text-[var(--heading-color)]'>
+        <motion.h2
+          initial={{ y: -50, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 100 }}
+          transition={{ duration: 0.5, type: 'tween', delay: 0.2 }}
+          className='font-bold text-[30px] text-[var(--heading-color)]'
+        >
           Your Real Estate Journey Simplified
-        </h2>
-        <p className='max-w-[60%] text-[var(--heading-color)] text-center'>
+        </motion.h2>
+        <motion.p
+          initial={{ y: 50, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 100 }}
+          transition={{ duration: 0.5, type: 'tween', delay: 0.4 }}
+          className='max-w-[60%] text-[var(--heading-color)] text-center'
+        >
           Whether you are looking for a new home, selling your property, or
           offering real estate services, Crown-Haven is your one-stop platform.
-        </p>
+        </motion.p>
 
         {/* CTA Buttons */}
-        <div className='flex justify-center items-center gap-4 mt-4'>
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 100 }}
+          transition={{ duration: 0.5, type: 'tween', delay: 0.5 }}
+          className='flex justify-center items-center gap-4 mt-4'
+        >
           <Button
             styles='text-white font-semibold border-none rounded-md text-[14px] px-4 py-2 bg-[var(--primary-color)]'
             title='Find a Property'
@@ -144,7 +201,7 @@ export default function LandingPage () {
             styles='text-[var(--secondary-color)] font-semibold border-[var(--secondary-color)] border rounded-md text-[14px] px-4 py-2 bg-transparent'
             title='Become a Partner'
           />
-        </div>
+        </motion.div>
       </section>
       <Footer />
     </main>
