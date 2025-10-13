@@ -1,0 +1,51 @@
+import NewAdContent from '@/app/components/pages/vendor-dashboard/ads/NewAdContent'
+import Image from 'next/image'
+export default function PostNewAd () {
+  return (
+    <div>
+      <div className='top-0 z-[1000] sticky bg-white shadow-lg px-6 py-4 w-full'>
+        <div className='flex justify-between items-center'>
+          <h2 className='font-semibold text-[20px] text-[var(--heading-color)]'>
+            Post New Ad
+          </h2>
+          {/* Icons */}
+          <div className='flex flex-row-reverse items-center gap-8'>
+            <div className='shadow-md rounded-full'>
+              <Image
+                src='/user.png'
+                alt='vendor profile avatar'
+                className='object-contain cursor-pointer'
+                height={40}
+                width={40}
+              />
+            </div>
+            <div className='shadow-md rounded-full'>
+              <Image
+                src='/notify.png'
+                alt='notification icon'
+                className='object-contain cursor-pointer'
+                height={40}
+                width={40}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* content */}
+      <div className='flex flex-col gap-4 px-16 py-8'>
+        <div>
+          <NewAdContent />
+        </div>
+        <div className='flex gap-2'>
+          <button className='bg-transparent px-12 py-1 border border-[var(--primary-color)] w-full font-semibold text-[var(--primary-color)] cursor-pointer'>
+            Preview Ad
+          </button>
+          <button className='bg-[var(--primary-color)] px-12 py-1 w-full font-semibold text-white cursor-pointer'>
+            Publish Ad
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
