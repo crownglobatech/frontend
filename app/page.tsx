@@ -7,8 +7,11 @@ import HomeFilter from './components/pages/home/HomeFilter'
 import ServiceGallery from './components/pages/home/ServiceGallery'
 import Services from './components/pages/home/Services'
 import { motion } from 'motion/react'
+import { useNotification } from './contexts/NotificationProvider'
 
 export default function LandingPage () {
+  // const { notify } = useNotification()
+  // notify('Hello', 'success')
   return (
     <main>
       {/* hero */}

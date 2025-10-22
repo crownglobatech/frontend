@@ -22,7 +22,9 @@ export default function HeaderBanner () {
         </div>
 
         {/* Icons */}
-        <div className='flex flex-row-reverse items-center gap-8'>
+        <div className='flex flex-row-reverse items-center gap-4'>
+          <Rating rate={5} />
+
           <div className='shadow-md rounded-full'>
             <Image
               src='/user.png'
@@ -41,7 +43,6 @@ export default function HeaderBanner () {
               width={40}
             />
           </div>
-          <Rating rate={5}/>
         </div>
       </div>
     </div>

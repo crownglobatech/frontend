@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { MdDashboard } from 'react-icons/md'
 import { TbMessageCircleStar, TbHandLoveYou } from 'react-icons/tb'
 import { usePathname } from 'next/navigation'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/app/store'
 
 export default function SideBarUser () {
   const pathname = usePathname()
@@ -18,7 +20,7 @@ export default function SideBarUser () {
   const bottomLinks = [
     { href: '/user/settings', label: 'Settings' },
     { href: '/user/help', label: 'Help & Support' },
-    { href: '/auth/login', label: 'Login' }
+    { href: '/auth/logout', label: 'Signout' }
   ]
 
   return (

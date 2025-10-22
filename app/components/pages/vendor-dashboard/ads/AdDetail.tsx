@@ -2,17 +2,20 @@ import HouseDetail from './AdHouseDetail'
 import AdPerformaceSummary from './AdPerformance'
 import EditContactInfo from './EditAdContactInfo'
 
-export default function AdDetails () {
+interface Props {
+  adData: any
+}
+export default function AdDetails ({ adData }: Props) {
   return (
     <div className='flex flex-col gap-8'>
       <div className='bg-[var(--foundation-neutral-3)] p-6 rounded-md'>
-        <HouseDetail />
+        <HouseDetail adData={adData} />
       </div>
       <div className='bg-[var(--foundation-neutral-3)] p-6 rounded-md'>
-        <EditContactInfo />
+        <EditContactInfo adData={adData} />
       </div>
       <div className='bg-[var(--foundation-neutral-3)] p-6 rounded-md'>
-       <AdPerformaceSummary />
+        <AdPerformaceSummary adData={adData} />
       </div>
     </div>
   )

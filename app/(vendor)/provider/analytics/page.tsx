@@ -1,3 +1,5 @@
+'use client'
+import { useNotification } from '@/app/contexts/NotificationProvider'
 import AnalyticsTable from './AnalyticsTable'
 import HeadBanner from './HeadBanner'
 import Image from 'next/image'
@@ -21,6 +23,7 @@ export default function Analytics () {
       value: '7.1%'
     }
   ]
+  const { notify } = useNotification()
   return (
     <div>
       <div className='top-0 sticky w-full'>

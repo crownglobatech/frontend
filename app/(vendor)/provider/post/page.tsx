@@ -35,15 +35,7 @@ export default function PostNewAd () {
       {/* content */}
       <div className='flex flex-col gap-4 px-16 py-8'>
         <div>
-          <NewAdContent />
-        </div>
-        <div className='flex gap-2'>
-          <button className='bg-transparent px-12 py-1 border border-[var(--primary-color)] w-full font-semibold text-[var(--primary-color)] cursor-pointer'>
-            Preview Ad
-          </button>
-          <button className='bg-[var(--primary-color)] px-12 py-1 w-full font-semibold text-white cursor-pointer'>
-            Publish Ad
-          </button>
+          <NewAdContent  />
         </div>
       </div>
     </div>

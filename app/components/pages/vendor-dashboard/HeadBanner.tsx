@@ -7,7 +7,7 @@ export default function HeaderBanner () {
       <div className='flex justify-between items-center'>
         <h2 className='font-semibold text-[20px]'>Welcome, Oluwapelumi</h2>
         {/* icons */}
-        <div className='flex flex-row-reverse items-center gap-8'>
+        <div className='flex flex-row-reverse items-center gap-4'>
           <Rating rate={5} />
           <div className='shadow-md rounded-full'>
             <Image

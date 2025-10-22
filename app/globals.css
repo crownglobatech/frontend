@@ -23,6 +23,7 @@
   --foundation-neutral-3: #F5F5F5;
   --success-color: #28A745;
   --danger-color: #E63946;
+  --muted-text: #64748B;
   --text-body: #334155;
   --font-norm: 18px;
   --font-lg: 30px;
@@ -157,3 +158,10 @@
   }
 }
 
+@keyframes slideIn {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}

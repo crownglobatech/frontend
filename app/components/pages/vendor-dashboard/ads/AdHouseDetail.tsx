@@ -1,30 +1,36 @@
 import Image from 'next/image'
 import { CiLocationOn } from 'react-icons/ci'
-export default function HouseDetail () {
+
+interface Props {
+  adData: any
+}
+export default function HouseDetail ({ adData }: Props) {
   return (
     <div className='flex flex-col gap-2'>
       <div className='flex justify-between items-center'>
         <h2 className='font-bold text-[18px] text-[var(--heading-color)]'>
-          Vineyard Estate
+          {adData.title}
         </h2>
-        <div className='bg-[#C8FFD5] px-4 py-1 rounded-full font-semibold text-[var(--success-color)]'>
-          Active
+        <div className={`bg-[#C8FFD5] px-4 py-1 rounded-full font-semibold ${adData.status === 'paused' ? 'bg-[#FFF4D3] text-[var(--brand-accent-color)]' : adData.status === 'approved' ? 'bg-[#C8FFD5] text-[var(--success-color)]' : ''} capitalize`}>
+          {adData.status}
         </div>
       </div>
-      <div>
+      <div className='relative'>
+        {/* overlay */}
+        <div className='absolute inset-0 bg-gradient-to-b from-[#1E5AA882] via-[#1E5AA882] via-[51%] to-[#0C2342F0] to-[94%] rounded-md' />
         <Image
-          src='/bg-overlay.png'
+          src={adData.photo_urls[0]}
           alt='house image'
           width={300}
           height={300}
-          className='w-full object-contain'
+          className='rounded-md w-full object-contain'
         />
       </div>
       <div className='flex flex-col gap-2'>
         <div className='flex items-center gap-1'>
           <CiLocationOn size={12} />
           <p className='text-[12px] text-[var(--foundation-neutral-8)]'>
-            Agodi Awolowo, Ibadan
+            {adData.area}
           </p>
         </div>
         <div className='flex flex-col gap-1'>
@@ -33,30 +39,47 @@ export default function HouseDetail () {
               Service Description
             </h2>
             <h2 className='font-semibold text-[var(--heading-color)]'>
-              ₦50,000,000.00
+              ₦{adData.price}
             </h2>
           </div>
           <p className='text-[14px] text-[var(--foundation-neutral-8)]'>
-            Nestled in a serene and well-developed neighborhood, Vineyard Estate
-            offers the perfect blend of comfort, elegance, and modern living.
+            {adData.description}
           </p>
         </div>
-        <div className='flex justify-between'> 
+        <div className='flex justify-between'>
           <div>
-            <h2 className='font-semibold text-[16px] text-[var(--heading color)]'>Category</h2>
-            <p className='text-[14px] text-[var(--foundation-neutral-8)]'>Real Estate</p>
+            <h2 className='font-semibold text-[16px] text-[var(--heading color)]'>
+              Category
+            </h2>
+            <p className='text-[14px] text-[var(--foundation-neutral-8)] capitalize'>
+              {adData.business.category.name}
+            </p>
           </div>
           <div>
-            <h2 className='font-semibold text-[16px] text-[var(--heading color)]'>Listing</h2>
-            <p className='text-[14px] text-[var(--foundation-neutral-8)]'>Rent</p>
+            <h2 className='font-semibold text-[16px] text-[var(--heading color)]'>
+              Listing
+            </h2>
+            <p className='text-[14px] text-[var(--foundation-neutral-8)] capitalize'>
+              {adData.listing_type}
+            </p>
           </div>
           <div>
-            <h2 className='font-semibold text-[16px] text-[var(--heading color)]'>Bath Room</h2>
-            <p className='text-[14px] text-[var(--foundation-neutral-8)]'>4</p>
+            <h2 className='font-semibold text-[16px] text-[var(--heading color)]'>
+              Bath Room
+            </h2>
+            <p className='text-[14px] text-[var(--foundation-neutral-8)]'>
+              {' '}
+              {adData.bathrooms}
+            </p>
           </div>
           <div>
-            <h2 className='font-semibold text-[16px] text-[var(--heading color)]'>Bed Room</h2>
-            <p className='text-[14px] text-[var(--foundation-neutral-8)]'>4</p>
+            <h2 className='font-semibold text-[16px] text-[var(--heading color)]'>
+              Bed Room
+            </h2>
+            <p className='text-[14px] text-[var(--foundation-neutral-8)]'>
+              {' '}
+              {adData.bedrooms}
+            </p>
           </div>
         </div>
       </div>

@@ -18,9 +18,6 @@ export default function SignUp () {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const dispatch = useDispatch<AppDispatch>()
-  const { isAuthenticated, user } = useSelector(
-    (state: RootState) => state.auth
-  )
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -52,11 +49,21 @@ export default function SignUp () {
         )
       }
       const data: LoginResponse = await res.json()
-      dispatch(setAuthSuccess({ user: data.user, token: data.token }))
+      dispatch(
+        setAuthSuccess({
+          user: data.user,
+          token: data.token,
+          role: data.user.role
+        })
+      )
       console.log(data.user, data.token)
 
       toast.success('Login successful!')
-      router.push('/dashboard')
+      if (data.user.role === 'service_provider') {
+        router.replace('/provider/dashboard')
+      } else {
+        router.replace('/dashboard')
+      }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error'
       console.error('Login error:', errorMessage)

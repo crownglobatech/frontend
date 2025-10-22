@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import Cookies from 'js-cookie'
 
 interface User {
   id: string
@@ -41,13 +42,18 @@ const authSlice = createSlice({
     // Set user and token on successful login/register
     setAuthSuccess (
       state,
-      action: PayloadAction<{ user: User; token: string }>
+      action: PayloadAction<{ user: User; token: string, role: string }>
     ) {
       state.loading = false
       state.user = action.payload.user
       state.token = action.payload.token
       state.isAuthenticated = true
+      // client side use
       localStorage.setItem('token', action.payload.token)
+      localStorage.setItem('role', action.payload.role)
+      // middleware use
+      Cookies.set('token', action.payload.token, { expires: 7, sameSite: 'strict' })
+      Cookies.set('role', action.payload.role, { expires: 7, sameSite: 'strict' })
       // localStorage.setItem('userEmail', action.payload.user.email)
     },
     setUserId (state, action: PayloadAction<{ userId: number | null }>) {
@@ -71,6 +77,9 @@ const authSlice = createSlice({
       state.isAuthenticated = false
       state.error = null
       localStorage.removeItem('token')
+      localStorage.removeItem('role')
+      Cookies.remove('token')
+      Cookies.remove('role')
     },
     // Load user from storage
     loadUserFromStorage (state) {

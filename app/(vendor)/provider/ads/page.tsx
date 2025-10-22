@@ -1,12 +1,13 @@
+'use client'
+import Loader from '@/app/components/general/Loader'
 import AdCard from '@/app/components/pages/vendor-dashboard/ads/AdCard'
 import AdFilter from '@/app/components/pages/vendor-dashboard/ads/AdFilter'
 import HeaderBanner from '@/app/components/pages/vendor-dashboard/ads/HeaderBanner'
+import { getAllAds } from '@/lib/api'
+import { AllAdsResponse } from '@/lib/types'
 import Link from 'next/link'
-interface Props {
-  params: {
-    vendorId: string
-  }
-}
+import { useEffect, useState } from 'react'
+
 const listings = [
   {
     id: 1,
@@ -87,8 +88,30 @@ const listings = [
   }
 ]
 
-export default async function AllAds ({ params }: Props) {
-  const { vendorId } = params
+export default function AllAds () {
+  const [ads, setAds] = useState<AllAdsResponse>()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchAds = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        if (!token) throw new Error('User not authenticated')
+
+        const data = await getAllAds(token)
+        setAds(data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAds()
+  }, [])
+
+  if (loading) return <Loader />
+  console.log(ads)
 
   return (
     <>
@@ -102,15 +125,23 @@ export default async function AllAds ({ params }: Props) {
       {/* Ad Display */}
       <div className='flex flex-col items-center'>
         <div className='gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-          {listings.map((listing, index) => (
-            <Link href={`/provider/1023/ads/${listing.id}`} key={index}>
+          {/* {!ads && !loading ? (
+            <div className='flex justify-center items-center space-x-1 h-screen font-semibold text-[16px] text-[var(--danger-color)]'>
+              <span >Unable to fetch your Ads</span>
+            </div>
+          ) : (
+            ''
+          )} */}
+          {ads?.data.data.map((listing, index) => (
+            <Link href={`/provider/ads/${listing.id}`} key={index}>
               <AdCard
-                baths={listing.baths}
-                beds={listing.beds}
-                image={listing.image}
-                location={listing.location}
+                baths={listing.bathrooms}
+                beds={listing.bedrooms}
+                image={listing.photo_urls[0]}
+                location={listing.area}
                 price={listing.price}
-                rating={listing.rating}
+                rating={4.3}
+                date={new Date(listing.created_at).toLocaleDateString('en-GB')}
                 status={listing.status}
                 title={listing.title}
               />

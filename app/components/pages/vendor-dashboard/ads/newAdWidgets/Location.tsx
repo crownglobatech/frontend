@@ -1,7 +1,22 @@
-export default function LocationForm () {
+'use client'
+import React from 'react'
+
+interface LocationFormProps {
+  data: {
+    street: string
+    area: string
+    lga: string
+    state: string
+    country: string
+  }
+  onChange: (field: string, value: string) => void
+}
+
+export default function LocationForm({ data, onChange }: LocationFormProps) {
   return (
-    <form action='flex flex-col gap-2 mt-4'>
-      <div className='gap-2 grid grid-cols-1 md:grid-cols-2 mt-4 w-full'>
+    <div className='flex flex-col gap-4 mt-4'>
+      <div className='gap-2 grid grid-cols-1 md:grid-cols-2 w-full'>
+        {/* Street */}
         <div className='flex flex-col gap-1'>
           <label
             className='font-semibold text-[14px] text-[var(--heading-color)]'
@@ -10,11 +25,18 @@ export default function LocationForm () {
             Street
           </label>
           <input
-            className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
+            id='street'
+            name='street'
+            required
             type='text'
+            value={data.street}
+            onChange={e => onChange('street', e.target.value)}
             placeholder='Carlton Street'
+            className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
           />
         </div>
+
+        {/* Area */}
         <div className='flex flex-col gap-1'>
           <label
             className='font-semibold text-[14px] text-[var(--heading-color)]'
@@ -23,13 +45,20 @@ export default function LocationForm () {
             Area
           </label>
           <input
-            className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
+            id='area'
             type='text'
+            name='area'
+            required
+            value={data.area}
+            onChange={e => onChange('area', e.target.value)}
             placeholder='Molete'
+            className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
           />
         </div>
       </div>
+
       <div className='gap-2 grid grid-cols-1 md:grid-cols-2 w-full'>
+        {/* LGA */}
         <div className='flex flex-col gap-1'>
           <label
             className='font-semibold text-[14px] text-[var(--heading-color)]'
@@ -38,11 +67,18 @@ export default function LocationForm () {
             LGA
           </label>
           <input
-            className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
+            id='lga'
+            name='lga'
             type='text'
+            required
+            value={data.lga}
+            onChange={e => onChange('lga', e.target.value)}
             placeholder='Ibadan North'
+            className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
           />
         </div>
+
+        {/* State */}
         <div className='flex flex-col gap-1'>
           <label
             className='font-semibold text-[14px] text-[var(--heading-color)]'
@@ -51,12 +87,19 @@ export default function LocationForm () {
             State
           </label>
           <input
-            className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
+            id='state'
+            name='state'
             type='text'
+            required
+            value={data.state}
+            onChange={e => onChange('state', e.target.value)}
             placeholder='Oyo State'
+            className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
           />
         </div>
       </div>
+
+      {/* Country */}
       <div className='flex flex-col gap-1 w-full'>
         <label
           className='font-semibold text-[14px] text-[var(--heading-color)]'
@@ -65,11 +108,16 @@ export default function LocationForm () {
           Country
         </label>
         <input
-          className='bg-white px-4 py-1 border border-[var(--foundation-neutral-6)] rounded-sm'
+          id='country'
           type='text'
+          name='country'
+          required
+          value={data.country}
+          onChange={e => onChange('country', e.target.value)}
           placeholder='Nigeria'
+          className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm font-semibold text-[12px]'
         />
       </div>
-    </form>
+    </div>
   )
 }

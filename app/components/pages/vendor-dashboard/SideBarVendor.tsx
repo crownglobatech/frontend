@@ -12,7 +12,7 @@ export default function SideBarVendor () {
   const vendor = 1023
   const navLinks = [
     { href: '/provider/dashboard', label: 'Dashboard', icon: MdDashboard },
-    { href: `/provider/${vendor}/ads`, label: 'My Ads', icon: TbHandLoveYou },
+    { href: `/provider/ads`, label: 'My Ads', icon: TbHandLoveYou },
     {
       href: '/provider/post',
       label: 'Post New Ad',
@@ -38,7 +38,7 @@ export default function SideBarVendor () {
   const bottomLinks = [
     { href: '/user/settings', label: 'Settings' },
     { href: '/user/help', label: 'Help & Support' },
-    { href: '/auth/login', label: 'Login' }
+    { href: '/auth/logout', label: 'Signout' }
   ]
 
   return (
@@ -78,7 +78,7 @@ export default function SideBarVendor () {
                 const inAdsSection = pathname.includes('/ads')
                 const isActive =
                   pathname === href ||
-                  (href === `/provider/${vendor}/ads` && inAdsSection)
+                  (href === `/provider/ads` && inAdsSection)
                 return (
                   <li key={href}>
                     <Link

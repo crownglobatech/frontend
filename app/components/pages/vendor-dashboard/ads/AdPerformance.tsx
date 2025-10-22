@@ -1,4 +1,7 @@
-export default function AdPerformaceSummary () {
+interface Props{
+  adData: any
+}
+export default function AdPerformaceSummary ({adData}:Props) {
   const metric = [
     {
       title: 'Views',

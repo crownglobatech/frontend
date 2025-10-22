@@ -2,13 +2,12 @@
 import { ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { store } from '@/app/store'
-import { ToastContainer } from 'react-toastify'
+import { NotificationProvider } from '@/app/contexts/NotificationProvider'
 export default function LayoutWrapper ({ children }: { children: ReactNode }) {
   return (
     <div>
       <Provider store={store}>
-        <ToastContainer />
-        {children}
+        <NotificationProvider>{children}</NotificationProvider>
       </Provider>
     </div>
   )

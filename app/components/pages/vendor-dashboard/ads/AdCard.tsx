@@ -1,6 +1,7 @@
 import { FaBed, FaBath } from 'react-icons/fa'
 import { AiFillStar } from 'react-icons/ai'
 import { CiLocationOn } from 'react-icons/ci'
+import { Calendar } from 'lucide-react'
 
 interface ApartmentCardProps {
   image: string
@@ -11,6 +12,7 @@ interface ApartmentCardProps {
   baths: number
   rating: number
   status: string
+  date: string
 }
 
 export default function ApartmentCard ({
@@ -21,6 +23,7 @@ export default function ApartmentCard ({
   beds,
   baths,
   rating,
+  date,
   status = 'Active'
 }: ApartmentCardProps) {
   return (
@@ -37,12 +40,12 @@ export default function ApartmentCard ({
         <div className='absolute inset-0 bg-gradient-to-b from-[#1E5AA882] via-[#1E5AA882] via-[51%] to-[#0C2342F0] to-[94%] rounded-md' />
         <span
           className={`${
-            status === 'Active'
-              ? 'bg-[#C8FFD5]'
-              : status === 'Inactive'
-              ? 'bg-[#FFD2D2]'
-              : 'bg-[#FFF4D3]'
-          } top-3 left-3 absolute shadow px-3 py-1 rounded-md font-medium text-[12px] text-[var(--text-body)]`}
+            status === 'approved'
+              ? 'bg-[#C8FFD5] text-[var(--success-color)]'
+              : status === 'paused'
+              ? 'bg-[#FFF4D3] text-[var(--brand-accent-color)]'
+              : 'bg-[var(--text-body)] text-white'
+          } top-3 left-3 absolute shadow px-3 py-1 rounded-md font-medium text-[12px]`}
         >
           {status}
         </span>
@@ -82,6 +85,9 @@ export default function ApartmentCard ({
           </div>
           <div className='flex items-center gap-1 text-[10px] text-[var(--foundation-neutral-8)]'>
             <FaBath /> {baths} Bath Room
+          </div>
+          <div className='flex items-center gap-1 text-[10px] text-[var(--foundation-neutral-8)]'>
+            <Calendar className='' size={10} /> {date}
           </div>
         </div>
 
