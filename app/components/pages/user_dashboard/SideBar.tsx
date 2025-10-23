@@ -5,58 +5,59 @@ import Link from 'next/link'
 import { MdDashboard } from 'react-icons/md'
 import { TbMessageCircleStar, TbHandLoveYou } from 'react-icons/tb'
 import { usePathname } from 'next/navigation'
-import { useSelector } from 'react-redux'
-import { RootState } from '@/app/store'
 
-export default function SideBarUser () {
+export default function SideBarUser() {
   const pathname = usePathname()
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: MdDashboard },
-    { href: '/user/favourites', label: 'My Favourites', icon: TbHandLoveYou },
-    { href: '/user/messages', label: 'Messages', icon: TbMessageCircleStar }
+    { href: '/favourites', label: 'My Favourites', icon: TbHandLoveYou },
+    { href: '/messages', label: 'Messages', icon: TbMessageCircleStar },
   ]
 
   const bottomLinks = [
     { href: '/user/settings', label: 'Settings' },
     { href: '/user/help', label: 'Help & Support' },
-    { href: '/auth/logout', label: 'Signout' }
+    { href: '/auth/logout', label: 'Signout' },
   ]
 
+  // Helper: Check if the current route starts with the link href
+  const isActiveRoute = (href: string) => pathname.startsWith(href)
+
   return (
-    <div className='top-0 sticky flex flex-col bg-[var(--primary-color)] px-4 py-6 h-screen'>
-      <div className='flex flex-col h-full'>
+    <div className="top-0 sticky flex flex-col bg-[var(--primary-color)] px-4 py-6 h-screen">
+      <div className="flex flex-col h-full">
         {/* Header */}
-        <div className='flex justify-between items-center'>
+        <div className="flex justify-between items-center">
           <motion.div
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{
               duration: 0.8,
               delay: 0.5,
-              ease: [0, 0.71, 0.2, 1.01]
+              ease: [0, 0.71, 0.2, 1.01],
             }}
           >
-            <span className='font-thin text-[var(--neutral-white)]/70'>
+            <span className="font-thin text-[var(--neutral-white)]/70">
               Crown-
             </span>
-            <span className='font-extrabold text-[var(--neutral-white)]'>
+            <span className="font-extrabold text-[var(--neutral-white)]">
               Haven
             </span>
           </motion.div>
           <PanelRightClose
-            color='white'
+            color="white"
             size={20}
-            className='opacity-80 hover:opacity-100 transition-all cursor-pointer'
+            className="opacity-80 hover:opacity-100 transition-all cursor-pointer"
           />
         </div>
 
         {/* Navigation */}
-        <div className='flex flex-col justify-between mt-8 h-full'>
+        <div className="flex flex-col justify-between mt-8 h-full">
           <nav>
-            <ul className='flex flex-col gap-2'>
+            <ul className="flex flex-col gap-2">
               {navLinks.map(({ href, label, icon: Icon }) => {
-                const isActive = pathname === href
+                const isActive = isActiveRoute(href)
                 return (
                   <li key={href}>
                     <Link
@@ -68,7 +69,7 @@ export default function SideBarUser () {
                       }`}
                     >
                       <Icon size={20} />
-                      <span className='text-[13px] leading-relaxed'>
+                      <span className="text-[13px] leading-relaxed">
                         {label}
                       </span>
                     </Link>
@@ -80,9 +81,9 @@ export default function SideBarUser () {
 
           {/* Bottom Links */}
           <nav>
-            <ul className='flex flex-col gap-2'>
+            <ul className="flex flex-col gap-2">
               {bottomLinks.map(({ href, label }) => {
-                const isActive = pathname === href
+                const isActive = isActiveRoute(href)
                 return (
                   <li key={href}>
                     <Link
