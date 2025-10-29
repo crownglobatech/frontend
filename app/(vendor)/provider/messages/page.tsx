@@ -1,9 +1,10 @@
-import ChatFooter from './components/ChatFooter'
-import ChatHeader from './components/ChatHeader'
-import ChatPane from './components/ChatPane'
-import MessageWindow from './components/MessageWindow'
+import ChatFooter from "@/app/(customer)/messages/components/ChatFooter";
+import ChatHeader from "@/app/(customer)/messages/components/ChatHeader";
+import ChatPane from "@/app/(customer)/messages/components/ChatPane";
+import MessageWindow from "@/app/(customer)/messages/components/MessageWindow";
 
-export default function Messages () {
+
+export default function VendorMessages () {
   return (
     // Main Content Container (e.g., in a component called ChatPanel.tsx)
 

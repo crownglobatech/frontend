@@ -2,7 +2,7 @@ import AdDisplay from './components/AdDisplay'
 import CustomerHeader from './components/CustomerHeader'
 import HomeFilter from './components/HomeFilter'
 
-interface CustomerDashboardProps {}
+// interface CustomerDashboardProps {}
 export default function CustomerDashboard () {
   return (
     <div>
