@@ -6,8 +6,14 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import { AnalyticsPerformance } from '@/lib/types'
 
-export default function AnalyticsTable () {
+interface AnalyticsTableProps {
+  performanceData: AnalyticsPerformance[] | undefined
+}
+export default function AnalyticsTable ({
+  performanceData
+}: AnalyticsTableProps) {
   return (
     <div className='mt-4 px-6 py-4 border border-[var(--foundation-neutral-6)]'>
       <div className='flex justify-between items-center mb-2'>
@@ -24,7 +30,7 @@ export default function AnalyticsTable () {
         </select>
       </div>
 
-      <Table className='min-h-[200px]'>
+      <Table className='max-h-20 overflow-y-scroll scrollbar-hide'>
         <TableHeader>
           <TableRow className='bg-[var(--foundation-neutral-4)]'>
             <TableHead className='w-[20%] font-semibold text-[var(--heading-color)]'>
@@ -49,14 +55,39 @@ export default function AnalyticsTable () {
         </TableHeader>
 
         <TableBody>
-          <TableRow>
-            <TableCell
-              colSpan={14}
-              className='py-6 text-[var(--foundation-neutral-8)] text-center'
-            >
-              No performance data available yet
-            </TableCell>
-          </TableRow>
+          {!performanceData ? (
+            <TableRow>
+              <TableCell
+                colSpan={14}
+                className='py-6 text-[var(--foundation-neutral-8)] text-center'
+              >
+                No performance data available yet
+              </TableCell>
+            </TableRow>
+          ) : (
+            performanceData.map((data, index) => (
+              <TableRow key={index} className='border-none'>
+                <TableCell className='text-[var(--heading-color)]'>{data.title}</TableCell>
+                <TableCell className='text-[var(--heading-color)]'>{data.searches}</TableCell>
+                <TableCell className='text-[var(--heading-color)]'>{data.clicks}</TableCell>
+                <TableCell className='text-[var(--heading-color)]'>{data.views}</TableCell>
+                <TableCell className='text-[var(--heading-color)]'>{data.inquiries}</TableCell>
+                <TableCell>
+                  <span
+                    className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${
+                      data.status === 'paused'
+                        ? 'bg-[#FFF4D3] text-[var(--brand-accent-color)]'
+                        : data.status === 'approved'
+                        ? 'bg-[#C8FFD5] text-[var(--success-color)]'
+                        : 'bg-[var(--text-body)] text-white'
+                    }`}
+                  >
+                    {data.status === 'approved' ? 'Active' : data.status}
+                  </span>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

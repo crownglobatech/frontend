@@ -3,27 +3,72 @@ import { useNotification } from '@/app/contexts/NotificationProvider'
 import AnalyticsTable from './AnalyticsTable'
 import HeadBanner from './HeadBanner'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { getVendorAnalytics } from '@/lib/api'
+import Loader from '@/app/components/general/Loader'
+import { AnalyticsApiResponse } from '@/lib/types'
+import { formatK } from '@/lib/utils'
 
 export default function Analytics () {
-  const metrics = [
-    {
-      title: 'Total Ads Posted',
-      value: '500'
-    },
-    {
-      title: 'Total Views',
-      value: '1.2K'
-    },
-    {
-      title: 'Total Inquiries',
-      value: '1K'
-    },
-    {
-      title: 'Conversion Rate',
-      value: '7.1%'
-    }
-  ]
   const { notify } = useNotification()
+  const [loading, setLoading] = useState(false)
+  const [analytics, setAnalytics] = useState<AnalyticsApiResponse>()
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      setLoading(true)
+      try {
+        const token = localStorage.getItem('token')
+        if (!token) {
+          setLoading(false)
+          throw new Error('User not authenticated')
+        }
+
+        const data: AnalyticsApiResponse = await getVendorAnalytics(token)
+        setAnalytics(data)
+      } catch (err: unknown) {
+        let errorMessage = 'An unknown error occurred'
+        if (err instanceof Error) {
+          errorMessage = err.message
+        } else if (typeof err === 'string') {
+          errorMessage = err
+        }
+        notify(errorMessage, 'error', 'Error')
+        console.error('Error:', errorMessage)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAnalytics()
+  }, [])
+
+  if (loading) {
+    return <Loader />
+  }
+
+  const metrics = analytics
+    ? [
+        {
+          title: 'Total Ads Posted',
+          value: analytics.data.overview.total_ads.toString()
+        },
+        {
+          title: 'Total Views',
+          value: formatK(analytics.data.overview.total_views)
+        },
+        {
+          title: 'Total Inquiries',
+          value: formatK(analytics.data.overview.total_inquiries)
+        },
+        {
+          title: 'Conversion Rate',
+          // Format the number to one decimal place and add a '%'
+          value: `${analytics.data.overview.conversion_rate.toFixed(1)}%`
+        }
+      ]
+    : []
+
   return (
     <div>
       <div className='top-0 sticky w-full'>
@@ -73,7 +118,7 @@ export default function Analytics () {
           </div>
         </div>
         <div>
-          <AnalyticsTable />
+          <AnalyticsTable performanceData={analytics?.data.performance} />
         </div>
       </div>
     </div>

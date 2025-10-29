@@ -151,3 +151,32 @@ export async function getAdById (
     throw error
   }
 }
+
+// Analytics
+export async function getVendorAnalytics (token: string) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/ads-analytics`,
+      {
+        method: 'GET',
+        next: {
+          // Caching options
+          revalidate: 60 // seconds to revalidate
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    if (!res.ok) {
+      const text = await res.text()
+      throw new Error(`Failed to fetch ads: ${res.status} - ${text}`)
+    }
+    const data = await res.json()
+    return data
+  } catch (error) {
+    console.error('Error fetching all ads:', error)
+    throw error
+  }
+}
