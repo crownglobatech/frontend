@@ -1,34 +1,33 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
-export function cn(...inputs: ClassValue[]) {
+export function cn (...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
 export const formatK = (num: number): string => {
   if (num >= 1000000) {
-    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
   }
   if (num >= 1000) {
-    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K'
   }
-  return num.toString();
-};
-
-// /app/(store)/customer/components/filterOptions.ts
+  return num.toString()
+}
 
 export const filterOptions = [
+ {
+  name: 'price',
+  label: 'Price Range',
+  options: [
+    { value: { min: 10000, max: 50000 }, label: '₦10,000 - ₦50,000' },
+    { value: { min: 50000, max: 100000 }, label: '₦50,000 - ₦100,000' },
+    { value: { min: 500000, max: 1000000 }, label: '₦500,000 - ₦1,000,000' }
+  ]
+}
+,
   {
-    name: 'price',
-    label: 'Price Range',
-    options: [
-      { value: '10000-50000', label: '₦10,000 - ₦50,000' },
-      { value: '50000-100000', label: '₦50,000 - ₦100,000' },
-      { value: '500000-1000000', label: '₦500,000 - ₦1,000,000' }
-    ]
-  },
-  {
-    name: 'state',
+    name: 'location',
     label: 'Location',
     options: [
       { value: 'lekki', label: 'Lekki' },
@@ -38,7 +37,7 @@ export const filterOptions = [
     ]
   },
   {
-    name: 'propertyType',
+    name: 'property_type',
     label: 'Property Type',
     options: [
       { value: 'apartment', label: 'Apartment' },
@@ -50,9 +49,10 @@ export const filterOptions = [
     label: 'Service Type',
     options: [
       { value: 'sale', label: 'For Sale' },
-      { value: 'rent', label: 'For Rent' }
+      { value: 'rent', label: 'For Rent' },
+      { value: 'Cleaning', label: 'Cleaning' }
     ]
-  },
+  }
   // {
   //   name: 'rating',
   //   label: 'Rating',

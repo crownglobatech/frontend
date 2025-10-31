@@ -1,38 +1,46 @@
 'use client'
-import { filterOptions } from '@/lib/utils'
+
 import {
   Select,
+  SelectTrigger,
   SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
 import Image from 'next/image'
-import { useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 
 interface Props {
   currentCategory: string
   setCategory: (category: string) => void
+  query: string
+  setQuery: (query: string) => void
+  filters: Record<string, string | { min?: number; max?: number }>
+  setFilters: Dispatch<
+    SetStateAction<Record<string, string | { min?: number; max?: number }>>
+  >
   totalResults: number | null
 }
-export default function CustomerHeader ({ setCategory, totalResults,currentCategory }: Props) {
-  const [filters, setFilters] = useState<Record<string, string>>({})
 
-  const handleFilterChange = (name: string, value: string) => {
-    if (!value) {
-      setFilters(prev => {
-        const updated = { ...prev }
-        delete updated[name]
-        return updated
-      })
-    } else {
-      setFilters(prev => ({
-        ...prev,
-        [name]: value
-      }))
-    }
-
-    console.log('Updated filters:', { ...filters, [name]: value })
+export default function CustomerHeader ({
+  currentCategory,
+  setCategory,
+  query,
+  setQuery,
+  filters,
+  setFilters,
+  totalResults
+}: Props) {
+  const handleFilterChange = (name: string, value: any) => {
+    setFilters(prev => {
+      const updated = { ...prev }
+      if (!value || value === '__empty__') {
+        delete updated[name] // completely remove the key
+      } else {
+        updated[name] = value
+      }
+      return updated
+    })
   }
 
   return (
@@ -49,6 +57,8 @@ export default function CustomerHeader ({ setCategory, totalResults,currentCateg
           <input
             type='text'
             placeholder='Search for homes and services'
+            value={query}
+            onChange={e => setQuery(e.target.value)}
             className='px-4 py-2 border border-gray-300 rounded-sm w-full text-[12px]'
           />
         </div>
@@ -84,7 +94,11 @@ export default function CustomerHeader ({ setCategory, totalResults,currentCateg
               <button
                 key={item.key}
                 onClick={() => setCategory(item.key)}
-                className={`font-medium text-sm transition cursor-pointer ${currentCategory === item.key ? 'text-[var(--primary-color)]' : ''}`}
+                className={`font-medium text-sm transition cursor-pointer ${
+                  currentCategory === item.key
+                    ? 'text-[var(--primary-color)]'
+                    : ''
+                }`}
               >
                 {item.label}
               </button>
@@ -95,7 +109,7 @@ export default function CustomerHeader ({ setCategory, totalResults,currentCateg
             <span className='flex items-center gap-1.5 font-bold text-gray-800 text-sm cursor-pointer'>
               Filters
               <span className='flex justify-center items-center bg-blue-600 rounded-full w-5 h-5 font-bold text-white text-xs'>
-                {Object.keys(filters).length}
+                {Object.keys(filters || {}).length}
               </span>
             </span>
             <span className='hover:opacity-80 font-bold text-gray-800 text-sm cursor-pointer'>
@@ -106,31 +120,108 @@ export default function CustomerHeader ({ setCategory, totalResults,currentCateg
 
         {/* --- Dropdown Filters --- */}
         <div className='relative flex flex-wrap gap-4 mt-2 overflow-visible'>
-          {filterOptions.map(option => (
-            <div key={option.name} className='relative w-[150px]'>
-              <Select
-                value={filters[option.name] || ''}
-                onValueChange={val => handleFilterChange(option.name, val)}
-              >
-                <SelectTrigger className='w-full font-semibold text-[12px] text-gray-800'>
-                  <SelectValue placeholder={option.label} />
-                </SelectTrigger>
+          {/* Price Range */}
+          <div className='relative w-[150px]'>
+            <Select
+              value={
+                filters.price ? JSON.stringify(filters.price) : '__empty__'
+              }
+              onValueChange={val =>
+                handleFilterChange(
+                  'price',
+                  val === '__empty__' ? null : JSON.parse(val)
+                )
+              }
+            >
+              <SelectTrigger className='w-full font-semibold text-[12px] text-gray-800'>
+                <SelectValue placeholder='Price Range' />
+              </SelectTrigger>
+              <SelectContent className='z-[9999]'>
+                <SelectItem value='__empty__'>Price Range</SelectItem>
+                <SelectItem value={JSON.stringify({ min: 10000, max: 50000 })}>
+                  ₦10,000 - ₦50,000
+                </SelectItem>
+                <SelectItem value={JSON.stringify({ min: 50000, max: 100000 })}>
+                  ₦50,000 - ₦100,000
+                </SelectItem>
+                <SelectItem
+                  value={JSON.stringify({ min: 500000, max: 1000000 })}
+                >
+                  ₦500,000 - ₦1,000,000
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-                <SelectContent className='z-[9999]'>
-                  {/* Placeholder as clear option */}
-                  <SelectItem value={option.label}>{option.label}</SelectItem>
-                  {option.options.map(item => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          ))}
+          {/* Location */}
+          <div className='relative w-[150px]'>
+            <Select
+              value={(filters.location as string) || '__empty__'}
+              onValueChange={val =>
+                handleFilterChange('location', val === '__empty__' ? '' : val)
+              }
+            >
+              <SelectTrigger className='w-full font-semibold text-[12px] text-gray-800'>
+                <SelectValue placeholder='Location' />
+              </SelectTrigger>
+              <SelectContent className='z-[9999]'>
+                <SelectItem value='__empty__'>Location</SelectItem>
+                <SelectItem value='lekki'>Lekki</SelectItem>
+                <SelectItem value='ikeja'>Ikeja</SelectItem>
+                <SelectItem value='ajah'>Ajah</SelectItem>
+                <SelectItem value='jljsjfjk'>jljsjfjk</SelectItem>
+                <SelectItem value='yaba'>Yaba</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Property Type */}
+          <div className='relative w-[150px]'>
+            <Select
+              value={(filters.property_type as string) || '__empty__'}
+              onValueChange={val =>
+                handleFilterChange(
+                  'property_type',
+                  val === '__empty__' ? '' : val
+                )
+              }
+            >
+              <SelectTrigger className='w-full font-semibold text-[12px] text-gray-800'>
+                <SelectValue placeholder='Property Type' />
+              </SelectTrigger>
+              <SelectContent className='z-[9999]'>
+                <SelectItem value='__empty__'>Property Type</SelectItem>
+                <SelectItem value='apartment'>Apartment</SelectItem>
+                <SelectItem value='house'>House</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Service Type */}
+          <div className='relative w-[150px]'>
+            <Select
+              value={(filters.listing_type as string) || '__empty__'}
+              onValueChange={val =>
+                handleFilterChange(
+                  'listing_type',
+                  val === '__empty__' ? '' : val
+                )
+              }
+            >
+              <SelectTrigger className='w-full font-semibold text-[12px] text-gray-800'>
+                <SelectValue placeholder='Service Type' />
+              </SelectTrigger>
+              <SelectContent className='z-[9999]'>
+                <SelectItem value='__empty__'>Service Type</SelectItem>
+                <SelectItem value='sale'>For Sale</SelectItem>
+                <SelectItem value='rent'>For Rent</SelectItem>
+                <SelectItem value='Cleaning'>Cleaning</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        {/* Result Count */}
+        {/* --- Result Count --- */}
         <span className='my-2 text-gray-500 text-sm'>
           {totalResults || 0} results
         </span>
