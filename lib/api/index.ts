@@ -210,35 +210,60 @@ export async function getDashboardData (token: string) {
   }
 }
 // Custoomer API Integration
-export async function getCustomerAds (
-  token: string,
-  category: string
-): Promise<CustomerAdsResponse> {
-  try {
-    if (!token) {
-      throw new Error('User not authenticated - token missing')
-    }
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${category}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    )
-    if (!response.ok) {
-      const text = await response.text()
-      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
-    }
-    const data: CustomerAdsResponse = await response.json()
-    return data
-  } catch (error) {
-    console.error('Error fetching all ads:', error)
-    throw error
-  }
+
+
+export interface GetCustomerAdsOptions {
+  query?: string
+  filters?: Record<string, string | { min?: number; max?: number }>
 }
+
+export async function getCustomerAds(
+  token: string,
+  category: string,
+  options: GetCustomerAdsOptions = {}
+): Promise<CustomerAdsResponse> {
+  if (!token) throw new Error('User not authenticated')
+
+  const { query, filters = {} } = options
+  const url = new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${category}`)
+
+  // Query param
+  if (query) url.searchParams.set('search', query)
+
+  // Filters
+  Object.entries(filters).forEach(([key, value]) => {
+    if (!value) {
+      url.searchParams.delete(key)
+      url.searchParams.delete(`${key}_min`)
+      url.searchParams.delete(`${key}_max`)
+      return
+    }
+
+    if (typeof value === 'string') url.searchParams.set(key, value)
+    else {
+      if (value.min != null) url.searchParams.set(`${key}_min`, String(value.min))
+      else url.searchParams.delete(`${key}_min`)
+      if (value.max != null) url.searchParams.set(`${key}_max`, String(value.max))
+      else url.searchParams.delete(`${key}_max`)
+    }
+  })
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+  })
+
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+  }
+
+  const data: CustomerAdsResponse = await response.json()
+  return data
+}
+
+
+
 
 export async function getCustomerAdsById (
   id: string
