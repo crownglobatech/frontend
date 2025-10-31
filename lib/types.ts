@@ -62,6 +62,35 @@ export interface Ad {
   }
 }
 
+export interface AnalyticsPerformance {
+  title: string
+  searches: number
+  views: number
+  clicks: number
+  inquiries: number
+  status: string
+}
+
+// For the "overview" object
+export interface AnalyticsOverview {
+  total_ads: number
+  total_views: number
+  total_searches: number
+  total_clicks: number
+  total_inquiries: number
+  conversion_rate: number
+}
+
+export interface AnalyticsData {
+  overview: AnalyticsOverview
+  trend: unknown[] // 'trend' is an empty array
+  performance: AnalyticsPerformance[]
+}
+
+export interface AnalyticsApiResponse {
+  status: string
+  data: AnalyticsData
+}
 
 
 // customer response type
