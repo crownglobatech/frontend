@@ -18,7 +18,7 @@ export default function UserDashboardLayout ({ children }: LayoutProps) {
         {/* content space (right) */}
         <section className='flex flex-col bg-white w-4/5'>{children}</section>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   )
 }
