@@ -1,62 +1,111 @@
-import { FaChevronDown } from 'react-icons/fa'
+'use client'
 
-export default function HomeFilter() {
-  const filterOptions = [
-    { name: 'price', label: 'Price Range' },
-    { name: 'location', label: 'Location' },
-    { name: 'propertyType', label: 'Property Type' },
-    { name: 'serviceType', label: 'Service Type' },
-    { name: 'rating', label: 'Rating' },
-  ]
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+
+interface FilterOption {
+  name: string
+  label: string
+  options: { value: string; label: string }[]
+}
+
+interface HomeFilterProps {
+  loading: boolean
+  filters: Record<string, string>
+  onFilterChange: (filterName: string, value: string) => void
+  filterOptions: FilterOption[]
+  activeFilterCount: number
+  resultCount: number
+}
+
+export default function HomeFilter({
+  loading,
+  filters,
+  onFilterChange,
+  filterOptions,
+  activeFilterCount,
+  resultCount
+}: HomeFilterProps) {
+  const currentCategory = filters.category || 'all'
 
   return (
-    <div className="flex flex-col">
+    <div className='flex flex-col'>
       {/* Top filter navigation */}
-      <div className="flex justify-between py-2 border-[var(--heading-color)] border-b">
-        <div className="flex items-center gap-6">
-          <span className="font-semibold text-[14px] text-[var(--primary-color)]">
-            All Listings
-          </span>
-          <span className="text-[14px] text-[var(--muted-text)]">Buy Homes</span>
-          <span className="text-[14px] text-[var(--muted-text)]">Rent Homes</span>
-          <span className="text-[14px] text-[var(--muted-text)]">Allied Services</span>
+      <div className='flex justify-between py-2 border-gray-300 border-b'>
+        <div className='flex items-center gap-6'>
+          {[
+            { key: 'all', label: 'All Listings' },
+            { key: 'buy-homes', label: 'Buy Homes' },
+            { key: 'rent-homes', label: 'Rent Homes' },
+            { key: 'allied-homes', label: 'Allied Services' }
+          ].map(item => (
+            <button
+              key={item.key}
+              className={`text-sm font-medium ${
+                currentCategory === item.key
+                  ? 'text-blue-600 font-semibold'
+                  : 'text-gray-500 hover:text-blue-600'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
-        <div className="flex items-center gap-6">
-          <span className="hover:opacity-80 font-bold text-[var(--heading-color)] cursor-pointer">
+
+        <div className='flex items-center gap-6'>
+          <span className='flex items-center gap-1.5 hover:opacity-80 font-bold text-gray-800 text-sm cursor-pointer'>
             Filters
+            <span className='flex justify-center items-center bg-blue-600 rounded-full w-5 h-5 font-bold text-white text-xs'>
+              {activeFilterCount}
+            </span>
           </span>
-          <span className="hover:opacity-80 font-bold text-[var(--heading-color)] cursor-pointer">
+          <span className='hover:opacity-80 font-bold text-gray-800 text-sm cursor-pointer'>
             Sorting
           </span>
         </div>
       </div>
 
-      {/* Filter dropdowns */}
-      <div className="flex flex-wrap gap-4 mt-2">
-        {filterOptions.map((option) => (
-          <div
-            key={option.name}
-            className="relative flex items-center bg-[var(--foundation-primary)] hover:brightness-95 px-4 py-1.5 rounded-sm transition-all cursor-pointer"
-          >
-            <select
-              name={option.name}
-              id={option.name}
-              className="bg-transparent pr-6 focus:outline-none w-full font-semibold text-[14px] text-[var(--heading-color)] appearance-none cursor-pointer"
+      {/* Filter dropdowns using shadcn Select */}
+      <div className='flex flex-wrap gap-4 mt-2'>
+        {filterOptions.map(option => (
+          <div key={option.name} className='w-[150px]'>
+            <Select
+              value={
+                filters[option.name] &&
+                filters[option.name] !== option.label
+                  ? filters[option.name]
+                  : 'default'
+              }
+              onValueChange={val =>
+                onFilterChange(option.name, val === 'default' ? option.label : val)
+              }
             >
-              <option value={option.label}>{option.label}</option>
-            </select>
-            <FaChevronDown
-              size={14}
-              className="right-3 absolute text-black pointer-events-none"
-            />
+              <SelectTrigger className='w-full font-semibold text-[12px] text-gray-800'>
+                <SelectValue placeholder={option.label} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='default'>{option.label}</SelectItem>
+                {option.options.map(item => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         ))}
       </div>
 
-      {/* Result count */}
-      <span className="mt-2 text-[14px] text-[var(--muted-text)]">
-        99.3k results
-      </span>
+      {!loading && (
+        <span className='mt-2 text-gray-500 text-sm'>
+          {resultCount} results
+        </span>
+      )}
     </div>
   )
 }
