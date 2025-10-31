@@ -16,25 +16,57 @@ interface Props {
 }
 export default async function AdDetailsHomeScreen ({ params }: Props) {
   const detailId = params.id
-  let adData
-  try {
-    adData = await getCustomerAdsById(detailId)
-    console.log(adData)
-    if (!adData) {
-      notFound()
-    }
-  } catch (error: unknown) {
-    console.error('Failed to fetch ad:', error)
-    if (error instanceof Error && error.message.includes('404')) {
-      notFound()
-    }
-    throw error
-  }
+  // let adData
+  // try {
+  //   adData = await getCustomerAdsById(detailId)
+  //   console.log(adData)
+  //   if (!adData) {
+  //     notFound()
+  //   }
+  // } catch (error: unknown) {
+  //   console.error('Failed to fetch ad:', error)
+  //   if (error instanceof Error && error.message.includes('404')) {
+  //     notFound()
+  //   }
+  //   throw error
+  // }
   return (
     <div>
       {/* can be set to layout instead of repitition */}
       <div className='top-0 z-[1000] sticky w-full'>
-        <CustomerHeader />
+        {/* --- Top Bar --- */}
+        <div className='flex justify-between gap-[50px] bg-white shadow-sm px-6 py-4'>
+          <div className='flex gap-2 w-full'>
+            <select className='px-3 py-2 border border-gray-300 rounded-sm text-[12px]'>
+              <option value=''>All Nigeria</option>
+              <option value='oyo'>Oyo</option>
+              <option value='plateau'>Plateau</option>
+            </select>
+
+            <input
+              type='text'
+              placeholder='Search for homes and services'
+              className='px-4 py-2 border border-gray-300 rounded-sm w-full text-[12px]'
+            />
+          </div>
+
+          <div className='flex flex-row-reverse items-center gap-4'>
+            <Image
+              src='/user.png'
+              alt='profile'
+              height={40}
+              width={40}
+              className='shadow-md rounded-full cursor-pointer'
+            />
+            <Image
+              src='/notify.png'
+              alt='notifications'
+              height={40}
+              width={40}
+              className='shadow-md rounded-full cursor-pointer'
+            />
+          </div>
+        </div>
       </div>
       <div className='flex flex-col px-6'>
         {/* detail image */}
