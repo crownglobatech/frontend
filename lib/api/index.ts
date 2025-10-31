@@ -24,7 +24,7 @@ export interface AdFormData {
   phone_e164: string
   phone_country_iso: string
 }
-import { AllAdsResponse } from '../types'
+import { AllAdsResponse, CustomerAdsResponse } from '../types'
 
 export async function postNewAd (formData: AdFormData) {
   const form = new FormData()
@@ -174,6 +174,72 @@ export async function getVendorAnalytics (token: string) {
       throw new Error(`Failed to fetch ads: ${res.status} - ${text}`)
     }
     const data = await res.json()
+    return data
+  } catch (error) {
+    console.error('Error fetching all ads:', error)
+    throw error
+  }
+}
+
+// Custoomer API Integration
+export async function getCustomerAds (
+  token: string,
+  category: string
+): Promise<CustomerAdsResponse> {
+  try {
+    if (!token) {
+      throw new Error('User not authenticated - token missing')
+    }
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${category}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    if (!response.ok) {
+      const text = await response.text()
+      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+    }
+    const data: CustomerAdsResponse = await response.json()
+    return data
+  } catch (error) {
+    console.error('Error fetching all ads:', error)
+    throw error
+  }
+}
+
+export async function getCustomerAdsById (
+  id: string
+): Promise<CustomerAdsResponse> {
+  try {
+    if (!id) {
+      throw new Error('No product was selected.')
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${id}`,
+      {
+        method: 'GET',
+        next: {
+          // Caching options
+          revalidate: 60 // seconds to revalidate
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+
+    if (!response.ok) {
+      const text = await response.text()
+      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+    }
+
+    const data = await response.json()
     return data
   } catch (error) {
     console.error('Error fetching all ads:', error)

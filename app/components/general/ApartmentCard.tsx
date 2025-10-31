@@ -27,7 +27,7 @@ export default function ApartmentCard ({
   status = 'For Sale'
 }: ApartmentCardProps) {
   return (
-    <div className='bg-white shadow-md hover:shadow-lg rounded-xl w-[300px] overflow-hidden transition-shadow'>
+    <div className='bg-white shadow-md hover:shadow-lg rounded-xl w-[300px] overflow-hidden transition-shadow cursor-pointer'>
       {/* Image */}
       <div className='relative mx-2 my-2'>
         <img
@@ -38,7 +38,7 @@ export default function ApartmentCard ({
 
         {/* overlay */}
         <div className='absolute inset-0 bg-gradient-to-b from-[#1E5AA882] via-[#1E5AA882] via-[51%] to-[#0C2342F0] to-[94%] rounded-md' />
-        <span className='top-3 left-3 absolute bg-white shadow px-3 py-1 rounded-md font-medium text-[12px] text-[var(--text-body)]'>
+        <span className='top-3 left-3 absolute bg-white shadow px-3 py-1 rounded-md font-medium text-[12px] text-[var(--text-body)] capitalize'>
           {status}
         </span>
       </div>
@@ -51,7 +51,7 @@ export default function ApartmentCard ({
         </div>
 
         <div className='flex justify-between'>
-          <h3 className='font-semibold text-[14px] text-[var(--heading-color)]'>
+          <h3 className='font-semibold text-[14px] text-[var(--heading-color)] truncate'>
             {title}
           </h3>
 
