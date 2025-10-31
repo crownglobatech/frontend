@@ -24,7 +24,7 @@ export interface AdFormData {
   phone_e164: string
   phone_country_iso: string
 }
-import { AllAdsResponse, CustomerAdsResponse } from '../types'
+import { AllAdsResponse, CustomerAdsResponse, DashboardResponse } from '../types'
 
 export async function postNewAd (formData: AdFormData) {
   const form = new FormData()
@@ -181,6 +181,34 @@ export async function getVendorAnalytics (token: string) {
   }
 }
 
+// vendor dashboard data
+export async function getDashboardData (token: string) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/dashboard`,
+      {
+        method: 'GET',
+        next: {
+          // Caching options
+          revalidate: 60 // seconds to revalidate
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    if (!res.ok) {
+      const text = await res.text()
+      throw new Error(`Failed to fetch ads: ${res.status} - ${text}`)
+    }
+    const data:DashboardResponse = await res.json()
+    return data
+  } catch (error) {
+    console.error('Error fetching all ads:', error)
+    throw error
+  }
+}
 // Custoomer API Integration
 export async function getCustomerAds (
   token: string,
@@ -246,3 +274,6 @@ export async function getCustomerAdsById (
     throw error
   }
 }
+
+
+
