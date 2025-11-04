@@ -13,13 +13,13 @@ interface AdDisplayProps {
 export default function AdDisplay ({ loading, ads, error }: AdDisplayProps) {
   // Loading state
   if (loading || ads === null) return <Loader />
-
+  
   // Error state (API/network/etc.)
   if (error) {
     return (
       <div className='flex flex-col justify-center items-center py-10 text-center'>
         <p className='mb-3 font-medium text-gray-600 text-lg'>
-          ⚠️ Unable to load listings
+           Unable to load listings
         </p>
         <p className='text-gray-500 text-sm'>
           {error || 'Something went wrong. Please try again later.'}

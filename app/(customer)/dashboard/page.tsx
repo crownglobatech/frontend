@@ -7,15 +7,16 @@ import { CustomerAd } from '@/lib/types'
 import AdDisplay from './components/AdDisplay'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-export default function CustomerDashboard() {
+export default function CustomerDashboard () {
   const [token, setToken] = useState<string | null>(null)
   const [category, setCategory] = useState<string>('all')
   const [query, setQuery] = useState<string>('')
-  const [filters, setFilters] = useState<Record<string, string | { min?: number; max?: number }>>({})
+  const [filters, setFilters] = useState<
+    Record<string, string | { min?: number; max?: number }>
+  >({})
   const [ads, setAds] = useState<CustomerAd[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [totalResults, setTotalResults] = useState<number | null>(0)
-
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -26,34 +27,33 @@ export default function CustomerDashboard() {
   }, [])
 
   // In CustomerDashboard.tsx
-const buildQueryParams = (): URLSearchParams => {
-  const params = new URLSearchParams(searchParams.toString())
-  const KNOWN_FILTERS = ['price', 'location', 'property_type', 'listing_type']
+  const buildQueryParams = (): URLSearchParams => {
+    const params = new URLSearchParams(searchParams.toString())
+    const KNOWN_FILTERS = ['price', 'location', 'property_type', 'listing_type']
 
-  // Always clean old params
-  KNOWN_FILTERS.forEach(key => {
-    params.delete(key)
-    params.delete(`${key}_min`)
-    params.delete(`${key}_max`)
-  })
+    // Always clean old params
+    KNOWN_FILTERS.forEach(key => {
+      params.delete(key)
+      params.delete(`${key}_min`)
+      params.delete(`${key}_max`)
+    })
 
-  // Rebuild
-  if (category && category !== 'all') params.set('category', category)
-  if (query) params.set('search', query)
+    // Rebuild
+    if (category && category !== 'all') params.set('category', category)
+    if (query) params.set('search', query)
     else params.delete('search')
 
-  Object.entries(filters).forEach(([key, value]) => {
-    if (typeof value === 'string' && value) {
-      params.set(key, value)
-    } else if (typeof value === 'object' && value) {
-      if (value.min != null) params.set(`${key}_min`, String(value.min))
-      if (value.max != null) params.set(`${key}_max`, String(value.max))
-    }
-  })
+    Object.entries(filters).forEach(([key, value]) => {
+      if (typeof value === 'string' && value) {
+        params.set(key, value)
+      } else if (typeof value === 'object' && value) {
+        if (value.min != null) params.set(`${key}_min`, String(value.min))
+        if (value.max != null) params.set(`${key}_max`, String(value.max))
+      }
+    })
 
-  return params
-}
-
+    return params
+  }
 
   useEffect(() => {
     const fetchAds = async () => {
@@ -70,6 +70,7 @@ const buildQueryParams = (): URLSearchParams => {
       } finally {
         setLoading(false)
       }
+      // console.log(loading)
     }
 
     fetchAds()
