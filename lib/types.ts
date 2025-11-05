@@ -97,8 +97,8 @@ export interface AnalyticsApiResponse {
 export interface Category {
   id: number;
   name: string;
-  created_at: string | null; // Updated to allow null
-  updated_at: string | null; // Updated to allow null
+  created_at: string | null; 
+  updated_at: string | null;
 }
 
 export interface Business {

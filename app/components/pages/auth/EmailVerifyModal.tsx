@@ -9,9 +9,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation'
 import LoadingDots from '../../general/LoadingDots'
-import VerificationSuccessModal from './VerificationSuccessModal'
 
 interface EmailVerifyModalProps {
   open: boolean
@@ -30,7 +28,6 @@ export default function EmailVerifyModal ({
   const [loading, setLoading] = useState(false)
   const [timeLeft, setTimeLeft] = useState(60)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
-  const router = useRouter()
 
   // countdown
   useEffect(() => {
@@ -146,11 +143,11 @@ export default function EmailVerifyModal ({
                 <span className='font-bold text-[22px] text-[var(--heading-color)] text-center'>
                   Enter Verification Code
                 </span>
-                <p className='text-[13px] text-[var(--foundation-neutral)] text-center'>
+                <span className='text-[13px] text-[var(--foundation-neutral)] text-center'>
                   We’ve sent a 6-digit code to{' '}
-                  <span className='font-medium'>exam…..@gmail.com</span>. Enter
+                  <span className='font-medium'>{userEmail}</span>. Enter
                   it below to continue.
-                </p>
+                </span>
               </div>
 
               {/* OTP inputs */}
@@ -182,14 +179,14 @@ export default function EmailVerifyModal ({
               {/* Resend code & timer */}
               <div className='mt-4'>
                 {timeLeft > 0 ? (
-                  <p className='flex flex-col items-center gap-2 text-sm'>
+                  <div className='flex flex-col items-center gap-2 text-sm'>
                     <span className='opacity-20 text-[var(--primary-color)]'>
                       Resend Code
                     </span>
                     <span className='font-medium text-[var(--secondary-color)]'>
                       {timeLeft}s
                     </span>
-                  </p>
+                  </div>
                 ) : (
                   <button
                     onClick={() => {

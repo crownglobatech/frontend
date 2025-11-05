@@ -48,7 +48,7 @@ export default function VerificationSuccessModal ({
             <Button
               event={() => {
                 onOpenChange(false)
-                router.replace('/dashboard')
+                router.replace('/auth/login')
               }}
               styles='bg-[var(--primary-color)] cursor-pointer text-white font-semibold px-6 py-2 rounded-md'
               title='Continue'
