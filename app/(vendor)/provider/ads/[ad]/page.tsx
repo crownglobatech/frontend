@@ -1,5 +1,7 @@
 'use client'
-
+import Image from 'next/image'
+import { FaSearch } from 'react-icons/fa'
+import Rating from '@/app/components/general/Rating'
 import React, { use, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { getAdById } from '@/lib/api'
@@ -96,7 +98,36 @@ export default function ManageAd ({ params }: Props) {
   return (
     <>
       <div className='top-0 z-[1000] sticky w-full'>
-        <HeaderBanner />
+        <div className='bg-white shadow-lg px-6 py-4 w-full'>
+              {/* Top bar */}
+              <div className='flex justify-between items-center'>
+                <h2 className='font-semibold text-[20px]'>Manage Ad</h2>                
+        
+                {/* Icons */}
+                <div className='flex flex-row-reverse items-center gap-4'>
+                  <Rating rate={5} />
+        
+                  <div className='shadow-md rounded-full'>
+                    <Image
+                      src='/user.png'
+                      alt='vendor profile avatar'
+                      className='object-contain cursor-pointer'
+                      height={40}
+                      width={40}
+                    />
+                  </div>
+                  <div className='shadow-md rounded-full'>
+                    <Image
+                      src='/notify.png'
+                      alt='notification icon'
+                      className='object-contain cursor-pointer'
+                      height={40}
+                      width={40}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
       </div>
       <div className='p-6'>
         <div className='flex justify-between items-center'>
@@ -106,7 +137,7 @@ export default function ManageAd ({ params }: Props) {
           </h2>
           <button
             onClick={handleDeleteAd}
-            className='px-4 py-2 border border-[var(--danger-color)] rounded-md min-h-[40px] text-[12px] text-[var(--danger-color)] cursor-pointer'
+            className='px-4 py-2 border border-[var(--danger-color)] rounded-md min-h-[40px] font-semibold text-[12px] text-[var(--danger-color)] cursor-pointer'
           >
             {loading ? <LoadingDots /> : 'Delete Ad'}
           </button>
