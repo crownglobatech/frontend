@@ -35,7 +35,7 @@ export default function CustomerHeader ({
     setFilters(prev => {
       const updated = { ...prev }
       if (!value || value === '__empty__') {
-        delete updated[name] // completely remove the key
+        delete updated[name] 
       } else {
         updated[name] = value
       }
@@ -108,7 +108,7 @@ export default function CustomerHeader ({
           <div className='flex items-center gap-6'>
             <span className='flex items-center gap-1.5 font-bold text-gray-800 text-sm cursor-pointer'>
               Filters
-              <span className='flex justify-center items-center bg-blue-600 rounded-full w-5 h-5 font-bold text-white text-xs'>
+              <span className='flex justify-center items-center bg-[var(--danger-color)] rounded-full w-5 h-5 font-bold text-white text-xs'>
                 {Object.keys(filters || {}).length}
               </span>
             </span>
