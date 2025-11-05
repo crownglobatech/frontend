@@ -23,7 +23,7 @@ export default function HouseDetail ({ adData }: Props) {
           alt='house image'
           width={300}
           height={300}
-          className='rounded-md w-full object-contain'
+          className='rounded-md w-full max-h-[500px] object-contain'
         />
       </div>
       <div className='flex flex-col gap-2'>
