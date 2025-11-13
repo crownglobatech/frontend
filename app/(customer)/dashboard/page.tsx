@@ -2,18 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import CustomerHeader from './components/CustomerHeader'
-import { getCustomerAds } from '@/lib/api'
+import { getCustomerAds, getCustomerAdsWithoutToken } from '@/lib/api'
 import { CustomerAd } from '@/lib/types'
 import AdDisplay from './components/AdDisplay'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-export default function CustomerDashboard () {
+export default function CustomerDashboard() {
   const [token, setToken] = useState<string | null>(null)
   const [category, setCategory] = useState<string>('all')
   const [query, setQuery] = useState<string>('')
-  const [filters, setFilters] = useState<
-    Record<string, string | { min?: number; max?: number }>
-  >({})
+  const [filters, setFilters] = useState<Record<string, string | { min?: number; max?: number }>>({})
   const [ads, setAds] = useState<CustomerAd[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [totalResults, setTotalResults] = useState<number | null>(0)
@@ -26,12 +24,11 @@ export default function CustomerDashboard () {
     setToken(t)
   }, [])
 
-  // In CustomerDashboard.tsx
   const buildQueryParams = (): URLSearchParams => {
     const params = new URLSearchParams(searchParams.toString())
     const KNOWN_FILTERS = ['price', 'location', 'property_type', 'listing_type']
 
-    // Always clean old params
+    // Clean old params
     KNOWN_FILTERS.forEach(key => {
       params.delete(key)
       params.delete(`${key}_min`)
@@ -57,20 +54,25 @@ export default function CustomerDashboard () {
 
   useEffect(() => {
     const fetchAds = async () => {
-      if (!token) return
+      setLoading(true)
+
       const params = buildQueryParams()
       router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-      setLoading(true)
+
       try {
-        const res = await getCustomerAds(token, category, { query, filters })
+        let res
+        if (token) {
+          res = await getCustomerAds(token, category, { query, filters })
+        } else {
+          res = await getCustomerAdsWithoutToken(category)
+        }
         setAds(res.data)
         setTotalResults(res.total)
       } catch (err) {
-        console.error(err)
+        console.error('Error fetching ads:', err)
       } finally {
         setLoading(false)
       }
-      // console.log(loading)
     }
 
     fetchAds()

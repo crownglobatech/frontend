@@ -9,7 +9,7 @@ export function middleware(req: NextRequest) {
   // If there's no token, redirect to login
   if (!token) {
     if (
-      path.startsWith('/dashboard') ||
+      // path.startsWith('/dashboard') ||
       path.startsWith('/provider') ||
       path.startsWith('/admin')
     ) {
@@ -21,10 +21,10 @@ export function middleware(req: NextRequest) {
   // Extract role from token (if encoded) or store in cookie
   const userRole = req.cookies.get('role')?.value 
 
-  // Protect each role’s dashboard
-  if (path.startsWith('/dashboard') && userRole !== 'customer') {
-    return NextResponse.redirect(new URL('/unauthorized', req.url))
-  }
+  // // Protect each role’s dashboard
+  // if (path.startsWith('/dashboard') && userRole !== 'customer') {
+  //   return NextResponse.redirect(new URL('/unauthorized', req.url))
+  // }
 
   if (path.startsWith('/provider') && userRole !== 'service_provider') {
     return NextResponse.redirect(new URL('/unauthorized', req.url))
@@ -40,7 +40,7 @@ export function middleware(req: NextRequest) {
 // Apply middleware to specific routes
 export const config = {
   matcher: [
-    '/dashboard/:path*',
+    // '/dashboard/:path*',
     '/provider/:path*',
     '/admin/:path*',
   ],

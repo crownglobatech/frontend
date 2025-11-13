@@ -89,7 +89,7 @@ export default function CustomerHeader ({
               { key: 'all', label: 'All Listings' },
               { key: 'buy-homes', label: 'Buy Homes' },
               { key: 'rent-homes', label: 'Rent Homes' },
-              { key: 'allied-homes', label: 'Allied Services' }
+              { key: 'allied-services', label: 'Allied Services' }
             ].map(item => (
               <button
                 key={item.key}

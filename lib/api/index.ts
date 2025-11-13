@@ -210,6 +210,32 @@ export async function getDashboardData (token: string) {
   }
 }
 // Custoomer API Integration
+export async function getCustomerAdsWithoutToken (
+  category: string
+): Promise<CustomerAdsResponse> {
+  try {
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${category}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    if (!response.ok) {
+      const text = await response.text()
+      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+    }
+    const data: CustomerAdsResponse = await response.json()
+    return data
+  } catch (error) {
+    console.error('Error fetching all ads:', error)
+    throw error
+  }
+}
+
 
 
 export interface GetCustomerAdsOptions {
