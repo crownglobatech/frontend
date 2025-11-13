@@ -1,13 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react'
 import CustomerHeader from './components/CustomerHeader'
-import { getCustomerAds } from '@/lib/api'
+import { getCustomerAds, getCustomerAdsWithoutToken } from '@/lib/api'
 import { CustomerAd } from '@/lib/types'
 import AdDisplay from './components/AdDisplay'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export default function CustomerDashboard () {
-  const [token, setToken] = useState<string | null>('')
+  const [token, setToken] = useState<string | null>(null)
   const [category, setCategory] = useState<string>('all')
   const [loading, setLoading] = useState(false)
   const [ads, setAds] = useState<CustomerAd[] | null>(null)
@@ -22,29 +22,37 @@ export default function CustomerDashboard () {
     console.log(userToken)
   }, [])
 
-  useEffect(() => {
-    const fetchAllAds = async () => {
-      if (!token) return
-      // Update the URL query param
+ useEffect(() => {
+  const fetchAllAds = async () => {
+
+    const currentCategoryParam = searchParams.get('category') || 'all'
+    if (currentCategoryParam !== category) {
       const params = new URLSearchParams(searchParams.toString())
       params.set('category', category)
       router.replace(`${pathname}?${params.toString()}`)
-      setLoading(true)
-
-      try {
-        const res = await getCustomerAds(token, category)
-        setAds(res.data)
-        setTotalResults(res.total)
-        console.log('Fetched ads:', res.data)
-      } catch (error) {
-        console.error('Error fetching ads:', error)
-      } finally {
-        setLoading(false)
-      }
     }
 
-    fetchAllAds()
-  }, [token, category])
+    setLoading(true)
+
+    try {
+      let res
+     if (token) {
+        res = await getCustomerAds(token, category)
+     }
+     else{
+       res = await getCustomerAdsWithoutToken(category)
+     }
+      setAds(res.data)
+      setTotalResults(res.total)
+    } catch (error) {
+      console.error('Error fetching ads:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchAllAds()
+}, [token, category])
 
   return (
     <div>
