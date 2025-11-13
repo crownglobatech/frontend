@@ -24,7 +24,7 @@ export interface AdFormData {
   phone_e164: string
   phone_country_iso: string
 }
-import { AllAdsResponse, CustomerAdsResponse } from '../types'
+import { AllAdsResponse, CustomerAdsResponse, DashboardResponse } from '../types'
 
 export async function postNewAd (formData: AdFormData) {
   const form = new FormData()
@@ -181,30 +181,28 @@ export async function getVendorAnalytics (token: string) {
   }
 }
 
-// Custoomer API Integration
-export async function getCustomerAds (
-  token: string,
-  category: string
-): Promise<CustomerAdsResponse> {
+// vendor dashboard data
+export async function getDashboardData (token: string) {
   try {
-    if (!token) {
-      throw new Error('User not authenticated - token missing')
-    }
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${category}`,
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/dashboard`,
       {
         method: 'GET',
+        next: {
+          // Caching options
+          revalidate: 60 // seconds to revalidate
+        },
         headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         }
       }
     )
-    if (!response.ok) {
-      const text = await response.text()
-      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+    if (!res.ok) {
+      const text = await res.text()
+      throw new Error(`Failed to fetch ads: ${res.status} - ${text}`)
     }
-    const data: CustomerAdsResponse = await response.json()
+    const data:DashboardResponse = await res.json()
     return data
   } catch (error) {
     console.error('Error fetching all ads:', error)
@@ -237,6 +235,60 @@ export async function getCustomerAdsWithoutToken (
     throw error
   }
 }
+
+
+
+export interface GetCustomerAdsOptions {
+  query?: string
+  filters?: Record<string, string | { min?: number; max?: number }>
+}
+
+export async function getCustomerAds(
+  token: string,
+  category: string,
+  options: GetCustomerAdsOptions = {}
+): Promise<CustomerAdsResponse> {
+  if (!token) throw new Error('User not authenticated')
+
+  const { query, filters = {} } = options
+  const url = new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${category}`)
+
+  // Query param
+  if (query) url.searchParams.set('search', query)
+
+  // Filters
+  Object.entries(filters).forEach(([key, value]) => {
+    if (!value) {
+      url.searchParams.delete(key)
+      url.searchParams.delete(`${key}_min`)
+      url.searchParams.delete(`${key}_max`)
+      return
+    }
+
+    if (typeof value === 'string') url.searchParams.set(key, value)
+    else {
+      if (value.min != null) url.searchParams.set(`${key}_min`, String(value.min))
+      else url.searchParams.delete(`${key}_min`)
+      if (value.max != null) url.searchParams.set(`${key}_max`, String(value.max))
+      else url.searchParams.delete(`${key}_max`)
+    }
+  })
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+  })
+
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+  }
+
+  const data: CustomerAdsResponse = await response.json()
+  return data
+}
+
+
 
 
 export async function getCustomerAdsById (
@@ -273,3 +325,6 @@ export async function getCustomerAdsById (
     throw error
   }
 }
+
+
+

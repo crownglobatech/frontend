@@ -11,7 +11,7 @@ export default function HouseDetail ({ adData }: Props) {
         <h2 className='font-bold text-[18px] text-[var(--heading-color)]'>
           {adData.title}
         </h2>
-        <div className={`bg-[#C8FFD5] px-4 py-1 rounded-full font-semibold ${adData.status === 'paused' ? 'bg-[#FFF4D3] text-[var(--brand-accent-color)]' : adData.status === 'approved' ? 'bg-[#C8FFD5] text-[var(--success-color)]' : ''} capitalize`}>
+        <div className={`bg-[#C8FFD5] px-4 py-1 rounded-full font-semibold ${adData.status === 'paused' ? 'bg-[#FFF4D3] text-[var(--brand-accent-color)]' : adData.status === 'approved' ? 'bg-[#C8FFD5] text-[var(--success-color)]' : 'bg-[var(--text-body)] text-white'} capitalize`}>
           {adData.status}
         </div>
       </div>

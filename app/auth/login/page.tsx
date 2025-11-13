@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/app/store'
 import LoadingDots from '@/app/components/general/LoadingDots'
 import { setAuthSuccess } from '@/app/features/auth/authSlice'
-import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { motion } from 'motion/react'
+import { useNotification } from '@/app/contexts/NotificationProvider'
 
 type LoginResponse = {
   message: string
@@ -22,10 +22,11 @@ export default function SignUp () {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const {notify} = useNotification()
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!email || !password) {
-      toast.error('Enter email and password')
+      notify('Enter email and password', 'error')
     }
     setError('')
     setLoading(true)
@@ -43,7 +44,7 @@ export default function SignUp () {
       if (!res.ok) {
         const errorData = await res.json()
         setError(errorData.message)
-        toast.error(errorData.message)
+        notify(errorData.message, 'error', 'Error')
         throw new Error(
           errorData.message || `Login failed (status ${res.status})`
         )
@@ -58,7 +59,7 @@ export default function SignUp () {
       )
       console.log(data.user, data.token)
 
-      toast.success('Login successful!')
+      notify('Redirecting you dashboard!', 'success', 'Login Successful')
       if (data.user.role === 'service_provider') {
         router.replace('/provider/dashboard')
       } else {
@@ -67,7 +68,6 @@ export default function SignUp () {
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error'
       console.error('Login error:', errorMessage)
-      // toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -154,7 +154,8 @@ export default function SignUp () {
       >
         {/* cta */}
         <div className='relative py-8 w-full'>
-          <div className='top-0 right-8 absolute'>
+          <div className='relative mx-auto max-w-[400px]'>
+            <div className='-top-10 right-0 absolute'>
             <span className='text-[12px] text-[var(--foundation-neutral)]'>
               Don't have an account?{' '}
               <Link
@@ -165,8 +166,6 @@ export default function SignUp () {
               </Link>
             </span>
           </div>
-
-          <div>
             <div>
               <h2 className='font-bold text-[30px] text-[var(--heading-color)]'>
                 Login

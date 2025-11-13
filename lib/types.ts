@@ -97,8 +97,8 @@ export interface AnalyticsApiResponse {
 export interface Category {
   id: number;
   name: string;
-  created_at: string | null; // Updated to allow null
-  updated_at: string | null; // Updated to allow null
+  created_at: string | null; 
+  updated_at: string | null;
 }
 
 export interface Business {
@@ -179,3 +179,43 @@ interface PaginatedData<T> {
 }
 
 export interface CustomerAdsResponse extends PaginatedData<CustomerAd> {}
+
+export interface RecentActivity {
+  title: string
+  status: string
+  updated_at: string
+}
+
+export interface RatingsFeedbacks {
+  average_rating: number | null
+  total_feedbacks: number
+  recent_feedbacks: Feedback[]
+}
+
+export interface Feedback {
+  // Add properties based on your actual feedback structure
+  // Example:
+  id?: string
+  rating: number
+  comment?: string
+  user_name?: string
+  created_at?: string
+}
+
+export interface DashboardData {
+  views_over_time: ViewOverTime[]
+  recent_activities: RecentActivity[]
+  ratings_feedbacks: RatingsFeedbacks
+}
+
+export interface ViewOverTime {
+  // Add properties based on your actual views data
+  // Example:
+  date: string
+  views: number
+}
+
+export interface DashboardResponse {
+  status: 'success' | 'error' // or string if you want more flexibility
+  data: DashboardData
+}

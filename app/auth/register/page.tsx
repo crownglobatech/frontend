@@ -4,10 +4,8 @@ import Link from 'next/link'
 import { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/navigation'
-import { toast, ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import { AppDispatch, RootState } from '@/app/store'
-import { motion, spring } from 'motion/react'
+import { motion } from 'motion/react'
 import {
   setAuthError,
   setUserId,
@@ -18,6 +16,7 @@ import PhoneInput, { CountryData } from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import EmailVerifyModal from '@/app/components/pages/auth/EmailVerifyModal'
 import VerificationSuccessModal from '@/app/components/pages/auth/VerificationSuccessModal'
+import { useNotification } from '@/app/contexts/NotificationProvider'
 
 type RegisterResponse = {
   message: string
@@ -52,6 +51,7 @@ export default function SignUp () {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const { notify } = useNotification()
   // display updated userId
   useEffect(() => {
     console.log('Updated userId:', userId)
@@ -100,7 +100,7 @@ export default function SignUp () {
       if (!res.ok) {
         const error = await res.json()
         setError(error.message)
-        toast.error(error.message)
+        notify(error.message, 'error')
         console.log(error)
       }
       const data: RegisterResponse = await res.json()
@@ -108,9 +108,6 @@ export default function SignUp () {
       dispatch(setUserId({ userId: data.user_id }))
       // set pending email verfiication to true
       dispatch(setPendingEmailVerify({ verify: true }))
-      toast.success('Registration successful!')
-      // empty all fields
-      // debug
       console.log(data)
       // console.log(userId)
     } catch (err: unknown) {
@@ -181,8 +178,6 @@ export default function SignUp () {
       const data = await res.json()
       console.log(data)
       dispatch(setPendingEmailVerify({ verify: true }))
-      toast.success('Registration successful!')
-      // empty all fields
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error'
       dispatch(setAuthError(errorMessage))
@@ -266,9 +261,9 @@ export default function SignUp () {
           delay: 0.5,
           ease: 'easeIn'
         }}
-        className='relative flex-1 bg-white px-8 py-16 w-full md:w-1/2 h-screen overflow-y-auto'
+        className='relative flex-1 bg-white px-16 py-16 w-full md:w-1/2 h-screen overflow-y-auto'
       >
-        <div className='top-4 right-8 absolute'>
+        <div className='top-4 right-16 absolute'>
           <span className='text-[12px] text-[var(--foundation-neutral)]'>
             Already have an account?{' '}
             <Link
@@ -280,12 +275,14 @@ export default function SignUp () {
           </span>
         </div>
 
-        <Nav step={step} />
-
+        {/* progress bar */}
+        <div className=''>
+          <Nav step={step} />
+        </div>
         {/* General Step */}
         {step === 'general' && (
           <form
-            className='flex flex-col gap-4 mt-8'
+            className='flex flex-col gap-4 mx-auto mt-8 max-w-[500px]'
             onSubmit={handleCustomerSubmit}
           >
             <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>
@@ -295,7 +292,7 @@ export default function SignUp () {
                 </label>
                 <input
                   type='text'
-                  placeholder='Oluwapelumi'
+                  placeholder='Amos'
                   value={fname}
                   onChange={e => setFname(e.target.value)}
                   className='px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[var(--primary-color)] focus:ring-2 text-sm'
@@ -450,6 +447,7 @@ export default function SignUp () {
             onSuccess={() => {
               dispatch(setPendingEmailVerify({ verify: false }))
               setShowSuccessModal(true)
+
             }}
           />
         )}
@@ -461,7 +459,7 @@ export default function SignUp () {
         {/* Provider Step */}
         {step === 'provider' && (
           <form
-            className='flex flex-col gap-4 mt-16'
+            className='flex flex-col gap-4 mx-auto mt-16 max-w-[500px]'
             onSubmit={handleProviderSubmit}
           >
             <div className='flex flex-col'>
@@ -594,7 +592,6 @@ export default function SignUp () {
           </form>
         )}
       </motion.div>
-      <ToastContainer />
     </div>
   )
 }
