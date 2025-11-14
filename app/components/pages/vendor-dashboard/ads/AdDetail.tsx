@@ -1,9 +1,10 @@
+import { Ad } from '@/lib/types'
 import HouseDetail from './AdHouseDetail'
 import AdPerformaceSummary from './AdPerformance'
 import EditContactInfo from './EditAdContactInfo'
 
 interface Props {
-  adData: any
+  adData: Ad
 }
 export default function AdDetails ({ adData }: Props) {
   return (

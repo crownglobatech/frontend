@@ -1,9 +1,10 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
+import { Ad } from '@/lib/types'
 
 interface ImageUploadProps {
-  adData?: any
+  adData?: Ad
   onChange?: (data: { existing: string[]; newFiles: File[] }) => void
 }
 

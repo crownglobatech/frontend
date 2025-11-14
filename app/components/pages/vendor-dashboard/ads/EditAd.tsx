@@ -4,9 +4,10 @@ import React, { useState } from 'react'
 import ImageUpload from './HandleImageUpload'
 import { useNotification } from '@/app/contexts/NotificationProvider'
 import Loader from '@/app/components/general/Loader'
+import { Ad } from '@/lib/types'
 
 interface Props {
-  adData: any
+  adData: Ad
   onUpdate?: () => void
 }
 
@@ -18,7 +19,7 @@ export default function EditAd ({ adData, onUpdate }: Props) {
     bedrooms: adData.bedrooms || '',
     bathrooms: adData.bathrooms || '',
     listing_type: adData.listing_type || '',
-    category: adData.business?.category?.name || ''
+    category: adData.business.business_name || ''
   })
 
   const [imageData, setImageData] = useState<{
@@ -30,7 +31,7 @@ export default function EditAd ({ adData, onUpdate }: Props) {
   })
 
   const [loading, setLoading] = useState(false)
-  const [adStatus, setAdStatus] = useState<'paused' | 'active'>(adData.status)
+  const [adStatus, setAdStatus] = useState<string>(adData.status)
   const [processing, setProcessing] = useState(false)
   const { notify } = useNotification()
 
@@ -77,9 +78,9 @@ export default function EditAd ({ adData, onUpdate }: Props) {
       const form = new FormData()
       form.append('title', formData.title)
       form.append('description', formData.description)
-      form.append('price', formData.price)
-      form.append('bedrooms', formData.bedrooms)
-      form.append('bathrooms', formData.bathrooms)
+      form.append('price', String(formData.price))
+      form.append('bedrooms', String(formData.bedrooms))
+      form.append('bathrooms', String(formData.bathrooms))
       form.append('listing_type', formData.listing_type)
 
       // Existing image URLs
@@ -111,8 +112,10 @@ export default function EditAd ({ adData, onUpdate }: Props) {
       await res.json()
       notify('Ad updated successfully', 'success', 'Changes Saved')
       onUpdate?.()
-    } catch (error: any) {
-      notify(error.message || 'Something went wrong.', 'error')
+    } catch (error: unknown) {
+      let errorMessage = error instanceof Error ? error.message : ''
+            notify(errorMessage || 'Something went wrong.', 'error')
+
     } finally {
       setLoading(false)
     }

@@ -2,16 +2,18 @@
 
 import { useEffect, useState } from 'react'
 import CustomerHeader from './components/CustomerHeader'
-import { getCustomerAds, getCustomerAdsWithoutToken } from '@/lib/api'
+import { getCustomerAds, getCustomerAdsNoAuth } from '@/lib/api'
 import { CustomerAd } from '@/lib/types'
 import AdDisplay from './components/AdDisplay'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-export default function CustomerDashboard() {
+export default function CustomerDashboard () {
   const [token, setToken] = useState<string | null>(null)
   const [category, setCategory] = useState<string>('all')
   const [query, setQuery] = useState<string>('')
-  const [filters, setFilters] = useState<Record<string, string | { min?: number; max?: number }>>({})
+  const [filters, setFilters] = useState<
+    Record<string, string | { min?: number; max?: number }>
+  >({})
   const [ads, setAds] = useState<CustomerAd[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [totalResults, setTotalResults] = useState<number | null>(0)
@@ -26,7 +28,13 @@ export default function CustomerDashboard() {
 
   const buildQueryParams = (): URLSearchParams => {
     const params = new URLSearchParams(searchParams.toString())
-    const KNOWN_FILTERS = ['price', 'location', 'property_type', 'listing_type']
+    const KNOWN_FILTERS = [
+      'price',
+      'location',
+      'property_type',
+      'listing_type',
+      'category'
+    ]
 
     // Clean old params
     KNOWN_FILTERS.forEach(key => {
@@ -41,6 +49,7 @@ export default function CustomerDashboard() {
     else params.delete('search')
 
     Object.entries(filters).forEach(([key, value]) => {
+          if (key === 'category' && value === 'all') return
       if (typeof value === 'string' && value) {
         params.set(key, value)
       } else if (typeof value === 'object' && value) {
@@ -64,7 +73,7 @@ export default function CustomerDashboard() {
         if (token) {
           res = await getCustomerAds(token, category, { query, filters })
         } else {
-          res = await getCustomerAdsWithoutToken(category)
+          res = await getCustomerAdsNoAuth(category, { query, filters })
         }
         setAds(res.data)
         setTotalResults(res.total)
