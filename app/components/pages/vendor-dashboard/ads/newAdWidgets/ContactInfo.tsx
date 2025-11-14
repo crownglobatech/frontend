@@ -9,7 +9,7 @@ interface Props {
     phone_country_iso: string
     phone_e164: string
   }
-  onChange: (field: string, value: any) => void
+  onChange: (field: string, value: string) => void
 }
 
 export default function ContactInfo ({ data, onChange }: Props) {

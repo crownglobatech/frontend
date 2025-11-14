@@ -113,7 +113,7 @@ export default function EditAd ({ adData, onUpdate }: Props) {
       notify('Ad updated successfully', 'success', 'Changes Saved')
       onUpdate?.()
     } catch (error: unknown) {
-      let errorMessage = error instanceof Error ? error.message : ''
+      const errorMessage = error instanceof Error ? error.message : ''
             notify(errorMessage || 'Something went wrong.', 'error')
 
     } finally {

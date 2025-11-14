@@ -201,7 +201,10 @@ interface PaginatedData<T> {
   total: number;
 }
 /* eslint-disable @typescript-eslint/no-empty-interface */
-export interface CustomerAdsResponse extends PaginatedData<CustomerAd> {}
+// try to not use the customeradresponse
+export interface CustomerAdsResponse extends PaginatedData<CustomerAd> {
+    _typeBrand?: 'CustomerAdsResponse'
+}
 /* eslint-enable @typescript-eslint/no-empty-interface */
 
 export interface RecentActivity {
