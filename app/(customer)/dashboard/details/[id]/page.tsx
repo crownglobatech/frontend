@@ -17,10 +17,10 @@ import { getCustomerAdsById } from '@/lib/api'
 import { notFound } from 'next/navigation'
 
 interface Props {
-  params: { id: string }
+  params: Promise<{ detailId: string }>
 }
 export default async function AdDetailsHomeScreen ({ params }: Props) {
-  const detailId =  params.id
+  const { detailId } = await params
   let adData
   try {
     adData = await getCustomerAdsById(detailId)
