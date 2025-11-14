@@ -20,7 +20,7 @@ interface Props {
   params: { id: string }
 }
 export default async function AdDetailsHomeScreen ({ params }: Props) {
-  const detailId = await params.id
+  const detailId =  params.id
   let adData
   try {
     adData = await getCustomerAdsById(detailId)
