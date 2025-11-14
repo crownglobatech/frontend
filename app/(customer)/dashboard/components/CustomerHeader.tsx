@@ -31,7 +31,7 @@ export default function CustomerHeader ({
   setFilters,
   totalResults
 }: Props) {
-  const handleFilterChange = (name: string, value: any) => {
+  const handleFilterChange = (name: string, value: string | { min?: number; max?: number } | undefined) => {
     setFilters(prev => {
       const updated = { ...prev }
       if (!value || value === '__empty__') {
