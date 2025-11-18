@@ -42,7 +42,7 @@ export default function NewAdContent () {
 
   const [formData, setFormData] = useState(initialFormData)
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | File | File[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 

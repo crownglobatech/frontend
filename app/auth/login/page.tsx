@@ -8,10 +8,11 @@ import { setAuthSuccess } from '@/app/features/auth/authSlice'
 import { useRouter } from 'next/navigation'
 import { motion } from 'motion/react'
 import { useNotification } from '@/app/contexts/NotificationProvider'
+import { User } from '@/lib/types'
 
 type LoginResponse = {
   message: string
-  user: any
+  user: User
   token: string
 }
 export default function SignUp () {
@@ -157,7 +158,7 @@ export default function SignUp () {
           <div className='relative mx-auto max-w-[400px]'>
             <div className='-top-10 right-0 absolute'>
             <span className='text-[12px] text-[var(--foundation-neutral)]'>
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link
                 href='/auth/register'
                 className='font-bold text-[var(--primary-color)]'

@@ -1,5 +1,11 @@
 import { CiLocationOn } from 'react-icons/ci'
-import CustomerHeader from '../../components/CustomerHeader'
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue
+} from '@/components/ui/select'
 import Image from 'next/image'
 import Rating from '@/app/components/general/Rating'
 import ReviewCard from '../../components/ReviewCard'
@@ -8,28 +14,27 @@ import MiniChatBox from '../../components/MiniChatBox'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import RelatedServices from '../../components/RelatedServices'
 import { getCustomerAdsById } from '@/lib/api'
-import { Ad } from '@/lib/types'
 import { notFound } from 'next/navigation'
 
 interface Props {
-  params: { id: string }
+  params: Promise<{ detailId: string }>
 }
 export default async function AdDetailsHomeScreen ({ params }: Props) {
-  const detailId = params.id
-  // let adData
-  // try {
-  //   adData = await getCustomerAdsById(detailId)
-  //   console.log(adData)
-  //   if (!adData) {
-  //     notFound()
-  //   }
-  // } catch (error: unknown) {
-  //   console.error('Failed to fetch ad:', error)
-  //   if (error instanceof Error && error.message.includes('404')) {
-  //     notFound()
-  //   }
-  //   throw error
-  // }
+  const { detailId } = await params
+  let adData
+  try {
+    adData = await getCustomerAdsById(detailId)
+    console.log(adData)
+    if (!adData) {
+      notFound()
+    }
+  } catch (error: unknown) {
+    console.error('Failed to fetch ad:', error)
+    if (error instanceof Error && error.message.includes('404')) {
+      notFound()
+    }
+    throw error
+  }
   return (
     <div>
       {/* can be set to layout instead of repitition */}
@@ -37,11 +42,18 @@ export default async function AdDetailsHomeScreen ({ params }: Props) {
         {/* --- Top Bar --- */}
         <div className='flex justify-between gap-[50px] bg-white shadow-sm px-6 py-4'>
           <div className='flex gap-2 w-full'>
-            <select className='px-3 py-2 border border-gray-300 rounded-sm text-[12px]'>
-              <option value=''>All Nigeria</option>
-              <option value='oyo'>Oyo</option>
-              <option value='plateau'>Plateau</option>
-            </select>
+            <div className='relative w-[100px]'>
+              <Select>
+                <SelectTrigger className='w-full font-semibold text-[12px] text-gray-800'>
+                  <SelectValue placeholder='All Areas' />
+                </SelectTrigger>
+                <SelectContent className='z-[9999] rounded-sm text-[12px]'>
+                  <SelectItem value='all'>All Areas</SelectItem>
+                  <SelectItem value='oyo'>Oyo</SelectItem>
+                  <SelectItem value='plateau'>Plateau</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <input
               type='text'
@@ -83,16 +95,18 @@ export default async function AdDetailsHomeScreen ({ params }: Props) {
           <div className=''>
             <div className='flex items-center gap-1'>
               <CiLocationOn size={12} />
-              <p className='text-[10px] text-gray-500'>Agodi Awolowo, Ibadan</p>
+              <p className='text-[10px] text-gray-500'>
+                {adData.area || 'Location not stated'}
+              </p>
             </div>
           </div>
           {/* ad title and price */}
           <div className='flex justify-between mt-1'>
             <h1 className='font-semibold text-[20px] text-black'>
-              Vineyard Estate
+              {adData.title || 'Title not stated'}
             </h1>
             <h1 className='font-semibold text-[20px] text-[var(--heading-color)]'>
-              ₦50,000,000.00
+              ₦{adData.price}
             </h1>
           </div>
         </div>
@@ -110,7 +124,9 @@ export default async function AdDetailsHomeScreen ({ params }: Props) {
               height={30}
               className='rounded-full object-contain'
             />
-            <h2 className='font-semibold text-[12px]'>Peter Omoh</h2>
+            <h2 className='font-semibold text-[12px]'>
+              {adData.business.business_name || 'Business name  stated'}
+            </h2>
           </div>
           <div className='flex items-center gap-2'>
             <Rating rate={5} />
@@ -124,9 +140,7 @@ export default async function AdDetailsHomeScreen ({ params }: Props) {
               Service Description
             </h2>
             <p className='max-w-[80%] text-[13px] text-[var(--foundation-neutral-8)]'>
-              Nestled in a serene and well-developed neighborhood, Vineyard
-              Estate offers the perfect blend of comfort, elegance, and modern
-              living.
+              {adData.description || 'Description not available'}
             </p>
           </div>
 
@@ -139,34 +153,18 @@ export default async function AdDetailsHomeScreen ({ params }: Props) {
           <div className='flex flex-col items-start gap-4'>
             <h2 className='font-semibold text-[18px] text-black'>Gallery</h2>
             <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>
-              <Image
-                alt='house image'
-                src='/bg-overlay.png'
-                width={300}
-                height={300}
-                className='rounded-md object-cover'
-              />
-              <Image
-                alt='house image'
-                src='/bg-overlay.png'
-                width={300}
-                height={300}
-                className='rounded-md object-contain'
-              />
-              <Image
-                alt='house image'
-                src='/bg-overlay.png'
-                width={300}
-                height={300}
-                className='rounded-md object-contain'
-              />
-              <Image
-                alt='house image'
-                src='/bg-overlay.png'
-                width={300}
-                height={300}
-                className='rounded-md object-contain'
-              />
+              {adData.photo_urls.map((url, index) => {
+                return (
+                  <Image
+                    key={index}
+                    alt={url.slice(69, 150)}
+                    src={url}
+                    width={300}
+                    height={300}
+                    className='rounded-md max-h-[300px] object-cover'
+                  />
+                )
+              })}
             </div>
           </div>
 

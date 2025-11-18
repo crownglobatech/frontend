@@ -1,14 +1,8 @@
+import { User } from '@/lib/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Cookies from 'js-cookie'
 
-interface User {
-  id: string
-  email: string
-  first_name: string
-  last_name: string
-  role: 'customer' | 'provider'
-  // Add other fields as needed
-}
+
 
 interface AuthState {
   user: User | null

@@ -1,12 +1,13 @@
 'use client'
 import LoadingDots from '@/app/components/general/LoadingDots'
 import { useNotification } from '@/app/contexts/NotificationProvider'
+import { Ad } from '@/lib/types'
 import { FormEvent, useState } from 'react'
 import PhoneInput, { CountryData } from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 
 interface Props {
-  adData: any
+  adData: Ad
 }
 
 export default function EditContactInfo({ adData }: Props) {

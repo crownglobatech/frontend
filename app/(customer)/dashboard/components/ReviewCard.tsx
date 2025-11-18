@@ -11,7 +11,7 @@ export default function ReviewCard () {
         <Rating rate={5} />
       </div>
       <p className='text-[10px] text-black'>
-        Peter's team really did a great job. The process was smooth and strictly
+        Peter&apos;s team really did a great job. The process was smooth and strictly
         professional
       </p>
     </div>
