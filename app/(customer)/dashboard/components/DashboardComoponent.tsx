@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { getCustomerAds, getCustomerAdsNoAuth } from '@/lib/api'
+import { CustomerAd } from '@/lib/types'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import CustomerHeader from './CustomerHeader'
 import AdDisplay from './AdDisplay'
-import { CustomerAd } from '@/lib/types'
-import { getCustomerAds, getCustomerAdsWithoutToken } from '@/lib/api'
 
 export default function DashboardComponent () {
   const [token, setToken] = useState<string | null>(null)
@@ -73,7 +73,7 @@ export default function DashboardComponent () {
         if (token) {
           res = await getCustomerAds(token, category, { query, filters })
         } else {
-          res = await getCustomerAdsWithoutToken(category)
+          res = await getCustomerAdsNoAuth(category, { query, filters })
         }
         setAds(res.data)
         setTotalResults(res.total)

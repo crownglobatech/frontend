@@ -1,5 +1,7 @@
+import { Ad } from "@/lib/types"
+
 interface Props{
-  adData: any
+  adData: Ad
 }
 export default function AdPerformaceSummary ({adData}:Props) {
   const metric = [

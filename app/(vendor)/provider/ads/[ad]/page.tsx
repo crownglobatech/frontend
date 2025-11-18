@@ -12,6 +12,7 @@ import Loader from '@/app/components/general/Loader'
 import { useNotification } from '@/app/contexts/NotificationProvider'
 import LoadingDots from '@/app/components/general/LoadingDots'
 import { useRouter } from 'next/navigation'
+import { Ad } from '@/lib/types'
 
 interface Props {
   params: Promise<{ ad: string }>
@@ -20,7 +21,7 @@ interface Props {
 export default function ManageAd ({ params }: Props) {
   const { ad } = use(params)
   const [loading, setLoading] = useState(true)
-  const [adData, setAdData] = useState<any>(null)
+  const [adData, setAdData] = useState<Ad>()
   const { notify } = useNotification()
   const router = useRouter()
 
@@ -30,7 +31,7 @@ export default function ManageAd ({ params }: Props) {
       if (!token) throw new Error('User not authenticated.')
 
       const res = await getAdById(token, ad)
-      setAdData(res.data)
+      if (res.data) setAdData(res.data)
     } catch (err) {
       console.error(err)
     } finally {
@@ -85,7 +86,11 @@ export default function ManageAd ({ params }: Props) {
         return
       }
 
-      notify(data.message || 'Ad deleted successfully.', 'success', 'Ad Deleted')
+      notify(
+        data.message || 'Ad deleted successfully.',
+        'success',
+        'Ad Deleted'
+      )
       router.replace('/provider/ads')
     } catch (error) {
       console.error(error)
@@ -99,35 +104,35 @@ export default function ManageAd ({ params }: Props) {
     <>
       <div className='top-0 z-[1000] sticky w-full'>
         <div className='bg-white shadow-lg px-6 py-4 w-full'>
-              {/* Top bar */}
-              <div className='flex justify-between items-center'>
-                <h2 className='font-semibold text-[20px]'>Manage Ad</h2>                
-        
-                {/* Icons */}
-                <div className='flex flex-row-reverse items-center gap-4'>
-                  <Rating rate={5} />
-        
-                  <div className='shadow-md rounded-full'>
-                    <Image
-                      src='/user.png'
-                      alt='vendor profile avatar'
-                      className='object-contain cursor-pointer'
-                      height={40}
-                      width={40}
-                    />
-                  </div>
-                  <div className='shadow-md rounded-full'>
-                    <Image
-                      src='/notify.png'
-                      alt='notification icon'
-                      className='object-contain cursor-pointer'
-                      height={40}
-                      width={40}
-                    />
-                  </div>
-                </div>
+          {/* Top bar */}
+          <div className='flex justify-between items-center'>
+            <h2 className='font-semibold text-[20px]'>Manage Ad</h2>
+
+            {/* Icons */}
+            <div className='flex flex-row-reverse items-center gap-4'>
+              <Rating rate={5} />
+
+              <div className='shadow-md rounded-full'>
+                <Image
+                  src='/user.png'
+                  alt='vendor profile avatar'
+                  className='object-contain cursor-pointer'
+                  height={40}
+                  width={40}
+                />
+              </div>
+              <div className='shadow-md rounded-full'>
+                <Image
+                  src='/notify.png'
+                  alt='notification icon'
+                  className='object-contain cursor-pointer'
+                  height={40}
+                  width={40}
+                />
               </div>
             </div>
+          </div>
+        </div>
       </div>
       <div className='p-6'>
         <div className='flex justify-between items-center'>

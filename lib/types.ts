@@ -1,3 +1,22 @@
+export interface Address {
+  address_line1: string | null
+  address_line2: string | null
+  city: string | null
+  state: string | null
+  country: string | null
+  postal_code?: string | null // optional if your backend includes it
+}
+
+export interface User {
+  id: number
+  first_name: string
+  last_name: string
+  email: string
+  phone: string | null
+  role: string
+  address: Address
+}
+
 export interface AllAdsResponse {
   status: 'success' | 'error'
   data: {
@@ -45,7 +64,7 @@ export interface Ad {
   photos: string[]
   video_urls: string[] | null
   videos: string[]
-  extra_attributes: Record<string, any> | null
+  extra_attributes: Record<string, string> | null
   created_at: string
   updated_at: string
   business_id: number
@@ -62,6 +81,10 @@ export interface Ad {
   }
 }
 
+export interface vendorAd {
+  status: 'success' | 'error'
+  data: Ad
+}
 export interface AnalyticsPerformance {
   title: string
   searches: number
@@ -147,7 +170,7 @@ export interface CustomerAd {
   photos: string[];
   video_urls: string[] | null;
   videos: string[];
-  extra_attributes: Record<string, any> | null;
+  extra_attributes: Record<string, string> | null;
   created_at: string;
   updated_at: string;
   business_id: number;
@@ -177,8 +200,12 @@ interface PaginatedData<T> {
   to: number | null;
   total: number;
 }
-
-export interface CustomerAdsResponse extends PaginatedData<CustomerAd> {}
+/* eslint-disable @typescript-eslint/no-empty-interface */
+// try to not use the customeradresponse
+export interface CustomerAdsResponse extends PaginatedData<CustomerAd> {
+    _typeBrand?: 'CustomerAdsResponse'
+}
+/* eslint-enable @typescript-eslint/no-empty-interface */
 
 export interface RecentActivity {
   title: string

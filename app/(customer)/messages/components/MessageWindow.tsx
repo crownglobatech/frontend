@@ -6,7 +6,7 @@ export default function MessageWindow() {
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="user" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -17,14 +17,14 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="user" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="Avatar" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -35,14 +35,14 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="Avatar" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="user" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -53,7 +53,7 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="user" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
@@ -61,7 +61,7 @@ export default function MessageWindow() {
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="user" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -72,14 +72,14 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="user" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="Avatar" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -90,14 +90,14 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="Avatar" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="user" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -108,7 +108,7 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="user" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
@@ -116,7 +116,7 @@ export default function MessageWindow() {
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="user" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -127,14 +127,14 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="user" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="Avatar" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -145,14 +145,14 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="Avatar" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="user" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -163,7 +163,7 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="user" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
@@ -171,7 +171,7 @@ export default function MessageWindow() {
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="user" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -182,14 +182,14 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="user" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="Avatar" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -200,14 +200,14 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="Avatar" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>
       <div className="flex justify-end">
         <div className="flex items-start">
           <div className="bg-[var(--primary-color)] p-3 rounded-lg max-w-xs text-white text-sm">
-            Hey! I'm interested in your service. Are you available for consultation?
+            Hey! I&apos;m interested in your service. Are you available for consultation?
           </div>
           <img src="/user.png" alt="user" className="mt-auto ml-2 rounded-full w-6 h-6" />
         </div>
@@ -218,7 +218,7 @@ export default function MessageWindow() {
       <div className="flex justify-start">
         <img src="/user.png" alt="user" className="mt-auto mr-2 rounded-full w-6 h-6" />
         <div className="bg-[var(--foundation-neutral-4)] p-3 rounded-lg max-w-xs text-gray-800 text-sm">
-          Hello Jane!, Thanks for reaching out. Yes, I'm available. When will be a good time for you?
+          Hello Jane!, Thanks for reaching out. Yes, I&apos;m available. When will be a good time for you?
         </div>
       </div>
       <div className="flex justify-start ml-8 text-[var(--muted-text)] text-xs">3:40PM</div>

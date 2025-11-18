@@ -1,8 +1,9 @@
+import { Ad } from '@/lib/types'
 import Image from 'next/image'
 import { CiLocationOn } from 'react-icons/ci'
 
 interface Props {
-  adData: any
+  adData: Ad
 }
 export default function HouseDetail ({ adData }: Props) {
   return (
@@ -52,7 +53,7 @@ export default function HouseDetail ({ adData }: Props) {
               Category
             </h2>
             <p className='text-[14px] text-[var(--foundation-neutral-8)] capitalize'>
-              {adData.business.category.name}
+              {adData.business.business_name}
             </p>
           </div>
           <div>
