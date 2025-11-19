@@ -1,13 +1,13 @@
 // ChatFooter.tsx (Optimized for Backgrounds)
-import { SendIcon } from "lucide-react"
-import { MdAttachFile } from "react-icons/md"
+import { SendIcon } from 'lucide-react'
+import { MdAttachFile } from 'react-icons/md'
 export default function ChatFooter () {
   return (
-    <div className='flex flex-col pb-6 border-t'>
-      <div className='flex items-center bg-white mb-6 w-full'>
+    <div className='flex flex-col border-t'>
+      <div className='flex items-center bg-white w-full'>
         {/* Paperclip Button */}
         <button className='ml-2 p-2 cursor-pointer'>
-          <MdAttachFile color="black" size={25} />
+          <MdAttachFile color='black' size={25} />
         </button>
         <input
           type='text'
@@ -17,8 +17,16 @@ export default function ChatFooter () {
 
         {/* Send Button */}
         <button className='bg-[var(--primary-color)] m-1 p-2 rounded-full cursor-pointer'>
-         <SendIcon color="white" size={20} />
+          <SendIcon color='white' size={20} />
         </button>
+      </div>
+      {/* progress or response section */}
+      <div className='flex flex-col justify-center items-center min-h-[50px]'>
+        <p className='font-normal text-[14px] text-[var(--secondary-color)] text-center'>
+          Discuss service details before booking.
+        </p>
+
+        {/* conditional rendering */}
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
 import ChatFooter from "@/app/(customer)/messages/components/ChatFooter";
-import ChatHeader from "@/app/(customer)/messages/components/ChatHeader";
-import ChatPane from "@/app/(customer)/messages/components/ChatPane";
 import MessageWindow from "@/app/(customer)/messages/components/MessageWindow";
+import ProviderChatHeader from "./components/ChatHeader";
+import ProviderChatPane from "./components/ChatPane";
 
 
 export default function VendorMessages () {
@@ -14,13 +14,13 @@ export default function VendorMessages () {
       <div className='flex w-full'>
         {/* Left Side: Chat List - Approx 1/3 width */}
         <div className='bg-white border-r w-2/5 h-screen'>
-          <ChatPane />
+          <ProviderChatPane />
         </div>
 
         {/* Right Side: Message Window - Approx 2/3 width */}
         <div className='flex flex-col bg-[#F0F0F0] w-3/5'>
           <div className='z-10 shadow-md'>
-            <ChatHeader />
+            <ProviderChatHeader />
           </div>
           <MessageWindow />
           <ChatFooter />
