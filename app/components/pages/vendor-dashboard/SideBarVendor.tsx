@@ -27,11 +27,6 @@ export default function SideBarVendor () {
       href: '/provider/messages',
       label: 'Messages',
       icon: TbMessageCircleStar
-    },
-    {
-      href: '/provider/verification',
-      label: 'Verification Status',
-      icon: BiSolidUniversalAccess
     }
   ]
 
