@@ -84,7 +84,7 @@ export default async function AdDetailsHomeScreen ({ params }: Props) {
         {/* detail image */}
         <div className='rounded-md w-full'>
           <Image
-            src='/bg-overlay.png'
+            src={adData.photo_urls[0]}
             alt='detail image, could be a house or a service description image'
             width={300}
             height={300}
@@ -161,7 +161,7 @@ export default async function AdDetailsHomeScreen ({ params }: Props) {
                     src={url}
                     width={300}
                     height={300}
-                    className='rounded-md max-h-[300px] object-cover'
+                    className='rounded-md h-[260px] object-cover'
                   />
                 )
               })}

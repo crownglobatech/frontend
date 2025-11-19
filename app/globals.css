@@ -172,3 +172,9 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+details summary::-webkit-details-marker {
+  display: none;
+}
+details summary::marker {
+  content: "";
+}

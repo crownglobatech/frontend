@@ -31,8 +31,7 @@ export default function SideBarVendor () {
   ]
 
   const bottomLinks = [
-    { href: '/user/settings', label: 'Settings' },
-    { href: '/user/help', label: 'Help & Support' },
+    { href: '/provider/faq', label: 'Help & Support' },
     { href: '/auth/logout', label: 'Signout' }
   ]
 
