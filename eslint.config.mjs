@@ -20,6 +20,14 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+
+    // Global (Project Specific) rules (or overrides)
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-empty-interface": "off",
+    },
+  },
 ];
 
 export default eslintConfig;
