@@ -64,7 +64,7 @@ export default function Analytics () {
         {
           title: 'Conversion Rate',
           // Format the number to one decimal place and add a '%'
-          value: `${analytics.data.overview.conversion_rate.toFixed(1)}%`
+          value: `${analytics.data.overview.conversion_rate}`
         }
       ]
     : []

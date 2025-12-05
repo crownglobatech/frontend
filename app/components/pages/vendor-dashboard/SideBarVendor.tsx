@@ -24,7 +24,7 @@ export default function SideBarVendor () {
       icon: TbMessageCircleStar
     },
     {
-      href: '/provider/messages',
+      href: '/provider/inquiries',
       label: 'Messages',
       icon: TbMessageCircleStar
     }

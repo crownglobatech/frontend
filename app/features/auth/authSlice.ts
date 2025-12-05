@@ -29,12 +29,12 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // Start loading
-    setLoading (state) {
+    setLoading(state) {
       state.loading = true
       state.error = null
     },
     // Set user and token on successful login/register
-    setAuthSuccess (
+    setAuthSuccess(
       state,
       action: PayloadAction<{ user: User; token: string, role: string }>
     ) {
@@ -48,24 +48,24 @@ const authSlice = createSlice({
       // middleware use
       Cookies.set('token', action.payload.token, { expires: 7, sameSite: 'strict' })
       Cookies.set('role', action.payload.role, { expires: 7, sameSite: 'strict' })
-      // localStorage.setItem('userEmail', action.payload.user.email)
+      localStorage.setItem('user', JSON.stringify(action.payload.user))
     },
-    setUserId (state, action: PayloadAction<{ userId: number | null }>) {
+    setUserId(state, action: PayloadAction<{ userId: number | null }>) {
       state.loading = false
       state.userId = action.payload.userId
       state.isAuthenticated = false
       state.pendingEmailVerify = true
     },
-    setPendingEmailVerify (state, action:PayloadAction<{verify: boolean}>) {
+    setPendingEmailVerify(state, action: PayloadAction<{ verify: boolean }>) {
       state.pendingEmailVerify = action.payload.verify
     },
     // Set error on failure
-    setAuthError (state, action: PayloadAction<string>) {
+    setAuthError(state, action: PayloadAction<string>) {
       state.loading = false
       state.error = action.payload
     },
     // Logout
-    logout (state) {
+    logout(state) {
       state.user = null
       state.token = null
       state.isAuthenticated = false
@@ -76,14 +76,20 @@ const authSlice = createSlice({
       Cookies.remove('role')
     },
     // Load user from storage
-    loadUserFromStorage (state) {
-      const token = localStorage.getItem('token')
-      if (token) {
-        state.token = token
-        state.isAuthenticated = true
-        // Optionally decode JWT to get user info (requires a library like jwt-decode)
-      }
+    loadUserFromStorage(state) {
+  const token = localStorage.getItem('token')
+  const userJson = localStorage.getItem('user')
+
+  if (token && userJson) {
+    try {
+      state.token = token
+      state.user = JSON.parse(userJson)
+      state.isAuthenticated = true
+    } catch (e) {
+      console.error('Failed to parse user from storage')
     }
+  }
+}
   }
 })
 

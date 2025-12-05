@@ -1,29 +1,17 @@
 // components/ChatHeader.tsx
 'use client';
 
-import { useNotification } from '@/app/contexts/NotificationProvider';
-import { useAppSelector } from '@/app/store-hooks';
 import { bookProvider } from '@/lib/api/bookings';
 import { ConversationItem } from '@/lib/types';
-import { fetchAllConversations } from '@/services/api';
 import { useEffect, useState } from 'react';
 
 interface ChatHeaderProps {
   conversationId: string;
-  onBookNow?: (res: any) => void;
+  conversations: ConversationItem[]; // Receive from parent instead of fetching
 }
 
-export default function ChatHeader({ conversationId, onBookNow }: ChatHeaderProps) {
-  const [conversations, setConversations] = useState<ConversationItem[]>([]);
+export default function ChatHeader({ conversationId, conversations }: ChatHeaderProps) {
   const [currentConversation, setCurrentConversation] = useState<ConversationItem | null>(null);
-
-  useEffect(() => {
-    const load = async () => {
-      const data = await fetchAllConversations();
-      setConversations(data);
-    };
-    load();
-  }, []);
 
   useEffect(() => {
     // Find the conversation by ID
@@ -43,13 +31,6 @@ export default function ChatHeader({ conversationId, onBookNow }: ChatHeaderProp
 
   const { other_user, service_ad } = currentConversation;
 
-  // handle booking
-  const handleBookNow =  () => {
-    if (onBookNow) {
-      onBookNow(conversationId);
-    }
-  }
-
 
   return (
     <div className="flex justify-between items-center bg-white p-4 border-b shadow-sm">
@@ -67,16 +48,11 @@ export default function ChatHeader({ conversationId, onBookNow }: ChatHeaderProp
           <h3 className="font-bold text-lg text-gray-900">
             {other_user.full_name}
           </h3>
-          {/* {service_ad && (
-            <p className="text-xs text-gray-500 mt-1">
-              {service_ad.title}
-            </p>
-          )} */}
         </div>
       </div>
 
       <div>
-        <button onClick={handleBookNow} className="bg-[var(--primary-color)] px-6 py-3 rounded-lg font-bold cursor-pointer text-white text-sm shadow-md transition-all hover:shadow-lg">
+        <button  className="bg-[var(--primary-color)] px-6 py-3 rounded-lg font-bold cursor-pointer text-white text-sm shadow-md transition-all hover:shadow-lg">
           Book Now
         </button>
       </div>

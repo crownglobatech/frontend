@@ -246,3 +246,50 @@ export interface DashboardResponse {
   status: 'success' | 'error' // or string if you want more flexibility
   data: DashboardData
 }
+
+// messages types
+
+export interface Sender {
+  id: number;
+  first_name: string;
+  last_name: string;
+  role: 'customer' | 'service_provider';
+}
+
+export interface Message {
+  conversation_id: number;
+  id: number;
+  message: string;           // your backend uses "message", not "content"
+  sender_id: number;
+  sender: Sender;
+  created_at: string;
+  is_read: 0 | 1;
+}
+
+// types/chat.ts or lib/types.ts
+
+export interface OtherUser {
+  id: number;
+  full_name: string;
+  photo_url: string | null;
+}
+
+export interface ServiceAd {
+  id: number;
+  title: string;
+  price?: string;
+}
+
+export interface ConversationItem {
+  conversation_id: number;
+  other_user: OtherUser;
+  service_ad: ServiceAd;
+  last_message: string;
+  last_message_at: string; // you can parse to Date later if needed
+  unread_count: number;
+}
+
+export interface ConversationsApiResponse {
+  success: true;
+  data: ConversationItem[];
+}

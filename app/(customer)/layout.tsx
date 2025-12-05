@@ -1,6 +1,7 @@
 import Footer from '@/app/components/general/Footer'
 import SideBarUser from '@/app/components/pages/user_dashboard/SideBar'
 import React from 'react'
+import AuthLoader from '../components/general/AuthLoader'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -9,6 +10,7 @@ interface LayoutProps {
 export default function UserDashboardLayout ({ children }: LayoutProps) {
   return (
     <>
+    <AuthLoader />
       <div className='flex min-h-screen'>
         {/* sidebar (left) */}
         <div className='w-1/5'>

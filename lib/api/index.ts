@@ -340,6 +340,3 @@ export async function getCustomerAdsById (
     throw error
   }
 }
-
-
-

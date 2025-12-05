@@ -1,14 +1,13 @@
-// components/ChatPane.tsx
-import { ConversationItem, Message } from '@/lib/types';
+import { ConversationItem } from '@/lib/types';
 import AllMessages from './AllMessages';
 import SearchMessages from './ChatPaneSearch';
 
 interface ChatPaneProps {
   conversations: ConversationItem[];
   onSelectChat: (chatId: string) => void;
-  loading: boolean
-  selectedChatId: string | null
-} 
+  loading: boolean;
+  selectedChatId: string | null;
+}
 
 export default function ChatPane({ conversations, onSelectChat, loading, selectedChatId }: ChatPaneProps) {
   return (
@@ -17,7 +16,7 @@ export default function ChatPane({ conversations, onSelectChat, loading, selecte
         <SearchMessages />
       </div>
       <div className="flex-1 overflow-y-auto">
-        <AllMessages conversations={conversations} selectedChatId={selectedChatId} onSelectChat={onSelectChat} loading={loading} />
+        <AllMessages conversations={conversations} onSelectChat={onSelectChat} loading={loading} selectedChatId={selectedChatId} />
       </div>
     </div>
   );

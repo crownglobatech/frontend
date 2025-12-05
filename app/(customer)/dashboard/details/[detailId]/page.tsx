@@ -114,7 +114,7 @@ export default async function AdDetailsHomeScreen ({ params }: Props) {
         {/* provider profile and rating */}
         <div className='relative flex items-center gap-4 mt-4'>
           <div className='top-10 right-0 absolute'>
-            <MiniChatBox />
+            <MiniChatBox userId={detailId} />
           </div>
           <div className='flex items-center gap-2'>
             <Image

@@ -8,7 +8,7 @@ import { getDashboardData } from '@/lib/api'
 import { DashboardResponse } from '@/lib/types'
 import { useEffect, useState } from 'react'
 import CustomerRecentActivities from './components/RecentActivities'
-import Rating from '@/app/components/general/Rating'
+// import Rating from '@/app/components/general/Rating'
 import CustomerRatingAndFeedbacks from './components/Ratings'
 
 export default function VendorDashboard () {

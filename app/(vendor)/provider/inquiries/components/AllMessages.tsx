@@ -6,7 +6,7 @@ interface AllMessagesProps {
   conversations: ConversationItem[];
   onSelectChat: (chatId: string) => void;
   loading: boolean;
-  selectedChatId: string | null;
+  selectedChatId: string | null
 }
 
 export default function AllMessages({ conversations, onSelectChat, loading, selectedChatId }: AllMessagesProps) {

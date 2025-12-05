@@ -62,3 +62,25 @@ export const filterOptions = [
   //   ]
   // }
 ]
+
+// lib/auth.ts or utils/auth.ts
+export function getTokenFromCookies(): string | null {
+  // Server-side: return null (we'll handle server auth separately)
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  // Client-side: check cookies for token or access_token
+  const cookieString = document.cookie;
+  const tokenMatch = cookieString.match(/(?:^|; )\s*token=([^;]*)/);
+  const accessTokenMatch = cookieString.match(/(?:^|; )\s*access_token=([^;]*)/);
+
+  if (tokenMatch) {
+    return decodeURIComponent(tokenMatch[1]);
+  }
+  if (accessTokenMatch) {
+    return decodeURIComponent(accessTokenMatch[1]);
+  }
+
+  return null;
+}

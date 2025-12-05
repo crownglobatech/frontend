@@ -4,25 +4,22 @@ import { fetchAllConversations, fetchConversationMessages } from '@/services/api
 import ChatFooter from './components/ChatFooter';
 import ChatHeader from './components/ChatHeader';
 import ChatPane from './components/ChatPane';
-import ChatClient from './ChatClient';
-import { useEffect, useState, useCallback, useRef } from 'react'; // MUST import useCallback
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { ConversationItem, Message } from '@/lib/types';
-import { bookProvider } from '@/lib/api/bookings';
-import { useNotification } from '@/app/contexts/NotificationProvider';
+import ChatClient from './ChatClient';
 import { initPusher } from '@/services/pusher';
 
-export default function Messages() {
+export default function VendorMessages() {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedMessages, setSelectedMessages] = useState<Message[]>([]);
   const [loadingConversations, setLoadingConversations] = useState<boolean>(false);
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
-  const [bookingstatus, setBookingstatus] = useState<string>('');
-  const [selectedBookingId, setSelectedBookingId] = useState<number | undefined>(undefined);
+
   // Get current user ID
   const [currentUserId, setCurrentUserId] = useState<number | undefined>();
   const [currentUserName, setCurrentUserName] = useState<string>('');
-  const selectedChatRef = useRef<string | null>(null);
+    const selectedChatRef = useRef<string | null>(null);
 
   useEffect(() => {
     selectedChatRef.current = selectedChatId;
@@ -57,9 +54,10 @@ export default function Messages() {
     load();
   }, []);
 
-  // useeffect for notification pusher channel
+  // useefect for notification pusher channel
   useEffect(() => {
     if (!currentUserId) return
+
     const pusher = initPusher()
 
     const channelName = `private-user.${currentUserId}`
@@ -69,8 +67,9 @@ export default function Messages() {
 
       const chatId = String(conversation_id);
       const isOwnMessage = currentUserName === sender_name;
-
-      // HARD STOP: if user is already inside this chat
+      console.log(isOwnMessage);
+      
+      //  if user is already inside this chat
         if (chatId === selectedChatRef.current) {
       console.log('Realtime ignored – chat already open');
       return;
@@ -165,7 +164,6 @@ export default function Messages() {
     );
   }, [selectedChatId]);
 
-
   // Handle message sent by current user (optimistic update)
   const handleMessageSent = useCallback((newMessage: Message) => {
     console.log(' [SENT] Optimistic message update:', {
@@ -181,15 +179,15 @@ export default function Messages() {
         // Check if already exists (shouldn't for optimistic, but just in case)
         const exists = prev.some(m => m.id === newMessage.id);
         if (exists) {
-          console.log('[SENT] Message already exists, skipping');
+          console.log(' [SENT] Message already exists, skipping');
           return prev;
         }
-        console.log('[SENT] Adding to UI');
+        console.log(' [SENT] Adding to UI');
         return [...prev, newMessage];
       });
     }
 
-    // Update conversation snippet
+    // Update conversation snippet (isOwnMessage = true)
     updateConversationSnippet(String(newMessage.conversation_id), newMessage, true);
   }, [selectedChatId, updateConversationSnippet]);
 
@@ -231,73 +229,38 @@ export default function Messages() {
     });
   }, [selectedChatId, currentUserId, updateConversationSnippet]);
 
-  // handle booking logic
-  const { notify } = useNotification()
-
-  // When booking succeeds → save status for THIS specific chat
-  const handleBookNow = async () => {
-    const res = await bookProvider(selectedChatId!);
-
-    if (!res) {
-      notify('Please try again', 'error', 'Booking Failed');
-      return;
-    }
-
-    const status = res.status || 'unknown';
-    setBookingstatus(status);
-    setSelectedBookingId(res.id);
-    // Save with chat-specific key
-    localStorage.setItem(`booking_status_${selectedChatId}`, status);
-    localStorage.setItem(`booking_id_${selectedChatId}`, String(res.id));
-  };
-  // When component mounts or selectedChatId changes → load the correct one
-  useEffect(() => {
-    if (!selectedChatId) {
-      setBookingstatus('');
-      return;
-    }
-    const savedStatus = localStorage.getItem(`booking_status_${selectedChatId}`);
-    const savedBookingId = localStorage.getItem(`booking_id_${selectedChatId}`);
-    if (savedBookingId && savedStatus) {
-      setSelectedBookingId(Number(savedBookingId));
-      setBookingstatus(savedStatus);
-    } else {
-      setSelectedBookingId(undefined);
-      setBookingstatus(''); // or 'unknown'
-    }
-
-  }, [selectedChatId, selectedBookingId]);
-
-
   return (
     <div className="flex bg-white h-screen">
       {/* Left: Chat List */}
-      <div className="w-2/5 border-r h-screen">
+      <div className="w-full sm:w-2/5 border-r h-screen overflow-y-auto">
         <ChatPane
           conversations={conversations}
           onSelectChat={handleSelectChat}
-          loading={loadingMessages}
+          loading={loadingConversations}
           selectedChatId={selectedChatId}
         />
       </div>
 
       {/* Right: Message Window */}
-      <div className="flex flex-col w-3/5 bg-[#f0f2f5]">
+      <div className="flex flex-col w-full sm:w-3/5 bg-[#f0f2f5]">
         {selectedChatId ? (
           <>
-            <ChatHeader conversationId={selectedChatId} onBookNow={handleBookNow} />
+            <ChatHeader
+              conversationId={selectedChatId}
+              conversations={conversations}
+            />
             <div className="flex-1 overflow-hidden">
               <ChatClient
                 chatId={selectedChatId}
                 initialMessages={selectedMessages}
-                // PASS NEW PROP: For remote message updates (Vendor's reply)
                 onNewRemoteMessage={handleNewRemoteMessage}
+                loadingMessages={loadingMessages}
+                conversations={conversations}
+                currentUserId={currentUserId}
               />
             </div>
             <ChatFooter
               chatId={selectedChatId}
-              bookingId={selectedBookingId}
-              bookingstatus={bookingstatus}
               onMessageSent={handleMessageSent}
             />
           </>
