@@ -15,8 +15,8 @@ export default function AllMessages({ conversations, onSelectChat, loading, sele
   // CRITICAL: Sort conversations by most recent message timestamp
   const sortedConversations = useMemo(() => {
     return [...conversations].sort((a, b) => {
-      const dateA = a.last_message_at ? new Date(a.last_message_at).getTime() : 0;
-      const dateB = b.last_message_at ? new Date(b.last_message_at).getTime() : 0;
+      const dateA = a.last_message_timestamp ? new Date(a.last_message_timestamp).getTime() : 0;
+      const dateB = b.last_message_timestamp ? new Date(b.last_message_timestamp).getTime() : 0;
       return dateB - dateA; // Most recent first
     });
   }, [conversations]);

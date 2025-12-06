@@ -19,7 +19,7 @@ export default function VendorMessages() {
   // Get current user ID
   const [currentUserId, setCurrentUserId] = useState<number | undefined>();
   const [currentUserName, setCurrentUserName] = useState<string>('');
-    const selectedChatRef = useRef<string | null>(null);
+  const selectedChatRef = useRef<string | null>(null);
 
   useEffect(() => {
     selectedChatRef.current = selectedChatId;
@@ -68,12 +68,12 @@ export default function VendorMessages() {
       const chatId = String(conversation_id);
       const isOwnMessage = currentUserName === sender_name;
       console.log(isOwnMessage);
-      
+
       //  if user is already inside this chat
-        if (chatId === selectedChatRef.current) {
-      console.log('Realtime ignored – chat already open');
-      return;
-    }
+      if (chatId === selectedChatRef.current) {
+        console.log('Realtime ignored – chat already open');
+        return;
+      }
 
       updateConversationSnippet(
         chatId,
@@ -130,39 +130,33 @@ export default function VendorMessages() {
     message: Message,
     isOwnMessage: boolean
   ) => {
-    console.log(' Updating conversation snippet:', {
-      chatId,
-      messagePreview: message.message.substring(0, 30) + '...',
-      isOwnMessage
-    });
+    setConversations(prev => {
+      const index = prev.findIndex(
+        c => String(c.conversation_id) === chatId
+      );
+      if (index === -1) return prev;
 
-    setConversations(prev => prev.map(conv => {
-      if (String(conv.conversation_id) !== chatId) return conv;
+      const target = prev[index];
+      const isOpen = chatId === selectedChatRef.current;
 
-      // open chat never shows unread
-      if (chatId === selectedChatId) {
-        return {
-          ...conv,
-          last_message: message.message,
-          last_message_at: message.created_at,
-          unread_count: 0,
-        };
-      }
-
-      //  apply unread rules if chat not open
-      const newUnread = isOwnMessage
-        ? conv.unread_count || 0
-        : (conv.unread_count || 0) + 1;
-
-      return {
-        ...conv,
+      const updated: ConversationItem = {
+        ...target,
         last_message: message.message,
+        last_message_timestamp: message.created_at,
         last_message_at: message.created_at,
-        unread_count: newUnread,
+        unread_count: isOpen
+          ? 0
+          : isOwnMessage
+            ? target.unread_count || 0
+            : (target.unread_count || 0) + 1,
       };
-    })
-    );
-  }, [selectedChatId]);
+
+      return [
+        updated,
+        ...prev.filter((_, i) => i !== index),
+      ];
+    });
+  }, []);
 
   // Handle message sent by current user (optimistic update)
   const handleMessageSent = useCallback((newMessage: Message) => {

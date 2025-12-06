@@ -120,7 +120,7 @@ export interface AnalyticsApiResponse {
 export interface Category {
   id: number;
   name: string;
-  created_at: string | null; 
+  created_at: string | null;
   updated_at: string | null;
 }
 
@@ -203,7 +203,7 @@ interface PaginatedData<T> {
 /* eslint-disable @typescript-eslint/no-empty-interface */
 // try to not use the customeradresponse
 export interface CustomerAdsResponse extends PaginatedData<CustomerAd> {
-    _typeBrand?: 'CustomerAdsResponse'
+  _typeBrand?: 'CustomerAdsResponse'
 }
 /* eslint-enable @typescript-eslint/no-empty-interface */
 
@@ -287,6 +287,7 @@ export interface ConversationItem {
   last_message: string;
   last_message_at: string; // you can parse to Date later if needed
   unread_count: number;
+  last_message_timestamp?: string
 }
 
 export interface ConversationsApiResponse {

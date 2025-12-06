@@ -6,7 +6,7 @@ import SearchMessages from './ChatPaneSearch';
 interface ChatPaneProps {
   conversations: ConversationItem[];
   onSelectChat: (chatId: string) => void;
-  loading: boolean
+  loading?: boolean
   selectedChatId: string | null
 } 
 
