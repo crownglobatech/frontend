@@ -8,6 +8,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { ConversationItem, Message } from '@/lib/types';
 import ChatClient from './ChatClient';
 import { initPusher } from '@/services/pusher';
+import { getProviderBookings } from '@/lib/api/bookings';
 
 export default function VendorMessages() {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
@@ -15,6 +16,8 @@ export default function VendorMessages() {
   const [selectedMessages, setSelectedMessages] = useState<Message[]>([]);
   const [loadingConversations, setLoadingConversations] = useState<boolean>(false);
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
+  const [allBookings, setAllBookings] = useState<any[]>([]);
+  const [currentBooking, setCurrentBooking] = useState(null);
 
   // Get current user ID
   const [currentUserId, setCurrentUserId] = useState<number | undefined>();
@@ -54,6 +57,37 @@ export default function VendorMessages() {
     load();
   }, []);
 
+  // get all bookings
+  useEffect(() => {
+    if (!selectedChatId) {
+      console.log('No current conversation to load bookings for.');
+      return;
+    } else {
+      console.log('Loading bookings for conversation:', selectedChatId);
+    }
+    const loadBookings = async () => {
+      const data = await getProviderBookings();
+      console.log('Provider bookings:', data);
+      setAllBookings(data.data);
+    }
+    loadBookings();
+  }, [selectedChatId])
+
+  // set current booking when allBookings or selectedChatId changes
+  useEffect(() => {
+    if (!allBookings || allBookings.length === 0 || !selectedChatId) {
+      return;
+    }
+    const booking = allBookings.find((b: any) => b.conversation_id === Number(selectedChatId));
+    if (booking) {
+      console.log('Found booking for current conversation:', booking);
+      setCurrentBooking(booking);
+    } else {
+      setCurrentBooking(null)
+      console.log('No booking found for current conversation.');
+
+    }
+  }, [allBookings, selectedChatId]);
   // useefect for notification pusher channel
   useEffect(() => {
     if (!currentUserId) return
@@ -223,6 +257,10 @@ export default function VendorMessages() {
     });
   }, [selectedChatId, currentUserId, updateConversationSnippet]);
 
+  const handleReftechBookings = () => {
+    getProviderBookings()
+  }
+
   return (
     <div className="flex bg-white h-screen">
       {/* Left: Chat List */}
@@ -250,12 +288,15 @@ export default function VendorMessages() {
                 onNewRemoteMessage={handleNewRemoteMessage}
                 loadingMessages={loadingMessages}
                 conversations={conversations}
+                currentBooking={currentBooking}
                 currentUserId={currentUserId}
               />
             </div>
             <ChatFooter
               chatId={selectedChatId}
               onMessageSent={handleMessageSent}
+              currentBooking={currentBooking}
+              onRejectBooking={handleReftechBookings}
             />
           </>
         ) : (

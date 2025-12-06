@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(req: NextRequest) {
+export default function proxy(req: NextRequest) {
   const token = req.cookies.get('token')?.value
   const path = req.nextUrl.pathname
 
@@ -33,6 +33,9 @@ export function middleware(req: NextRequest) {
   if (path.startsWith('/admin') && userRole !== 'admin') {
     return NextResponse.redirect(new URL('/unauthorized', req.url))
   }
+  if (path.startsWith('/messages') && userRole !== 'customer') {
+    return NextResponse.redirect(new URL('/unauthorized', req.url))
+  }
 
   return NextResponse.next()
 }
@@ -43,5 +46,6 @@ export const config = {
     // '/dashboard/:path*',
     '/provider/:path*',
     '/admin/:path*',
+    '/messages:path*'
   ],
 }

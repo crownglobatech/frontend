@@ -53,7 +53,7 @@ export default function ChatHeader({ conversationId, conversations }: ChatHeader
 
       <div>
         <button  className="bg-[var(--primary-color)] px-6 py-3 rounded-lg font-bold cursor-pointer text-white text-sm shadow-md transition-all hover:shadow-lg">
-          Book Now
+          Custom Booking
         </button>
       </div>
     </div>

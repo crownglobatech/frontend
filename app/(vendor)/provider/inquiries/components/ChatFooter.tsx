@@ -4,17 +4,21 @@ import { SendIcon } from 'lucide-react';
 import { useState } from 'react';
 import { MdAttachFile } from 'react-icons/md';
 import { useNotification } from '@/app/contexts/NotificationProvider'; // Stubbed below
+import ProgressBar from '@/app/(customer)/messages/components/ProgressBar';
+import { rejectBooking, vendorRejectBooking } from '@/lib/api/bookings';
 
 interface ChatFooterProps {
   chatId: string;
   onMessageSent: (message: any) => void;
+  currentBooking?: null | any
+  onRejectBooking? : () => void
 }
 
-export default function ChatFooter({ chatId, onMessageSent }: ChatFooterProps) {
+export default function ChatFooter({ chatId, onMessageSent, currentBooking, onRejectBooking }: ChatFooterProps) {
   const [message, setMessage] = useState('');
   const primaryColor = 'blue-600';
   const [loading, setLoading] = useState(false);
-  const { notify } = useNotification(); 
+  const { notify } = useNotification();
 
   const handleSendMessage = async () => {
     // --- Authentication Check ---
@@ -68,6 +72,24 @@ export default function ChatFooter({ chatId, onMessageSent }: ChatFooterProps) {
     }
   };
 
+
+  if (currentBooking) {
+    console.log('[Chat Footer Received Booking Details] Current Booking in ChatClient:', currentBooking);
+  }
+
+
+  const handleRejectBooking = async () => {
+    const res = await vendorRejectBooking(currentBooking?.id!)
+    console.log(res);
+    onRejectBooking?.()
+    notify('Booking cancelled successfully.', 'success', 'Booking Cancelled');
+  }
+
+  const [currentStep, setCurrentStep] = useState(0);
+  const steps = ['Pending', 'In Progress', 'Completed'];
+  const [completedSteps, setCompletedSteps] = useState<boolean[]>(
+    Array(steps.length).fill(false)
+  )
   return (
     <div className='flex flex-col border-t'>
       <div className='flex items-center bg-white w-full'>
@@ -95,6 +117,32 @@ export default function ChatFooter({ chatId, onMessageSent }: ChatFooterProps) {
         <p className='font-normal text-[14px] text-[var(--secondary-color)] text-center'>
           Discuss service details before booking.
         </p>
+
+        {currentBooking && currentBooking.status !== 'cancelled' && (
+          <div className="w-full mt-3 px-8">
+            <div className="flex flex-col items-start mb-4 w-full">
+              <h2 className="text-[18px] font-semibold text-[var(--heading-color)]">Service Progress</h2>
+              {/* progress */}
+              <div className='flex flex-col w-full mt-2 gap-3'>
+                <div>
+                  <ProgressBar
+                    steps={steps}
+                    completedSteps={completedSteps}
+                    currentStep={currentStep}
+                  />
+                </div>
+                <div className='bg-[#FBF7EB] border border-[#D4AF37] rounded-sm px-4 py-1.5 w-full flex items-center justify-between'>
+                  <p className='text-[#D4AF37] text-[10px]'>You have a booking request from {currentBooking.customer.full_name}</p>
+                  <div className='flex gap-2 items-center'>
+                    <span onClick={handleRejectBooking} className='bg-transparent border border-[#E63946] text-[10px] font-thin text-[#E63946] shadow-sm px-4 py-1.5 rounded cursor-pointer'>Reject Booking</span>
+                    <span className='bg-[var(--success-color)] rounded cursor-pointer text-[10px] font-thin text-white border border-[var(--success-color )] shadow-sm px-4 py-1.5'>Accept Booking</span>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

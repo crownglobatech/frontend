@@ -45,5 +45,24 @@ export const updateBookingStatus = async ( status: string, bookingId: number) =>
 }
 export const rejectBooking = async ( bookingId: number) => {
     const res = await apiClient.post(`/customer/bookings/${bookingId}/reject`);
+    console.log(res);
+    
     return res.data.data || res.data;
+}
+
+export const showBookingDetails = async ( bookingId: number) => {
+    const res = await apiClient.get(`/service-provider/bookings/${bookingId}`);
+    console.log(res.data.data);
+    return res.data.data || res.data;
+}
+export const getProviderBookings = async () => {
+    const res = await apiClient.get('/service-provider/bookings');
+    console.log(res.data.data);
+    return res.data.data || res.data;
+}
+export const vendorRejectBooking =  async (bookingId: number) => {
+    const res = await apiClient.post(`service-provider/bookings/${bookingId}/reject`)
+    console.log(res);
+    return res
+    
 }

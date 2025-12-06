@@ -5,6 +5,8 @@ import { subscribeToChat } from '@/services/pusher';
 import { ConversationItem, Message } from '@/lib/types';
 import { useAppSelector } from '@/app/store-hooks';
 import { fetchAllConversations } from '@/services/api';
+import { getProviderBookings, showBookingDetails } from '@/lib/api/bookings';
+import { get } from 'http';
 
 interface ChatClientProps {
   chatId: string;
@@ -20,19 +22,16 @@ export default function ChatClient({
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [currentConversation, setCurrentConversation] = useState<ConversationItem | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  // Assuming useAppSelector correctly fetches the current user's ID
   const currentUserId = useAppSelector((state) => state.auth.user?.id);
   const isInitialLoadRef = useRef(true); // For scroll behavior
-  // CRITICAL FIX: Use ref to avoid stale closures
   const onNewRemoteMessageRef = useRef(onNewRemoteMessage);
-  // const currentUserIdRef = useRef(currentUserId);
 
   // Update refs when props change
   useEffect(() => {
     onNewRemoteMessageRef.current = onNewRemoteMessage;
   }, [onNewRemoteMessage]);
 
-  // Load conversations for header/ad info (optional, usually done by parent)
+  // Load conversations for header/ad info
   useEffect(() => {
     const load = async () => {
       const data = await fetchAllConversations();
@@ -89,6 +88,8 @@ export default function ChatClient({
 
   const adTitle = currentConversation?.service_ad.title
   const adPrice = currentConversation?.service_ad.price || 'Price Unavailable';
+
+
 
   return (
     <div className="flex flex-col h-full bg-[#f0f2f5]">

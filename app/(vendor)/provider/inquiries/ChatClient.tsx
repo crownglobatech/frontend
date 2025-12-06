@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { subscribeToChat } from '@/services/pusher';
 import { ConversationItem, Message } from '@/lib/types';
+import { getProviderBookings } from '@/lib/api/bookings';
 
 interface ChatClientProps {
   chatId: string;
@@ -10,7 +11,9 @@ interface ChatClientProps {
   loadingMessages: boolean;
   onNewRemoteMessage: (message: Message) => void;
   conversations: ConversationItem[];
-  currentUserId?: number; // Pass this explicitly
+  currentUserId?: number;
+  currentBooking?: null;
+
 }
 
 export default function ChatClient({
@@ -19,10 +22,12 @@ export default function ChatClient({
   onNewRemoteMessage,
   loadingMessages,
   conversations,
+  currentBooking,
   currentUserId
 }: ChatClientProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isInitialLoadRef = useRef(true);
+
 
   // CRITICAL FIX: Use ref to avoid stale closures
   const onNewRemoteMessageRef = useRef(onNewRemoteMessage);
@@ -54,14 +59,14 @@ export default function ChatClient({
     if (isInitialLoadRef.current && initialMessages.length > 0) {
       isInitialLoadRef.current = false;
     }
-  }, [initialMessages.length]); // Only depend on length to avoid re-scroll on every message update
+  }, [initialMessages.length]); 
 
   // Sort messages (oldest first)
   const sortedMessages = [...initialMessages].sort((a, b) =>
     new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
   );
 
-  // CRITICAL FIX: Pusher subscription with stable callback reference
+  // Pusher subscription with stable callback reference
   useEffect(() => {
     if (!chatId) {
       console.warn(' No chatId provided to ChatClient');
@@ -71,10 +76,9 @@ export default function ChatClient({
     console.log(`Subscribing to private-conversation.${chatId}`);
 
     const cleanup = subscribeToChat(chatId, (msg: Message) => {
-      // CRITICAL FIX: Force conversation_id because backend doesn't send it
       const messageWithChatId: Message = {
         ...msg,
-        conversation_id: Number(chatId), // THIS IS THE MAGIC LINE
+        conversation_id: Number(chatId), 
       };
 
       console.log('Pusher message received → forcing conversation_id:', chatId);
@@ -97,6 +101,11 @@ export default function ChatClient({
 
   const adTitle = currentConversation?.service_ad?.title || 'Chat';
   const adPrice = currentConversation?.service_ad?.price || 'Price Unavailable';
+
+  if (currentBooking){
+    console.log('[Chat Client Received Booking Details] Current Booking in ChatClient:', currentBooking);
+  }
+
 
   return (
     <div className="flex flex-col h-full bg-[#f0f2f5]">
