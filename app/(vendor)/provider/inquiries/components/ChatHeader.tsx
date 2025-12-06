@@ -29,7 +29,7 @@ export default function ChatHeader({ conversationId, conversations }: ChatHeader
     );
   }
 
-  const { other_user, service_ad } = currentConversation;
+  const { other_user } = currentConversation;
 
 
   return (

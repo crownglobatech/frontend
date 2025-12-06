@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { MdAttachFile } from 'react-icons/md'
 import ProgressBar from './ProgressBar';
 import { rejectBooking } from '@/lib/api/bookings';
-// Assuming the parent now passes a callback
+
 interface ChatFooterProps {
   chatId: string;
   onMessageSent: (message: any) => void; // <<< ADDED THIS PROP
