@@ -47,7 +47,7 @@ export default function ApartmentCard ({
               : 'bg-[var(--text-body)] text-white'
           } top-3 left-3 absolute shadow px-3 py-1 rounded-md font-medium text-[12px]`}
         >
-          {status}
+          {status === 'approved' ? 'active' : status}
         </span>
       </div>
 

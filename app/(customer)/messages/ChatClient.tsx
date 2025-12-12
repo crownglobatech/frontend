@@ -111,9 +111,9 @@ export default function ChatClient({
                 className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-xs px-4 py-3 rounded-2xl shadow-md ${isMe
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white border border-gray-200 text-gray-800'
+                  className={`max-w-xs px-4 py-3 rounded-2xl shadow-sm ${isMe
+                    ? 'bg-blue-600 text-white rounded-br-none'
+                    : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'
                     }`}
                 >
                   {!isMe && (
@@ -121,8 +121,8 @@ export default function ChatClient({
                       {msg?.sender?.first_name} {msg?.sender?.last_name}
                     </p>
                   )}
-                  <p className="break-words">{msg.message}</p>
-                  <p className="text-xs opacity-60 mt-1 text-right">
+                  <p className="btext-sm break-words whitespace-pre-wrap">{msg.message}</p>
+                  <p className={`text-[10px] mt-1 block ${isMe ? 'opacity-60' : 'opacity-80'}`}>
                     {new Date(msg.created_at).toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit',

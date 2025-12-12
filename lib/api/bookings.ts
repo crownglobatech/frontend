@@ -66,3 +66,23 @@ export const vendorRejectBooking =  async (bookingId: number) => {
     return res
     
 }
+export const vendorAcceptBooking = async (bookingId: number) => {
+    const res = await apiClient.patch(`/service-provider/bookings/${bookingId}/accept`)
+}
+
+export const customerUpdateStatus = async (status: string, bookingId: number) => {
+    const res = await apiClient.patch(`/customer/bookings/${bookingId}/status`, {
+        status: status
+    })
+    console.log(res.data)
+}
+export const markStatusAsCompleted = async (status: string, bookingId: number) => {
+    const res = await apiClient.patch(`/service-provider/bookings/${bookingId}/status`, {
+        status: status
+    })
+}
+export const confirmCompletion = async (status: string, bookingId: number) => {
+     const res = await apiClient.patch(`/customer/bookings/${bookingId}/status`, {
+        status: status
+    })
+}

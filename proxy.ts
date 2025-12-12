@@ -30,7 +30,7 @@ export default function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL('/unauthorized', req.url))
   }
 
-  if (path.startsWith('/admin') && userRole !== 'admin') {
+  if (path.startsWith('/workspace') && userRole !== 'admin') {
     return NextResponse.redirect(new URL('/unauthorized', req.url))
   }
   if (path.startsWith('/messages') && userRole !== 'customer') {
@@ -45,7 +45,7 @@ export const config = {
   matcher: [
     // '/dashboard/:path*',
     '/provider/:path*',
-    '/admin/:path*',
+    '/workspace/:path*',
     '/messages:path*'
   ],
 }

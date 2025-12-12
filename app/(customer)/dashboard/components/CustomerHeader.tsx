@@ -1,5 +1,6 @@
 'use client'
 
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectTrigger,
@@ -8,7 +9,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import Image from 'next/image'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 interface Props {
   currentCategory: string
@@ -22,7 +23,7 @@ interface Props {
   totalResults: number | null
 }
 
-export default function CustomerHeader ({
+export default function CustomerHeader({
   currentCategory,
   setCategory,
   query,
@@ -35,50 +36,74 @@ export default function CustomerHeader ({
     setFilters(prev => {
       const updated = { ...prev }
       if (!value || value === '__empty__') {
-        delete updated[name] 
+        delete updated[name]
       } else {
         updated[name] = value
       }
       return updated
     })
   }
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+  const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+  const role = typeof window != 'undefined' ? localStorage.getItem('role') : null
 
+  useEffect(() => {
+    const isLoggedIn = () => {
+      if (!user || role !== 'customer') {
+        setIsLoggedIn(false)
+      } else {
+        setIsLoggedIn(true)
+      }
+    }
+    isLoggedIn()
+  }, [user, role])
   return (
     <div>
       {/* --- Top Bar --- */}
       <div className='flex justify-between gap-[50px] bg-white shadow-sm px-6 py-4'>
         <div className='flex gap-2 w-full'>
-          <select className='px-3 py-2 border border-gray-300 rounded-sm text-[12px]'>
-            <option value=''>All Nigeria</option>
-            <option value='oyo'>Oyo</option>
-            <option value='plateau'>Plateau</option>
-          </select>
+          <Select>
+            <SelectTrigger className='text-[var(--text-body)] text-[12px]'>
+              All Nigeria
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='plateau'>
+                <option value='plateau'>Plateau</option>
+              </SelectItem>
+              <SelectItem value='oyo'><option value='oyo'>Oyo</option>
+              </SelectItem>
+            </SelectContent>
+          </Select>
 
-          <input
+          <Input
             type='text'
             placeholder='Search for homes and services'
             value={query}
             onChange={e => setQuery(e.target.value)}
-            className='px-4 py-2 border border-gray-300 rounded-sm w-full text-[12px]'
+            className='px-4 py-2 border border-gray-300 rounded-sm w-full text-[12px] placeholder:text-[12px] placeholder:text-[#BFBFBF]'
           />
         </div>
 
-        <div className='flex flex-row-reverse items-center gap-4'>
-          <Image
-            src='/user.png'
-            alt='profile'
-            height={40}
-            width={40}
-            className='shadow-md rounded-full cursor-pointer'
-          />
-          <Image
-            src='/notify.png'
-            alt='notifications'
-            height={40}
-            width={40}
-            className='shadow-md rounded-full cursor-pointer'
-          />
-        </div>
+        {
+          isLoggedIn && (
+            <div className='flex flex-row-reverse items-center gap-4'>
+              <Image
+                src='/user.png'
+                alt='profile'
+                height={40}
+                width={40}
+                className='shadow-md rounded-full cursor-pointer'
+              />
+              <Image
+                src='/notify.png'
+                alt='notifications'
+                height={40}
+                width={40}
+                className='shadow-md rounded-full cursor-pointer'
+              />
+            </div>
+          )
+        }
       </div>
 
       {/* --- Category Navigation --- */}
@@ -94,11 +119,10 @@ export default function CustomerHeader ({
               <button
                 key={item.key}
                 onClick={() => setCategory(item.key)}
-                className={`font-medium text-sm transition cursor-pointer ${
-                  currentCategory === item.key
-                    ? 'text-[var(--primary-color)]'
-                    : ''
-                }`}
+                className={`font-medium text-sm transition cursor-pointer ${currentCategory === item.key
+                  ? 'text-[var(--primary-color)]'
+                  : ''
+                  }`}
               >
                 {item.label}
               </button>

@@ -1,33 +1,49 @@
 'use client'
-import { useRef } from 'react'
+import { useImperativeHandle, useRef, forwardRef } from 'react'
 import ApartmentCard from '@/app/components/general/ApartmentCard'
 import Link from 'next/link'
 
-export default function RelatedServices() {
+export type RelatedServicesHandle = {
+  scrollLeft: () => void
+  scrollRight: () => void
+}
+
+const RelatedServices = forwardRef<RelatedServicesHandle>((props, ref) => {
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  // Expose methods to parent
+  useImperativeHandle(ref, () => ({
+    scrollLeft: () => {
+      scrollRef.current?.scrollBy({ left: -300, behavior: 'smooth' })
+    },
+    scrollRight: () => {
+      scrollRef.current?.scrollBy({ left: 300, behavior: 'smooth' })
+    },
+  }))
+
+  // Drag scroll logic
   let isDown = false
   let startX: number
-  let scrollLeft: number
+  let scrollStart: number
 
   const handleMouseDown = (e: React.MouseEvent) => {
     isDown = true
     if (scrollRef.current) {
       startX = e.pageX - scrollRef.current.offsetLeft
-      scrollLeft = scrollRef.current.scrollLeft
+      scrollStart = scrollRef.current.scrollLeft
     }
   }
-
-  const handleMouseLeave = () => (isDown = false)
-  const handleMouseUp = () => (isDown = false)
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDown || !scrollRef.current) return
     e.preventDefault()
     const x = e.pageX - scrollRef.current.offsetLeft
-    const walk = (x - startX) * 1.5 // scroll speed multiplier
-    scrollRef.current.scrollLeft = scrollLeft - walk
+    const walk = (x - startX) * 1.5
+    scrollRef.current.scrollLeft = scrollStart - walk
   }
 
+  const handleMouseUp = () => (isDown = false)
+  const handleMouseLeave = () => (isDown = false)
   return (
     <div
       ref={scrollRef}
@@ -163,4 +179,5 @@ export default function RelatedServices() {
       </div>
     </div>
   )
-}
+})
+export default RelatedServices

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { subscribeToChat } from '@/services/pusher';
 import { ConversationItem, Message } from '@/lib/types';
-import { getProviderBookings } from '@/lib/api/bookings';
 
 interface ChatClientProps {
   chatId: string;
@@ -148,7 +147,7 @@ export default function ChatClient({
                       </p>
                     )}
                     <p className="text-sm break-words whitespace-pre-wrap">{msg.message}</p>
-                    <span className={`text-xs mt-1 block ${isCurrentUser ? 'opacity-60' : 'opacity-80'}`}>
+                    <span className={`text-[10px] mt-1 block ${isCurrentUser ? 'opacity-60' : 'opacity-80'}`}>
                       {new Date(msg.created_at).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit',

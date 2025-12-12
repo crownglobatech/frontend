@@ -7,7 +7,7 @@ import ChatPane from './components/ChatPane';
 import ChatClient from './ChatClient';
 import { useEffect, useState, useCallback, useRef } from 'react'; // MUST import useCallback
 import { ConversationItem, Message } from '@/lib/types';
-import { bookProvider } from '@/lib/api/bookings';
+import { bookProvider, getMyBookings, getProviderBookings } from '@/lib/api/bookings';
 import { useNotification } from '@/app/contexts/NotificationProvider';
 import { initPusher } from '@/services/pusher';
 
@@ -23,6 +23,8 @@ export default function Messages() {
   const [currentUserId, setCurrentUserId] = useState<number | undefined>();
   const [currentUserName, setCurrentUserName] = useState<string>('');
   const selectedChatRef = useRef<string | null>(null);
+  const [allBookings, setAllBookings] = useState([])
+  const [currentBooking, setCurrentBooking]= useState<null | []>(null)
 
   useEffect(() => {
     selectedChatRef.current = selectedChatId;
@@ -70,6 +72,7 @@ export default function Messages() {
       const chatId = String(conversation_id);
       const isOwnMessage = currentUserName === sender_name;
 
+
       // HARD STOP: if user is already inside this chat
       if (chatId === selectedChatRef.current) {
         console.log('Realtime ignored – chat already open');
@@ -91,6 +94,31 @@ export default function Messages() {
       pusher?.unsubscribe(channelName)
     }
   }, [currentUserId]);
+
+  useEffect(() => {
+    if (!selectedChatId) return;
+
+    const pusher = initPusher();
+    const channelName = `private-conversation.${selectedChatId}`;
+    const channel = pusher?.subscribe(channelName);
+
+    channel?.bind('booking.status.updated', (data: any) => {
+      console.log('[REALTIME] Booking update received:', data);
+
+      const { id, status } = data.booking ?? data;
+      // ✅ single source of truth
+      setSelectedBookingId(id);
+      setBookingstatus(status);
+      // ✅ persistence for refresh survival
+      localStorage.setItem(`booking_id_${selectedChatId}`, String(id));
+      localStorage.setItem(`booking_status_${selectedChatId}`, status);
+    });
+
+    return () => {
+      channel?.unbind('booking.status.updated');
+      pusher?.unsubscribe(channelName);
+    };
+  }, [selectedChatId]);
 
   // Fetch messages for selected chat
   const fetchAndSetMessages = useCallback(async (chatId: string) => {
@@ -227,6 +255,35 @@ export default function Messages() {
   // handle booking logic
   const { notify } = useNotification()
 
+    useEffect(() => {
+      if (!selectedChatId) {
+        console.log('No current conversation to load bookings for.');
+        return;
+      } else {
+        console.log('Loading bookings for conversation:', selectedChatId);
+      }
+      const loadBookings = async () => {
+        const data = await getMyBookings();
+        console.log('Provider bookings:', data);
+        setAllBookings(data.data);
+      }
+      loadBookings();
+    }, [selectedChatId])
+
+      useEffect(() => {
+    if (!allBookings || allBookings.length === 0 || !selectedChatId) {
+      return;
+    }
+    const booking = allBookings.find((b: any) => b.conversation_id === Number(selectedChatId));
+    if (booking) {
+      console.log('Found booking for current conversation:', booking);
+      setCurrentBooking(booking);
+    } else {
+      setCurrentBooking(null)
+      console.log('No booking found for current conversation.');
+
+    }
+  }, [allBookings, selectedChatId]);
   // When booking succeeds → save status for THIS specific chat
   const handleBookNow = async () => {
     const res = await bookProvider(selectedChatId!);
@@ -243,23 +300,55 @@ export default function Messages() {
     localStorage.setItem(`booking_status_${selectedChatId}`, status);
     localStorage.setItem(`booking_id_${selectedChatId}`, String(res.id));
   };
-  // When component mounts or selectedChatId changes → load the correct one
-  useEffect(() => {
-    if (!selectedChatId) {
-      setBookingstatus('');
-      return;
-    }
-    const savedStatus = localStorage.getItem(`booking_status_${selectedChatId}`);
-    const savedBookingId = localStorage.getItem(`booking_id_${selectedChatId}`);
-    if (savedBookingId && savedStatus) {
-      setSelectedBookingId(Number(savedBookingId));
-      setBookingstatus(savedStatus);
-    } else {
-      setSelectedBookingId(undefined);
-      setBookingstatus(''); // or 'unknown'
-    }
+  // // When component mounts or selectedChatId changes → load the correct one
+  // useEffect(() => {
+  //   if (!selectedChatId) {
+  //     setBookingstatus('');
+  //     return;
+  //   }
+  //   const savedStatus = localStorage.getItem(`booking_status_${selectedChatId}`);
+  //   const savedBookingId = localStorage.getItem(`booking_id_${selectedChatId}`);
+  //   if (savedBookingId && savedStatus) {
+  //     setSelectedBookingId(Number(savedBookingId));
+  //     setBookingstatus(savedStatus);
+  //   } else {
+  //     setSelectedBookingId(undefined);
+  //     setBookingstatus(''); // or 'unknown'
+  //   }
 
-  }, [selectedChatId, selectedBookingId]);
+  // }, [selectedChatId, selectedBookingId]);
+
+    // booking real-time bind
+  useEffect(() => {
+    if (!selectedChatId) return;
+
+    const pusher = initPusher();
+    const channelName = `private-conversation.${selectedChatId}`;
+    const channel = pusher?.subscribe(channelName);
+
+    channel?.bind('booking.status.updated', (data: any) => {
+      console.log('[REALTIME] Booking update received:', data);
+
+      const booking = data.booking
+      const { id, status } = data.booking ?? data;
+      setSelectedBookingId(id);
+      setBookingstatus(status);
+      if (String(booking.conversation_id) === selectedChatId) {
+        setCurrentBooking(booking);
+        setBookingstatus(status)
+      }
+      console.log(currentBooking);
+      console.log(status)
+      localStorage.setItem(`booking_id_${selectedChatId}`, String(id));
+      localStorage.setItem(`booking_status_${selectedChatId}`, status);
+    });
+
+    return () => {
+      channel?.unbind_all();
+      pusher?.unsubscribe(channelName);
+    };
+  }, [selectedChatId]);
+
 
 
   return (
@@ -292,6 +381,7 @@ export default function Messages() {
               bookingId={selectedBookingId}
               bookingstatus={bookingstatus}
               onMessageSent={handleMessageSent}
+              currentBooking={currentBooking}
             />
           </>
         ) : (

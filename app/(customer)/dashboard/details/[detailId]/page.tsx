@@ -11,15 +11,15 @@ import Rating from '@/app/components/general/Rating'
 import ReviewCard from '../../components/ReviewCard'
 import CreateReview from '../../components/CreateReview'
 import MiniChatBox from '../../components/MiniChatBox'
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-import RelatedServices from '../../components/RelatedServices'
 import { getCustomerAdsById } from '@/lib/api'
 import { notFound } from 'next/navigation'
+import RelatedServicesSection from './RelatedServicesSection'
+import ProfileDisplaySection from './ProfileDisplaySection'
 
 interface Props {
   params: Promise<{ detailId: string }>
 }
-export default async function AdDetailsHomeScreen ({ params }: Props) {
+export default async function AdDetailsHomeScreen({ params }: Props) {
   const { detailId } = await params
   let adData
   try {
@@ -62,22 +62,7 @@ export default async function AdDetailsHomeScreen ({ params }: Props) {
             />
           </div>
 
-          <div className='flex flex-row-reverse items-center gap-4'>
-            <Image
-              src='/user.png'
-              alt='profile'
-              height={40}
-              width={40}
-              className='shadow-md rounded-full cursor-pointer'
-            />
-            <Image
-              src='/notify.png'
-              alt='notifications'
-              height={40}
-              width={40}
-              className='shadow-md rounded-full cursor-pointer'
-            />
-          </div>
+          <ProfileDisplaySection />
         </div>
       </div>
       <div className='flex flex-col px-6'>
@@ -200,31 +185,7 @@ export default async function AdDetailsHomeScreen ({ params }: Props) {
         </div>
 
         {/* Related Services */}
-        <div className='-mx-6 mb-10'>
-          {/* title + arrows */}
-          <div className='flex justify-between items-center px-6'>
-            <h2 className='font-semibold text-[18px] text-black'>
-              Related Services
-            </h2>
-            <div className='flex items-center gap-2'>
-              <ChevronLeftIcon
-                className='cursor-pointer'
-                size={30}
-                color='black'
-              />
-              <ChevronRightIcon
-                className='cursor-pointer'
-                size={30}
-                color='black'
-              />
-            </div>
-          </div>
-
-          {/* display of related services */}
-          <div className='overflow-x-hidden'>
-            <RelatedServices />
-          </div>
-        </div>
+        <RelatedServicesSection />
       </div>
     </div>
   )

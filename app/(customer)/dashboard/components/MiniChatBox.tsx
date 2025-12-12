@@ -4,18 +4,27 @@ interface MiniChatBoxProps {
 }
 import LoadingDots from "@/app/components/general/LoadingDots"
 import { useNotification } from "@/app/contexts/NotificationProvider"
-import {  initiateChat, sendMessageCustomer } from "@/services/api"
-import { useRouter } from "next/navigation"
-import {  useState } from "react"
+import { initiateChat, sendMessageCustomer } from "@/services/api"
+import { useEffect, useState } from "react"
 export default function MiniChatBox({ userId }: MiniChatBoxProps) {
+  const [userRole, setUserRole] = useState<string>('')
   const [message, setMessage] = useState<string>('')
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const { notify } = useNotification()
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userString = localStorage.getItem('user');
+      if (userString) {
+        const user = JSON.parse(userString);
+        console.log(' Current user ID:', user);
+        setUserRole(user?.role)
+      }
+    }
+  }, []);
   const hadleSendMessage = async () => {
-    if (!token) {
-      notify('You must be logged in to send messages.', 'error', 'Authentication Required')
+    if (!token || userRole !== 'customer') {
+      notify('You must be logged in as our customer to send messages.', 'error', 'Authentication Required')
       return
     }
     if (!message.trim()) return;
@@ -24,7 +33,7 @@ export default function MiniChatBox({ userId }: MiniChatBoxProps) {
     try {
       setLoading(true);
 
-      // Step 1: Initiate chat
+      //  Initiate chat
       const initiateResponse = await initiateChat({ service_ad_id: userId });
       console.log('initiateChat response:', initiateResponse);
 
@@ -42,10 +51,10 @@ export default function MiniChatBox({ userId }: MiniChatBoxProps) {
 
       console.log('Conversation ID:', conversationId);
 
-      // Step 2: Send first message
+      // Send first message
       await sendMessageCustomer(String(conversationId), message);
 
-      // Step 3: Go to chat
+      // notify customer
       notify('Chat initiated successfully!', 'success', 'Success');
       setMessage('');
     } catch (error: any) {

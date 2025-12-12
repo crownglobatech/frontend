@@ -12,7 +12,7 @@ export default function ProgressBar({
   completedSteps,
 }: ProgressBarProps) {
   return (
-    <div className="relative w-full max-w-xl mx-auto bg-white px-4 py-6">
+    <div className="relative w-full max-w-xl mx-auto bg-white rounded-sm px-4 py-6">
       {/* Background line */}
       {/* <div className="absolute top-5 left-8 right-8 h-[2px] bg-gray-300 -z-10" /> */}
 

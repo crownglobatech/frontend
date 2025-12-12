@@ -1,13 +1,32 @@
 'use client'
-import { PanelRightClose } from 'lucide-react'
+import { Icon, PanelRightClose } from 'lucide-react'
 import { motion } from 'motion/react'
 import Link from 'next/link'
 import { MdDashboard } from 'react-icons/md'
 import { TbMessageCircleStar, TbHandLoveYou } from 'react-icons/tb'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { Settings } from 'lucide-react'
+import { MdSupportAgent } from 'react-icons/md'
+import { LogIn } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 
 export default function SideBarUser() {
   const pathname = usePathname()
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+  const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+  const role = typeof window != 'undefined' ? localStorage.getItem('role') : null
+
+  useEffect(() => {
+    const isLoggedIn = () => {
+      if (!user || role !== 'customer') {
+        setIsLoggedIn(false)
+      } else {
+        setIsLoggedIn(true)
+      }
+    }
+    isLoggedIn()
+  }, [user, role])
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: MdDashboard },
@@ -16,9 +35,11 @@ export default function SideBarUser() {
   ]
 
   const bottomLinks = [
-    { href: '/user/settings', label: 'Settings' },
-    { href: '/user/help', label: 'Help & Support' },
-    { href: '/auth/logout', label: 'Signout' },
+    { href: '/user/settings', label: 'Settings', icon: Settings },
+    { href: '/user/help', label: 'Help & Support', icon: MdSupportAgent },
+    isLoggedIn
+      ? { href: '/auth/logout', label: 'Signout', icon: LogOut }
+      : { href: '/auth/login', label: 'Login', icon: LogIn }
   ]
 
   // Helper: Check if the current route starts with the link href
@@ -62,11 +83,10 @@ export default function SideBarUser() {
                   <li key={href}>
                     <Link
                       href={href}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${
-                        isActive
-                          ? 'bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold'
-                          : 'text-white/70 hover:text-white hover:opacity-100'
-                      }`}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${isActive
+                        ? 'bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold'
+                        : 'text-white/70 hover:text-white hover:opacity-100'
+                        }`}
                     >
                       <Icon size={20} />
                       <span className="text-[13px] leading-relaxed">
@@ -82,18 +102,18 @@ export default function SideBarUser() {
           {/* Bottom Links */}
           <nav>
             <ul className="flex flex-col gap-2">
-              {bottomLinks.map(({ href, label }) => {
+              {bottomLinks.map(({ href, label, icon: Icon }) => {
                 const isActive = isActiveRoute(href)
                 return (
                   <li key={href}>
                     <Link
                       href={href}
-                      className={`flex items-center px-3 py-2 rounded-md transition-all ${
-                        isActive
-                          ? 'bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold'
-                          : 'text-white/70 hover:text-white hover:opacity-100'
-                      } text-[13px] leading-relaxed`}
+                      className={`flex gap-2 items-center px-3 py-2 rounded-md transition-all ${isActive
+                        ? 'bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold'
+                        : 'text-white/70 hover:text-white hover:opacity-100'
+                        } text-[13px] leading-relaxed`}
                     >
+                      <Icon size={20} />
                       {label}
                     </Link>
                   </li>

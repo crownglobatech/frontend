@@ -18,7 +18,8 @@ export default function VendorMessages() {
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [allBookings, setAllBookings] = useState<any[]>([]);
   const [currentBooking, setCurrentBooking] = useState(null);
-
+  const [bookingstatus, setBookingstatus] = useState<string>('');
+  const [selectedBookingId, setSelectedBookingId] = useState<number | undefined>(undefined);
   // Get current user ID
   const [currentUserId, setCurrentUserId] = useState<number | undefined>();
   const [currentUserName, setCurrentUserName] = useState<string>('');
@@ -96,6 +97,7 @@ export default function VendorMessages() {
 
     const channelName = `private-user.${currentUserId}`
     const channel = pusher?.subscribe(channelName)
+
     channel?.bind('new-message-notification', (data: any) => {
       const { conversation_id, last_message, sender_name } = data.payload;
 
@@ -124,6 +126,38 @@ export default function VendorMessages() {
       pusher?.unsubscribe(channelName)
     }
   }, [currentUserId]);
+
+  // booking real-time bind
+  useEffect(() => {
+    if (!selectedChatId) return;
+
+    const pusher = initPusher();
+    const channelName = `private-conversation.${selectedChatId}`;
+    const channel = pusher?.subscribe(channelName);
+
+    channel?.bind('booking.status.updated', (data: any) => {
+      console.log('[REALTIME] Booking update received:', data);
+
+      const booking = data.booking
+      const { id, status } = data.booking ?? data;
+      setSelectedBookingId(id);
+      setBookingstatus(status);
+      if (String(booking.conversation_id) === selectedChatId) {
+        setCurrentBooking(booking);
+        setBookingstatus(status)
+      }
+      console.log(currentBooking);
+      console.log(status)
+      localStorage.setItem(`booking_id_${selectedChatId}`, String(id));
+      localStorage.setItem(`booking_status_${selectedChatId}`, status);
+    });
+
+    return () => {
+      channel?.unbind_all();
+      pusher?.unsubscribe(channelName);
+    };
+  }, [selectedChatId]);
+
 
   // Fetch messages for selected chat
   const fetchAndSetMessages = useCallback(async (chatId: string) => {
@@ -259,6 +293,7 @@ export default function VendorMessages() {
 
   const handleReftechBookings = () => {
     getProviderBookings()
+    setBookingstatus('cancelled')
   }
 
   return (

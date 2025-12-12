@@ -60,7 +60,7 @@ export default function SignUp () {
       )
       console.log(data.user, data.token)
 
-      notify('Redirecting you dashboard!', 'success', 'Login Successful')
+      notify('Redirecting you to dashboard!', 'success', 'Login Successful')
       if (data.user.role === 'service_provider') {
         router.replace('/provider/dashboard')
       } else {
