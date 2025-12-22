@@ -347,19 +347,3 @@ export async function getCustomerAdsById(id: string): Promise<CustomerAd> {
     throw error;
   }
 }
-
-// can user review
-export async function canUserReview(adId: string, token: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}api/customer/service-ads/${adId}/can-review`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  if (!res.ok) throw new Error("Failed to check eligibility");
-  return res.json() as Promise<{ canReview: boolean; booking_id: number }>;
-}

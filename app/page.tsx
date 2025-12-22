@@ -10,9 +10,9 @@ import { motion } from "motion/react";
 
 export default function LandingPage() {
   return (
-    <main>
+    <main className="overflow-hidden">
       {/* hero */}
-      <section className="relative flex flex-col bg-[url('/herobg.png')] bg-cover bg-no-repeat bg-top w-full h-[100vh]">
+      <section className="relative flex flex-col bg-[url('/herobg.png')] bg-cover bg-no-repeat bg-top w-full h-[80vh] md:h-[100vh] overflow-hidden">
         {/* overlay bg */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#1E5AA882] via-[#1E5AA882] via-[51%] to-[#0C2342F0] to-[94%] w-full h-full" />
         <div className="z-10 relative flex justify-center px-4 pt-8 w-full">
@@ -28,14 +28,14 @@ export default function LandingPage() {
         </div>
 
         {/* hero content */}
-        <div className="z-10 relative flex flex-col justify-center items-center px-8 md:px-20 h-full">
-          <div className="z-10 relative flex flex-col justify-center items-center mx-auto md:max-w-[60%] max-w-[95%] text-center">
+        <div className="z-10 relative flex flex-col justify-center items-center md:px-20 h-full">
+          <div className="z-10 relative flex flex-col justify-center items-center mx-auto md:max-w-[60%]  text-center">
             <motion.h1
               viewport={{ once: true }}
               initial={{ y: 100, opacity: 0 }}
               whileInView={{ y: 0, opacity: 100 }}
               transition={{ duration: 0.5, type: "tween" }}
-              className="font-bold text-[35px] md:text-[45px] text-white leading-tight"
+              className="font-bold text-[40px] md:text-[45px] text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] leading-tight"
             >
               Find Your Perfect{" "}
               <span className="text-[var(--secondary-color)]">Property</span>{" "}
@@ -46,7 +46,7 @@ export default function LandingPage() {
               initial={{ y: 100, opacity: 0 }}
               whileInView={{ y: 0, opacity: 100 }}
               transition={{ duration: 0.5, type: "spring", delay: 0.2 }}
-              className="mt-4 font-normal text-white text-[16px] md:text-[20px]"
+              className="mt-4 font-normal text-white text-[16px] md:text-[20px] px-4 drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
             >
               Search properties, connect with verified agents, and access
               reliable real estate services all in one platform.
@@ -93,7 +93,7 @@ export default function LandingPage() {
             initial={{ y: -50, opacity: 0 }}
             whileInView={{ y: 0, opacity: 100 }}
             transition={{ duration: 0.5, type: "tween", delay: 0.2 }}
-            className="font-bold text-[30px] text-[var(--heading-color)]"
+            className="font-bold text-[27px] text-[var(--heading-color)]"
           >
             Quick Categories
           </motion.h2>
@@ -103,14 +103,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="flex flex-col items-center bg-[var(--foundation-primary)] mx-4 my-8 py-8">
+      <section className="flex flex-col items-center bg-[var(--foundation-primary)] my-8 py-8">
         {/* Featured Properties */}
         <motion.h2
           viewport={{ once: true }}
           initial={{ y: -50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 100 }}
           transition={{ duration: 0.5, type: "tween", delay: 0.2 }}
-          className="mb-8 font-bold text-[30px] text-[var(--heading-color)]"
+          className="mb-8 font-bold text-[27px] text-[var(--heading-color)]"
         >
           Featured Properties
         </motion.h2>
@@ -181,7 +181,7 @@ export default function LandingPage() {
           initial={{ y: -50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 100 }}
           transition={{ duration: 0.5, type: "tween", delay: 0.2 }}
-          className="font-bold text-[30px] text-center leading-tight text-[var(--heading-color)]"
+          className="font-bold text-[27px] text-center text-[var(--heading-color)] max-w-[80%] leading-tight md:max-w-full"
         >
           Your Real Estate Journey Simplified
         </motion.h2>

@@ -1,7 +1,6 @@
 "use client";
 import LoadingDots from "@/app/components/general/LoadingDots";
 import { useNotification } from "@/app/contexts/NotificationProvider";
-import { canUserReview } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
 
@@ -14,7 +13,7 @@ export default function CreateReview({ detailId }: Props) {
   const { notify } = useNotification();
   const [reviewEligibility, setReviewEligibility] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
-  const [bookingId, setBookingId] = useState<number | null>(null);
+  const [bookingCode, setBookingCode] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -28,9 +27,24 @@ export default function CreateReview({ detailId }: Props) {
 
     const checkEligibility = async () => {
       try {
-        const res = await canUserReview(detailId, token);
-        setReviewEligibility(res.canReview);
-        setBookingId(res.booking_id);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/service-ads/${detailId}/can-review`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!res.ok) {
+          console.error("Error", res.statusText);
+          return;
+        }
+        const resData = await res.json();
+        setReviewEligibility(resData.can_review);
+        setBookingCode(resData.booking_code);
+        console.log("Review Eligibility:", resData);
       } catch {
         setReviewEligibility(false);
       }
@@ -53,14 +67,14 @@ export default function CreateReview({ detailId }: Props) {
       setLoading(false);
       return;
     }
-    if (!bookingId) {
+    if (!bookingCode) {
       notify("Invalid booking reference", "error", "Validation");
       setLoading(false);
       return;
     }
     // Payload is clean and deterministic
     const payload = {
-      booking_id: bookingId,
+      booking_code: bookingCode,
       rating, // number of filled stars
       feedback: text,
     };
@@ -68,7 +82,7 @@ export default function CreateReview({ detailId }: Props) {
     console.log("Review Payload:", payload);
     try {
       const res = await fetch(
-        `$process.env.NEXT_PUBLIC_BASE_URL}/api/customer/reviews`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/reviews`,
         {
           method: "POST",
           headers: {
@@ -78,6 +92,15 @@ export default function CreateReview({ detailId }: Props) {
           body: JSON.stringify(payload),
         }
       );
+      if (!res.ok) {
+        console.error("Failed to submit review:", res.statusText);
+        notify("Could not submit review", "error", "Submission Error");
+      }
+      notify("Review submitted successfully", "success", "Success");
+      // Reset form
+      setRating(0);
+      setText("");
+      setReviewEligibility(false); // Disable further reviews
     } catch (error) {
       console.error("Error submitting review:", error);
       notify(
@@ -90,6 +113,7 @@ export default function CreateReview({ detailId }: Props) {
       setLoading(false);
     }
   };
+  console.log("Review Eligibility State:", reviewEligibility);
 
   return (
     <div
