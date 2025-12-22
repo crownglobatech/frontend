@@ -1,120 +1,119 @@
 export interface Address {
-  address_line1: string | null
-  address_line2: string | null
-  city: string | null
-  state: string | null
-  country: string | null
-  postal_code?: string | null // optional if your backend includes it
+  address_line1: string | null;
+  address_line2: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  postal_code?: string | null; // optional if your backend includes it
 }
 
 export interface User {
-  id: number
-  first_name: string
-  last_name: string
-  email: string
-  phone: string | null
-  role: string
-  address: Address
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  role: string;
+  address: Address;
 }
 
 export interface AllAdsResponse {
-  status: 'success' | 'error'
+  status: "success" | "error";
   data: {
-    current_page: number
-    data: Ad[]
-    first_page_url: string
-    from: number | null
-    last_page: number
-    last_page_url: string
+    current_page: number;
+    data: Ad[];
+    first_page_url: string;
+    from: number | null;
+    last_page: number;
+    last_page_url: string;
     links: {
-      url: string | null
-      label: string
-      active: boolean
-    }[]
-    next_page_url: string | null
-    path: string
-    per_page: number
-    prev_page_url: string | null
-    to: number | null
-    total: number
-  }
+      url: string | null;
+      label: string;
+      active: boolean;
+    }[];
+    next_page_url: string | null;
+    path: string;
+    per_page: number;
+    prev_page_url: string | null;
+    to: number | null;
+    total: number;
+  };
 }
 
 export interface Ad {
-  id: number
-  title: string
-  description: string
-  price: string
-  listing_type: string
-  status: string
-  size: number
-  area: string
-  country: string
-  state: string
-  lga: string
-  street: string
-  latitude: string
-  longitude: string
-  bedrooms: number
-  bathrooms: number
-  email: string
-  phone_country_iso: string
-  phone_e164: string
-  photo_urls: string[]
-  photos: string[]
-  video_urls: string[] | null
-  videos: string[]
-  extra_attributes: Record<string, string> | null
-  created_at: string
-  updated_at: string
-  business_id: number
+  id: number;
+  title: string;
+  description: string;
+  price: string;
+  listing_type: string;
+  status: string;
+  size: number;
+  area: string;
+  country: string;
+  state: string;
+  lga: string;
+  street: string;
+  latitude: string;
+  longitude: string;
+  bedrooms: number;
+  bathrooms: number;
+  email: string;
+  phone_country_iso: string;
+  phone_e164: string;
+  photo_urls: string[];
+  photos: string[];
+  video_urls: string[] | null;
+  videos: string[];
+  extra_attributes: Record<string, string> | null;
+  created_at: string;
+  updated_at: string;
+  business_id: number;
   business: {
-    id: number
-    user_id: number
-    is_verified: number
-    business_name: string
-    category_id: number
-    logo: string | null
-    description: string | null
-    created_at: string
-    updated_at: string
-  }
+    id: number;
+    user_id: number;
+    is_verified: number;
+    business_name: string;
+    category_id: number;
+    logo: string | null;
+    description: string | null;
+    created_at: string;
+    updated_at: string;
+  };
 }
 
 export interface vendorAd {
-  status: 'success' | 'error'
-  data: Ad
+  status: "success" | "error";
+  data: Ad;
 }
 export interface AnalyticsPerformance {
-  title: string
-  searches: number
-  views: number
-  clicks: number
-  inquiries: number
-  status: string
+  title: string;
+  searches: number;
+  views: number;
+  clicks: number;
+  inquiries: number;
+  status: string;
 }
 
 // For the "overview" object
 export interface AnalyticsOverview {
-  total_ads: number
-  total_views: number
-  total_searches: number
-  total_clicks: number
-  total_inquiries: number
-  conversion_rate: number
+  total_ads: number;
+  total_views: number;
+  total_searches: number;
+  total_clicks: number;
+  total_inquiries: number;
+  conversion_rate: number;
 }
 
 export interface AnalyticsData {
-  overview: AnalyticsOverview
-  trend: unknown[] // 'trend' is an empty array
-  performance: AnalyticsPerformance[]
+  overview: AnalyticsOverview;
+  trend: unknown[]; // 'trend' is an empty array
+  performance: AnalyticsPerformance[];
 }
 
 export interface AnalyticsApiResponse {
-  status: string
-  data: AnalyticsData
+  status: string;
+  data: AnalyticsData;
 }
-
 
 // customer response type
 export interface Category {
@@ -175,6 +174,8 @@ export interface CustomerAd {
   updated_at: string;
   business_id: number;
   business: Business; // Re-using the Business interface
+  reviews?: any[];
+  review_count?: number; // Optional reviews array
 }
 
 // --- API Response for All Ads (Paginated) ---
@@ -202,49 +203,50 @@ interface PaginatedData<T> {
 }
 /* eslint-disable @typescript-eslint/no-empty-interface */
 // try to not use the customeradresponse
-export interface CustomerAdsResponse extends PaginatedData<CustomerAd> {
-  _typeBrand?: 'CustomerAdsResponse'
+export interface CustomerAdsResponse {
+  data: PaginatedData<CustomerAd>;
 }
+
 /* eslint-enable @typescript-eslint/no-empty-interface */
 
 export interface RecentActivity {
-  title: string
-  status: string
-  updated_at: string
+  title: string;
+  status: string;
+  updated_at: string;
 }
 
 export interface RatingsFeedbacks {
-  average_rating: number | null
-  total_feedbacks: number
-  recent_feedbacks: Feedback[]
+  average_rating: number | null;
+  total_feedbacks: number;
+  recent_feedbacks: Feedback[];
 }
 
 export interface Feedback {
   // Add properties based on your actual feedback structure
   // Example:
-  id?: string
-  rating: number
-  comment?: string
-  user_name?: string
-  created_at?: string
+  id?: string;
+  rating: number;
+  comment?: string;
+  user_name?: string;
+  created_at?: string;
 }
 
 export interface DashboardData {
-  views_over_time: ViewOverTime[]
-  recent_activities: RecentActivity[]
-  ratings_feedbacks: RatingsFeedbacks
+  views_over_time: ViewOverTime[];
+  recent_activities: RecentActivity[];
+  ratings_feedbacks: RatingsFeedbacks;
 }
 
 export interface ViewOverTime {
   // Add properties based on your actual views data
   // Example:
-  date: string
-  views: number
+  date: string;
+  views: number;
 }
 
 export interface DashboardResponse {
-  status: 'success' | 'error' // or string if you want more flexibility
-  data: DashboardData
+  status: "success" | "error"; // or string if you want more flexibility
+  data: DashboardData;
 }
 
 // messages types
@@ -253,13 +255,13 @@ export interface Sender {
   id: number;
   first_name: string;
   last_name: string;
-  role: 'customer' | 'service_provider';
+  role: "customer" | "service_provider";
 }
 
 export interface Message {
   conversation_id: number;
   id: number;
-  message: string;           // your backend uses "message", not "content"
+  message: string; // your backend uses "message", not "content"
   sender_id: number;
   sender: Sender;
   created_at: string;
@@ -287,7 +289,7 @@ export interface ConversationItem {
   last_message: string;
   last_message_at: string; // you can parse to Date later if needed
   unread_count: number;
-  last_message_timestamp?: string
+  last_message_timestamp?: string;
 }
 
 export interface ConversationsApiResponse {

@@ -1,342 +1,365 @@
 export interface AdFormData {
-  title: string
-  description: string
+  title: string;
+  description: string;
 
   // Location
-  street: string
-  area: string
-  lga: string
-  state: string
-  country: string
+  street: string;
+  area: string;
+  lga: string;
+  state: string;
+  country: string;
 
   // Property info
-  listing_type: string
-  size: string
-  bedrooms: string
-  bathrooms: string
-  price: string
+  listing_type: string;
+  size: string;
+  bedrooms: string;
+  bathrooms: string;
+  price: string;
 
   // Media
-  photos: File[]
+  photos: File[];
 
   // Contact
-  email: string
-  phone_e164: string
-  phone_country_iso: string
+  email: string;
+  phone_e164: string;
+  phone_country_iso: string;
 }
-import { AllAdsResponse, CustomerAd, CustomerAdsResponse, DashboardResponse, vendorAd } from '../types'
+import {
+  AllAdsResponse,
+  CustomerAd,
+  CustomerAdsResponse,
+  DashboardResponse,
+  vendorAd,
+} from "../types";
 
-export async function postNewAd (formData: AdFormData) {
-  const form = new FormData()
+export async function postNewAd(formData: AdFormData) {
+  const form = new FormData();
 
   try {
     // Append all form fields
     Object.entries(formData).forEach(([key, value]) => {
-      if (key === 'photos' && Array.isArray(value)) {
-        value.forEach(file => form.append('photos[]', file))
-      } else if (typeof value === 'string' || value instanceof Blob) {
-        form.append(key, value)
+      if (key === "photos" && Array.isArray(value)) {
+        value.forEach((file) => form.append("photos[]", file));
+      } else if (typeof value === "string" || value instanceof Blob) {
+        form.append(key, value);
       }
-    })
+    });
 
-    const token = localStorage?.getItem('token')
+    const token = localStorage?.getItem("token");
     if (!token) {
-      throw new Error('User not authenticated — token missing.')
+      throw new Error("User not authenticated — token missing.");
     }
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/ads`,
       {
-        method: 'POST',
+        method: "POST",
         body: form,
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       }
-    )
+    );
 
     // Handle non-OK responses gracefully
     if (!response.ok) {
-      const errorData = await safeJson(response)
+      const errorData = await safeJson(response);
       throw new Error(
         errorData?.message || `Failed to post ad (status: ${response.status})`
-      )
+      );
     }
 
-    return await response.json()
+    return await response.json();
   } catch (error) {
-    console.error('Error posting new ad:', error)
-    throw error
+    console.error("Error posting new ad:", error);
+    throw error;
   }
 }
 
 // Helper to safely parse JSON responses.
-async function safeJson (res: Response) {
+async function safeJson(res: Response) {
   try {
-    return await res.json()
+    return await res.json();
   } catch {
-    return null
+    return null;
   }
 }
 
 // get all available ads
-export async function getAllAds (token: string): Promise<AllAdsResponse> {
+export async function getAllAds(token: string): Promise<AllAdsResponse> {
   try {
     if (!token) {
-      throw new Error('User not authenticated — token missing.')
+      throw new Error("User not authenticated — token missing.");
     }
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/all-ads`,
       {
-        method: 'GET',
+        method: "GET",
         next: {
           // Caching options
-          revalidate: 60 // seconds to revalidate
+          revalidate: 60, // seconds to revalidate
         },
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
-    )
+    );
 
     if (!response.ok) {
-      const text = await response.text()
-      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+      const text = await response.text();
+      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`);
     }
 
-    const data = await response.json()
-    return data
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error('Error fetching all ads:', error)
-    throw error
+    console.error("Error fetching all ads:", error);
+    throw error;
   }
 }
 
 // get specific ad detail
-export async function getAdById (
-  token: string,
-  id: string
-): Promise<vendorAd> {
+export async function getAdById(token: string, id: string): Promise<vendorAd> {
   try {
     if (!token) {
-      throw new Error('User not authenticated — token missing.')
+      throw new Error("User not authenticated — token missing.");
     }
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/ads/${id}`,
       {
-        method: 'GET',
+        method: "GET",
         next: {
           // Caching options
-          revalidate: 60 // seconds to revalidate
+          revalidate: 60, // seconds to revalidate
         },
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
-    )
+    );
 
     if (!response.ok) {
-      const text = await response.text()
-      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+      const text = await response.text();
+      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`);
     }
 
-    const data = await response.json()
-    return data
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error('Error fetching all ads:', error)
-    throw error
+    console.error("Error fetching all ads:", error);
+    throw error;
   }
 }
 
 // Analytics
-export async function getVendorAnalytics (token: string) {
+export async function getVendorAnalytics(token: string) {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/ads-analytics`,
       {
-        method: 'GET',
+        method: "GET",
         next: {
           // Caching options
-          revalidate: 60 // seconds to revalidate
+          revalidate: 60, // seconds to revalidate
         },
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
-    )
+    );
     if (!res.ok) {
-      const text = await res.text()
-      throw new Error(`Failed to fetch ads: ${res.status} - ${text}`)
+      const text = await res.text();
+      throw new Error(`Failed to fetch ads: ${res.status} - ${text}`);
     }
-    const data = await res.json()
-    return data
+    const data = await res.json();
+    return data;
   } catch (error) {
-    console.error('Error fetching all ads:', error)
-    throw error
+    console.error("Error fetching all ads:", error);
+    throw error;
   }
 }
 
 // vendor dashboard data
-export async function getDashboardData (token: string) {
+export async function getDashboardData(token: string) {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/dashboard`,
       {
-        method: 'GET',
+        method: "GET",
         next: {
           // Caching options
-          revalidate: 60 // seconds to revalidate
+          revalidate: 60, // seconds to revalidate
         },
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }
-    )
+    );
     if (!res.ok) {
-      const text = await res.text()
-      throw new Error(`Failed to fetch ads: ${res.status} - ${text}`)
+      const text = await res.text();
+      throw new Error(`Failed to fetch ads: ${res.status} - ${text}`);
     }
-    const data:DashboardResponse = await res.json()
-    return data
+    const data: DashboardResponse = await res.json();
+    return data;
   } catch (error) {
-    console.error('Error fetching all ads:', error)
-    throw error
+    console.error("Error fetching all ads:", error);
+    throw error;
   }
 }
 // Custoomer API Integration
 export interface GetCustomerAdsOptions {
-  query?: string
-  filters?: Record<string, string | { min?: number; max?: number }>
+  query?: string;
+  filters?: Record<string, string | { min?: number; max?: number }>;
 }
 
 export async function getCustomerAds(
   token: string,
   category: string,
+  current_page: number,
   options: GetCustomerAdsOptions = {}
 ): Promise<CustomerAdsResponse> {
-  if (!token) throw new Error('User not authenticated')
+  if (!token) throw new Error("User not authenticated");
 
-  const { query, filters = {} } = options
-  const url = new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${category}`)
+  const { query, filters = {} } = options;
+  const url = new URL(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${category}?page=${current_page}`
+  );
 
   // Query param
-  if (query) url.searchParams.set('search', query)
-
+  if (query) url.searchParams.set("search", query);
   // Filters
   Object.entries(filters).forEach(([key, value]) => {
     if (!value) {
-      url.searchParams.delete(key)
-      url.searchParams.delete(`${key}_min`)
-      url.searchParams.delete(`${key}_max`)
-      return
+      url.searchParams.delete(key);
+      url.searchParams.delete(`${key}_min`);
+      url.searchParams.delete(`${key}_max`);
+      return;
     }
 
-    if (typeof value === 'string') url.searchParams.set(key, value)
+    if (typeof value === "string") url.searchParams.set(key, value);
     else {
-      if (value.min != null) url.searchParams.set(`${key}_min`, String(value.min))
-      else url.searchParams.delete(`${key}_min`)
-      if (value.max != null) url.searchParams.set(`${key}_max`, String(value.max))
-      else url.searchParams.delete(`${key}_max`)
+      if (value.min != null)
+        url.searchParams.set(`${key}_min`, String(value.min));
+      else url.searchParams.delete(`${key}_min`);
+      if (value.max != null)
+        url.searchParams.set(`${key}_max`, String(value.max));
+      else url.searchParams.delete(`${key}_max`);
     }
-  })
+  });
 
   const response = await fetch(url.toString(), {
-    method: 'GET',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-  })
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 
   if (!response.ok) {
-    const text = await response.text()
-    throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+    const text = await response.text();
+    throw new Error(`Failed to fetch ads: ${response.status} - ${text}`);
   }
-
-  const data: CustomerAdsResponse = await response.json()
-  return data
+  const data: CustomerAdsResponse = await response.json();
+  return data;
 }
 
 export async function getCustomerAdsNoAuth(
   category: string,
   options: GetCustomerAdsOptions = {}
 ): Promise<CustomerAdsResponse> {
-
-  const { query, filters = {} } = options
-  const url = new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${category}`)
+  const { query, filters = {} } = options;
+  const url = new URL(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${category}`
+  );
 
   // Query param
-  if (query) url.searchParams.set('search', query)
+  if (query) url.searchParams.set("search", query);
 
   // Filters
   Object.entries(filters).forEach(([key, value]) => {
     if (!value) {
-      url.searchParams.delete(key)
-      url.searchParams.delete(`${key}_min`)
-      url.searchParams.delete(`${key}_max`)
-      return
+      url.searchParams.delete(key);
+      url.searchParams.delete(`${key}_min`);
+      url.searchParams.delete(`${key}_max`);
+      return;
     }
 
-    if (typeof value === 'string') url.searchParams.set(key, value)
+    if (typeof value === "string") url.searchParams.set(key, value);
     else {
-      if (value.min != null) url.searchParams.set(`${key}_min`, String(value.min))
-      else url.searchParams.delete(`${key}_min`)
-      if (value.max != null) url.searchParams.set(`${key}_max`, String(value.max))
-      else url.searchParams.delete(`${key}_max`)
+      if (value.min != null)
+        url.searchParams.set(`${key}_min`, String(value.min));
+      else url.searchParams.delete(`${key}_min`);
+      if (value.max != null)
+        url.searchParams.set(`${key}_max`, String(value.max));
+      else url.searchParams.delete(`${key}_max`);
     }
-  })
+  });
 
   const response = await fetch(url.toString(), {
-    method: 'GET',
-    headers: {'Content-Type': 'application/json' },
-  })
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
 
   if (!response.ok) {
-    const text = await response.text()
-    throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+    const text = await response.text();
+    throw new Error(`Failed to fetch ads: ${response.status} - ${text}`);
   }
 
-  const data: CustomerAdsResponse = await response.json()
-  return data
+  const data: CustomerAdsResponse = await response.json();
+  return data;
 }
 
-
-
-
-export async function getCustomerAdsById (
-  id: string
-): Promise<CustomerAd> {
+export async function getCustomerAdsById(id: string): Promise<CustomerAd> {
   try {
     if (!id) {
-      throw new Error('No product was selected.')
+      throw new Error("No product was selected.");
     }
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/ads/${id}`,
       {
-        method: 'GET',
+        method: "GET",
         next: {
           // Caching options
-          revalidate: 60 // seconds to revalidate
+          revalidate: 60, // seconds to revalidate
         },
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       }
-    )
+    );
 
     if (!response.ok) {
-      const text = await response.text()
-      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`)
+      const text = await response.text();
+      throw new Error(`Failed to fetch ads: ${response.status} - ${text}`);
     }
 
-    const data = await response.json()
-    return data
+    const data = await response.json();
+    return data.data;
   } catch (error) {
-    console.error('Error fetching all ads:', error)
-    throw error
+    console.error("Error fetching all ads:", error);
+    throw error;
   }
+}
+
+// can user review
+export async function canUserReview(adId: string, token: string) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}api/customer/service-ads/${adId}/can-review`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!res.ok) throw new Error("Failed to check eligibility");
+  return res.json() as Promise<{ canReview: boolean; booking_id: number }>;
 }

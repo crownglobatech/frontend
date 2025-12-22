@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectTrigger } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { FaMagnifyingGlass } from "react-icons/fa6"
+import Pagination from "../Pagination"
 export default function BookingsTable() {
     const data = [
         {
@@ -185,7 +186,7 @@ export default function BookingsTable() {
 
             <div className="flex justify-between items-center mt-2">
                 <span className="text-[12px] text-[var(--text-body)]">Showing 1-12 of 100</span>
-                <span className="text-[12px] text-[var(--text-body)]">Pagination</span>
+                <span className="text-[12px] text-[var(--text-body)]"><Pagination /></span>
             </div>
         </>
     )

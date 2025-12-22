@@ -1,12 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { subscribeToChat } from '@/services/pusher';
 import { ConversationItem, Message } from '@/lib/types';
 import { useAppSelector } from '@/app/store-hooks';
 import { fetchAllConversations } from '@/services/api';
-import { getProviderBookings, showBookingDetails } from '@/lib/api/bookings';
-import { get } from 'http';
 
 interface ChatClientProps {
   chatId: string;

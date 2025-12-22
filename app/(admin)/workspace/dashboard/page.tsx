@@ -19,7 +19,7 @@ export default function AdminDashboard() {
     ]
     return (
         <div>
-            <div className="top-0 z-[1000] sticky w-full">
+            <div className="top-0 z-[100] sticky w-full">
                 <Header pageTitle="Dashboard Overview" />
             </div>
             {/* content */}

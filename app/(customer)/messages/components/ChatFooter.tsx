@@ -35,7 +35,7 @@ export default function ChatFooter({ chatId, onMessageSent, bookingstatus, booki
   const getCurrentUser = () => {
     const userString = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
     return userString ? JSON.parse(userString) : { id: 0, first_name: 'You', role: 'customer' };
-  };
+  };  
 
   const handleSendMessage = async () => {
     if (!token) {

@@ -45,7 +45,7 @@ export const config = {
   matcher: [
     // '/dashboard/:path*',
     '/provider/:path*',
-    '/workspace/:path*',
+    // '/:path*',
     '/messages:path*'
   ],
 }
