@@ -198,14 +198,40 @@ export default function Messages() {
       // Add message to active view if it belongs to the currently open chat
       if (String(newMessage.conversation_id) === selectedChatId) {
         setSelectedMessages((prev) => {
-          // Check if already exists (shouldn't for optimistic, but just in case)
-          const exists = prev.some((m) => m.id === newMessage.id);
-          if (exists) {
+          // 1. Skip if real message already exists
+          if (newMessage.id && prev.some((m) => m.id === newMessage.id)) {
             console.log("[SENT] Message already exists, skipping");
             return prev;
           }
-          console.log("[SENT] Adding to UI");
-          return [...prev, newMessage];
+
+          // Replace optimistic message by client_uuid
+          const optIndex = prev.findIndex(
+            (m) => m.id && m.id === newMessage.id
+          );
+
+          if (optIndex !== -1) {
+            console.log(
+              "[SENT] Replaced optimistic message with server-confirmed message"
+            );
+            const updated = [...prev];
+            updated[optIndex] = newMessage;
+
+            // Always sort after mutation
+            return updated.sort(
+              (a, b) =>
+                new Date(a.created_at).getTime() -
+                new Date(b.created_at).getTime()
+            );
+          }
+
+          // New message from this user
+          console.log("[SENT] Adding new message to UI");
+          const updated = [...prev, newMessage];
+          return updated.sort(
+            (a, b) =>
+              new Date(a.created_at).getTime() -
+              new Date(b.created_at).getTime()
+          );
         });
       }
 
@@ -219,7 +245,6 @@ export default function Messages() {
     [selectedChatId, updateConversationSnippet]
   );
 
-  // Handle message received from Pusher (vendor's reply or any remote message)
   const handleNewRemoteMessage = useCallback(
     (newMessage: Message) => {
       const chatId = String(newMessage.conversation_id);
@@ -232,33 +257,36 @@ export default function Messages() {
       if (chatId !== selectedChatId) return;
 
       setSelectedMessages((prev) => {
-        // 1. Real message with server ID already exists? → skip
+        // 1. Skip if real message already exists
         if (newMessage.id && prev.some((m) => m.id === newMessage.id)) {
           console.log("Duplicate prevented");
           return prev;
         }
 
-        // 2. Find optimistic message by EXACT text match + time proximity
-        const optIndex = prev.findIndex(
-          (m) =>
-            (m.id === undefined || m.id < 0) &&
-            m.message === newMessage.message &&
-            Math.abs(
-              new Date(m.created_at).getTime() -
-                new Date(newMessage.created_at).getTime()
-            ) < 8000
-        );
+        // 2. Replace optimistic message by client_uuid
+        const optIndex = prev.findIndex((m) => m.id && m.id === newMessage.id);
 
         if (optIndex !== -1) {
-          console.log("Replaced optimistic message");
+          console.log(
+            "Replaced optimistic message with server-confirmed message"
+          );
           const updated = [...prev];
           updated[optIndex] = newMessage;
-          return updated;
+
+          return updated.sort(
+            (a, b) =>
+              new Date(a.created_at).getTime() -
+              new Date(b.created_at).getTime()
+          );
         }
 
-        // 3. New message from someone else
+        // 3. New real message
         console.log("New real message added");
-        return [...prev, newMessage];
+        const updated = [...prev, newMessage];
+        return updated.sort(
+          (a, b) =>
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
       });
     },
     [selectedChatId, currentUserId, updateConversationSnippet]

@@ -266,8 +266,8 @@ export interface Message {
   sender: Sender;
   created_at: string;
   is_read: 0 | 1;
+  client_uuid?: string;
 }
-
 // types/chat.ts or lib/types.ts
 
 export interface OtherUser {
