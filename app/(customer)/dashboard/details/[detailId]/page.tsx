@@ -24,6 +24,8 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
   let adData;
   try {
     adData = await getCustomerAdsById(detailId);
+    console.log("Addata");
+
     console.log(adData);
     if (!adData) {
       notFound();
@@ -41,6 +43,7 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
   const photos = Array.isArray(adData.photo_urls) ? adData.photo_urls : [];
 
   const vendorReviews = adData?.reviews || [];
+  console.log(vendorReviews);
 
   return (
     <div>

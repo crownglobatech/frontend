@@ -117,7 +117,7 @@ export default function DashboardComponent() {
   console.log(paginatedAds);
 
   return (
-    <div>
+    <div className="">
       <div className="top-0 z-[50] sticky w-full">
         <CustomerHeader
           currentCategory={category}

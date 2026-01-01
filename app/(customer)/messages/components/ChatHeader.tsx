@@ -1,21 +1,21 @@
 // components/ChatHeader.tsx
-'use client';
-
-import { useNotification } from '@/app/contexts/NotificationProvider';
-import { useAppSelector } from '@/app/store-hooks';
-import { bookProvider } from '@/lib/api/bookings';
-import { ConversationItem } from '@/lib/types';
-import { fetchAllConversations } from '@/services/api';
-import { useEffect, useState } from 'react';
+"use client";
+import { ConversationItem } from "@/lib/types";
+import { fetchAllConversations } from "@/services/api";
+import { useEffect, useState } from "react";
 
 interface ChatHeaderProps {
   conversationId: string;
   onBookNow?: (res: any) => void;
 }
 
-export default function ChatHeader({ conversationId, onBookNow }: ChatHeaderProps) {
+export default function ChatHeader({
+  conversationId,
+  onBookNow,
+}: ChatHeaderProps) {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
-  const [currentConversation, setCurrentConversation] = useState<ConversationItem | null>(null);
+  const [currentConversation, setCurrentConversation] =
+    useState<ConversationItem | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -41,22 +41,21 @@ export default function ChatHeader({ conversationId, onBookNow }: ChatHeaderProp
     );
   }
 
-  const { other_user, service_ad } = currentConversation;
+  const { other_user } = currentConversation;
 
   // handle booking
-  const handleBookNow =  () => {
+  const handleBookNow = () => {
     if (onBookNow) {
       onBookNow(conversationId);
     }
-  }
-
+  };
 
   return (
     <div className="flex justify-between items-center bg-white p-4 border-b shadow-sm">
       <div className="flex items-center gap-3">
         <div className="relative">
           <img
-            src={other_user.photo_url || '/default-avatar.png'}
+            src={other_user.photo_url || "/default-avatar.png"}
             alt={other_user.full_name}
             className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
           />
@@ -76,7 +75,10 @@ export default function ChatHeader({ conversationId, onBookNow }: ChatHeaderProp
       </div>
 
       <div>
-        <button onClick={handleBookNow} className="bg-[var(--primary-color)] px-6 py-3 rounded-lg font-bold cursor-pointer text-white text-sm shadow-md transition-all hover:shadow-lg">
+        <button
+          onClick={handleBookNow}
+          className="bg-[var(--primary-color)] px-6 py-3 rounded-lg font-bold cursor-pointer text-white text-sm shadow-md transition-all hover:shadow-lg"
+        >
           Book Now
         </button>
       </div>

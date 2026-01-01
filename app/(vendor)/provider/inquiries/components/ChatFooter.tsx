@@ -103,18 +103,17 @@ export default function ChatFooter({
 
   const handleAcceptBooking = async () => {
     if (!currentBooking) return;
-    await vendorAcceptBooking(currentBooking.id);
-
+    await vendorAcceptBooking(currentBooking.booking_code);
     notify("Booking accepted successfully.,", "success", "Booking Accepted");
   };
   const handlePaymentSuccess = async () => {
-    if (!currentBooking.id) return;
-    await customerUpdateStatus("in_progress", currentBooking.id);
+    if (!currentBooking.booking_code) return;
+    await customerUpdateStatus("in_progress", currentBooking.booking_code);
     notify("Your booking is in progress", "success", "Booking In Progress");
   };
   const markAsCompleted = async () => {
-    if (!currentBooking.id) return;
-    await markStatusAsCompleted("completed", currentBooking.id);
+    if (!currentBooking.booking_code) return;
+    await markStatusAsCompleted("completed", currentBooking.booking_code);
     notify(
       "Service as been successfully marked as completed",
       "success",

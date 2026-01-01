@@ -3,7 +3,11 @@ import { Input } from "@/components/ui/input";
 import { FaSearch } from "react-icons/fa";
 import Rating from "@/app/components/general/Rating";
 
-export default function HeaderBanner() {
+interface Props {
+  query: string;
+  setQuery: (query: string) => void;
+}
+export default function HeaderBanner({ query, setQuery }: Props) {
   return (
     <div className="bg-white shadow-lg px-6 py-4 w-full">
       {/* Top bar */}
@@ -11,14 +15,15 @@ export default function HeaderBanner() {
         {/* Search Bar */}
         <div className="relative w-[80%]">
           <FaSearch
-            style={{ color: "#595959", cursor: "pointer" }}
+            style={{ color: "#BFBFBF", cursor: "pointer" }}
             className="top-1/2 right-3 absolute text-sm -translate-y-1/2"
           />
           <Input
             type="text"
+            value={query}
+            onChange={(e) => setQuery?.(e.target.value)}
             placeholder="Search..."
             className="border-1"
-            // className="py-1.5 pr-4 pl-10 border border-[var(--heading-color)] rounded focus:outline-none w-full text-[var(--foundation-neutral-6)] appearance-none"
           />
         </div>
 

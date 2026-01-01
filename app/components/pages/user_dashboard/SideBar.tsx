@@ -1,49 +1,49 @@
-'use client'
-import { Icon, PanelRightClose } from 'lucide-react'
-import { motion } from 'motion/react'
-import Link from 'next/link'
-import { MdDashboard } from 'react-icons/md'
-import { TbMessageCircleStar, TbHandLoveYou } from 'react-icons/tb'
-import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { Settings } from 'lucide-react'
-import { MdSupportAgent } from 'react-icons/md'
-import { LogIn } from 'lucide-react'
-import { LogOut } from 'lucide-react'
+"use client";
+import { Icon, PanelRightClose } from "lucide-react";
+import { motion } from "motion/react";
+import Link from "next/link";
+import { MdDashboard } from "react-icons/md";
+import { TbHelpCircle, TbMessageCircle } from "react-icons/tb";
+import { Heart } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { LogIn } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 export default function SideBarUser() {
-  const pathname = usePathname()
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
-  const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-  const role = typeof window != 'undefined' ? localStorage.getItem('role') : null
+  const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const user =
+    typeof window !== "undefined" ? localStorage.getItem("user") : null;
+  const role =
+    typeof window != "undefined" ? localStorage.getItem("role") : null;
 
   useEffect(() => {
     const isLoggedIn = () => {
-      if (!user || role !== 'customer') {
-        setIsLoggedIn(false)
+      if (!user || role !== "customer") {
+        setIsLoggedIn(false);
       } else {
-        setIsLoggedIn(true)
+        setIsLoggedIn(true);
       }
-    }
-    isLoggedIn()
-  }, [user, role])
+    };
+    isLoggedIn();
+  }, [user, role]);
 
   const navLinks = [
-    { href: '/dashboard', label: 'Dashboard', icon: MdDashboard },
-    { href: '/favourites', label: 'My Favourites', icon: TbHandLoveYou },
-    { href: '/messages', label: 'Messages', icon: TbMessageCircleStar },
-  ]
+    { href: "/dashboard", label: "Dashboard", icon: MdDashboard },
+    { href: "/favourites", label: "My Favourites", icon: Heart },
+    { href: "/messages", label: "Messages", icon: TbMessageCircle },
+  ];
 
   const bottomLinks = [
-    { href: '/user/settings', label: 'Settings', icon: Settings },
-    { href: '/user/help', label: 'Help & Support', icon: MdSupportAgent },
+    { href: "/faq", label: "Help & Support", icon: TbHelpCircle },
     isLoggedIn
-      ? { href: '/auth/logout', label: 'Signout', icon: LogOut }
-      : { href: '/auth/login', label: 'Login', icon: LogIn }
-  ]
+      ? { href: "/auth/logout", label: "Signout", icon: LogOut }
+      : { href: "/auth/login", label: "Login", icon: LogIn },
+  ];
 
   // Helper: Check if the current route starts with the link href
-  const isActiveRoute = (href: string) => pathname.startsWith(href)
+  const isActiveRoute = (href: string) => pathname.startsWith(href);
 
   return (
     <div className="top-0 sticky flex flex-col bg-[var(--primary-color)] px-4 py-6 h-screen">
@@ -78,15 +78,16 @@ export default function SideBarUser() {
           <nav>
             <ul className="flex flex-col gap-2">
               {navLinks.map(({ href, label, icon: Icon }) => {
-                const isActive = isActiveRoute(href)
+                const isActive = isActiveRoute(href);
                 return (
                   <li key={href}>
                     <Link
                       href={href}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${isActive
-                        ? 'bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold'
-                        : 'text-white/70 hover:text-white hover:opacity-100'
-                        }`}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${
+                        isActive
+                          ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
+                          : "text-white/70 hover:text-white hover:opacity-100"
+                      }`}
                     >
                       <Icon size={20} />
                       <span className="text-[13px] leading-relaxed">
@@ -94,7 +95,7 @@ export default function SideBarUser() {
                       </span>
                     </Link>
                   </li>
-                )
+                );
               })}
             </ul>
           </nav>
@@ -103,26 +104,27 @@ export default function SideBarUser() {
           <nav>
             <ul className="flex flex-col gap-2">
               {bottomLinks.map(({ href, label, icon: Icon }) => {
-                const isActive = isActiveRoute(href)
+                const isActive = isActiveRoute(href);
                 return (
                   <li key={href}>
                     <Link
                       href={href}
-                      className={`flex gap-2 items-center px-3 py-2 rounded-md transition-all ${isActive
-                        ? 'bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold'
-                        : 'text-white/70 hover:text-white hover:opacity-100'
-                        } text-[13px] leading-relaxed`}
+                      className={`flex gap-2 items-center px-3 py-2 rounded-md transition-all ${
+                        isActive
+                          ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
+                          : "text-white/70 hover:text-white hover:opacity-100"
+                      } text-[13px] leading-relaxed`}
                     >
                       <Icon size={20} />
                       {label}
                     </Link>
                   </li>
-                )
+                );
               })}
             </ul>
           </nav>
         </div>
       </div>
     </div>
-  )
+  );
 }

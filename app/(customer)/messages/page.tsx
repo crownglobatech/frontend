@@ -21,6 +21,7 @@ export default function Messages() {
     useState<boolean>(false);
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [bookingstatus, setBookingstatus] = useState<string>("");
+  const [isBooking, setIsBooking] = useState<boolean>(false);
   const [selectedBookingId, setSelectedBookingId] = useState<
     number | undefined
   >(undefined);
@@ -325,21 +326,33 @@ export default function Messages() {
       console.log("No booking found for current conversation.");
     }
   }, [allBookings, selectedChatId]);
+
   // When booking succeeds → save status for THIS specific chat
   const handleBookNow = async () => {
-    const res = await bookProvider(selectedChatId!);
+    if (isBooking || !selectedChatId) return;
 
-    if (!res) {
-      notify("Please try again", "error", "Booking Failed");
-      return;
+    try {
+      const res = await bookProvider(selectedChatId);
+      if (!res) {
+        notify("Please try again", "error", "Booking Failed");
+        return;
+      }
+      const status = res.status || "unknown";
+      setBookingstatus(status);
+      setSelectedBookingId(res.id);
+      // Persist per-conversation state
+      localStorage.setItem(`booking_status_${selectedChatId}`, status);
+      localStorage.setItem(`booking_id_${selectedChatId}`, String(res.id));
+    } catch (error: any) {
+      // This is where the REAL API error lands
+      notify(
+        error.message || "Error booking provider",
+        "error",
+        "Booking-error"
+      );
+    } finally {
+      setIsBooking(false);
     }
-
-    const status = res.status || "unknown";
-    setBookingstatus(status);
-    setSelectedBookingId(res.id);
-    // Save with chat-specific key
-    localStorage.setItem(`booking_status_${selectedChatId}`, status);
-    localStorage.setItem(`booking_id_${selectedChatId}`, String(res.id));
   };
 
   // booking real-time bind

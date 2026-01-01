@@ -1,25 +1,35 @@
-import { RatingsFeedbacks } from '@/lib/types'
+import { RatingsFeedbacks } from "@/lib/types";
 
 interface Props {
-  ratings_feedbacks: RatingsFeedbacks | undefined
+  ratings_feedbacks: RatingsFeedbacks | undefined;
 }
-export default function CustomerRatingAndFeedbacks ({
-  ratings_feedbacks
+export default function CustomerRatingAndFeedbacks({
+  ratings_feedbacks,
 }: Props) {
-  if (!ratings_feedbacks?.recent_feedbacks || ratings_feedbacks.recent_feedbacks.length === 0) {
+  if (
+    !ratings_feedbacks?.recent_feedbacks ||
+    ratings_feedbacks.recent_feedbacks.length === 0
+  ) {
     return (
-      <p className='text-[12px] text-[var(--foundation-neutral-8)] text-center'>
+      <p className="text-[12px] text-[var(--foundation-neutral-8)] text-center">
         You’ll start receiving feedbacks as customers engage with your services.
       </p>
-    )
+    );
   }
-  console.log(ratings_feedbacks?.recent_feedbacks)
 
   return (
     <div>
       {ratings_feedbacks?.recent_feedbacks?.map((item, index) => {
-        return <div key={index}></div>
+        return (
+          <div key={index}>
+            {item.comment && (
+              <p className="text-[14px] text-[var(--foundation-neutral-10)] mb-2">
+                "{item.comment}"
+              </p>
+            )}
+          </div>
+        );
       })}
     </div>
-  )
+  );
 }

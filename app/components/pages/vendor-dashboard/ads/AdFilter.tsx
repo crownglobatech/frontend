@@ -1,6 +1,7 @@
 import { Select, SelectContent, SelectTrigger } from "@/components/ui/select";
-import { FaChevronDown } from "react-icons/fa";
-
+import { SelectItem } from "@radix-ui/react-select";
+import Link from "next/link";
+import { MdAddCircleOutline } from "react-icons/md";
 export default function AdFilter() {
   return (
     <div className="flex justify-between items-center w-full">
@@ -8,40 +9,26 @@ export default function AdFilter() {
         <label htmlFor="filter" className="font-semibold text-black">
           Sort by:
         </label>
-        {/* 
-        <div className='relative'>
-          <select
-            name='filter'
-            id='filter'
-            className='bg-[var(--foundation-primary)] px-3 py-1 pr-8 rounded-md focus:outline-none font-semibold text-[14px] text-black appearance-none cursor-pointer'
-          >
-            <option value='All Ads'>All Ads</option>
-            <option value='1'>Ad 1</option>
-            <option value='2'>Ad 2</option>
-          </select> */}
-
-        {/* Chevron icon */}
-        {/* <FaChevronDown
-            size={14}
-            className='top-1/2 right-2 absolute text-black -translate-y-1/2 pointer-events-none'
-          />
-        </div> */}
         <Select>
-          <SelectTrigger className="bg-[var(--foundation-primary)] cursor-pointer">
+          <SelectTrigger className="bg-[#E9EFF6] cursor-pointer text-[var(--heading-color)] font-bold">
             All Ads
           </SelectTrigger>
           <SelectContent className="bg-[var(--foundation-primary)] cursor-pointer">
-            <option value="All Ads">All Ads</option>
-            <option value="1">Ad 1</option>
-            <option value="2">Ad 2</option>
+            <SelectItem value="All Ads">All Ads</SelectItem>
+            <SelectItem value="1">Ad 1</SelectItem>
+            <SelectItem value="2">Ad 2</SelectItem>
           </SelectContent>
         </Select>
       </div>
-      <div>
-        <button className="bg-transparent px-4 py-2 border border-[var(--primary-color)] rounded-md font-semibold text-[var(--primary-color)] cursor-pointer">
-          Post New Ad
-        </button>
-      </div>
+      <Link
+        href="/provider/post"
+        className="bg-transparent flex gap-1 items-center px-4 py-2 border border-[var(--primary-color)] rounded-md font-semibold text-[var(--primary-color)] cursor-pointer"
+      >
+        <span className="">
+          <MdAddCircleOutline size={16} />
+        </span>
+        Post New Ad
+      </Link>
     </div>
   );
 }
