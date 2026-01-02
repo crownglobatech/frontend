@@ -1,10 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
-import { Select, SelectTrigger } from "@/components/ui/select";
-import Image from "next/image";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { getAdminAnalytics } from "@/lib/api/admin";
-import LoadingDots from "@/app/components/general/LoadingDots";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import Revenue from "./charts/Revenue";
 import DailyActiveUsers from "./charts/DailyActiveUsers";
@@ -16,6 +20,7 @@ export default function AdminAnalytics() {
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const [loading, setLoading] = useState(false);
   const { notify } = useNotification();
+  const [timeFilter, setTimeFilter] = useState("week");
   const [data, setData] = useState<any>(null);
 
   //   load data onmount
@@ -30,7 +35,6 @@ export default function AdminAnalytics() {
           return;
         }
         const response = await getAdminAnalytics(token);
-        console.log("Analytics Data:", response);
         setData(response);
       } catch (error) {
         error instanceof Error && notify(error.message, "error", "Error");
@@ -54,19 +58,19 @@ export default function AdminAnalytics() {
   const dashboardData = [
     {
       title: "Total Revenue",
-      count: stats.total_revenue || "N/A",
+      count: stats.total_revenue || "0",
     },
     {
       title: "Total Bookings",
-      count: stats.total_bookings || "N/A",
+      count: stats.total_bookings || "0",
     },
     {
       title: "Active Providers",
-      count: stats.active_providers || "N/A",
+      count: stats.active_providers || "0",
     },
     {
       title: "New Customers",
-      count: stats.new_customers || "N/A",
+      count: stats.new_customers || "0",
     },
   ];
 
@@ -75,6 +79,13 @@ export default function AdminAnalytics() {
   const dailyActiveUsersData = charts.daily_active_users || [];
   const totalBookingsData = charts.weekly_bookings || [];
   const topCategoriesData = charts.top_categories || [];
+
+  const handleFilterChange = (value: string) => {
+    setTimeFilter(value);
+    console.log("Filter changed to:", value);
+    // Add your filter logic here - you might want to refetch data with the filter
+  };
+
   return (
     <div>
       <div className="top-0 z-[100] sticky w-full">
@@ -87,10 +98,18 @@ export default function AdminAnalytics() {
             View business analytics in different time series at a glance
           </span>
 
-          <Select>
-            <SelectTrigger className="text-[var(--heading-color)] font-semibold text-[12px]">
-              Last 30 Days
+          <Select value={timeFilter} onValueChange={handleFilterChange}>
+            <SelectTrigger className="text-[var(--text-body)] text-[12px] w-[140px]">
+              <SelectValue placeholder="This Week" />
             </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="week">This Week</SelectItem>
+              <SelectItem value="month">This Month</SelectItem>
+              <SelectItem value="quarter">This Quarter</SelectItem>
+              <SelectItem value="year">This Year</SelectItem>
+              <SelectItem value="all">All Time</SelectItem>
+            </SelectContent>
           </Select>
         </div>
 
@@ -110,26 +129,11 @@ export default function AdminAnalytics() {
           ))}
         </div>
 
-        {/* metrics */}
-        <div className="w-full max-w-screen-xl mx-auto mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-2">
-          {/* Active Users Chart */}
-          <div className="w-full h-[400px] bg-white">
-            <DailyActiveUsers chartData={dailyActiveUsersData} />
-          </div>
-          {/* Revenue Chart */}
-          <div className="w-full h-[400px] bg-white">
-            <Revenue chartData={revenueData} />
-          </div>
-
-          {/* Total Bookings Chart */}
-          <div className="w-full h-[400px] bg-white">
-            <TotalBookings chartData={totalBookingsData} />
-          </div>
-
-          {/* Top Categories Chart */}
-          <div className="w-full h-[400px] bg-white">
-            <TopCategories chartData={topCategoriesData} />
-          </div>
+        <div className="w-full max-w-screen-xl mx-auto mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 auto-rows-fr">
+          <DailyActiveUsers chartData={dailyActiveUsersData} />
+          <Revenue chartData={revenueData} />
+          <TotalBookings chartData={totalBookingsData} />
+          <TopCategories chartData={topCategoriesData} />
         </div>
       </section>
     </div>

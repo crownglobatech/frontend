@@ -1,106 +1,82 @@
 "use client";
+
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from "recharts";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
 interface Props {
   chartData: Record<string, number | string>;
 }
 
+const chartConfig = {
+  users: {
+    label: "Active Users",
+    color: "hsl(221.2 83.2% 53.3%)",
+  },
+} satisfies ChartConfig;
+
 export default function DailyActiveUsers({ chartData }: Props) {
-  // Transform data to array of objects for Recharts
-  const data = Object.entries(chartData).map(([date, revenue]) => ({
-    date: new Date(date),
-    revenue: Number(revenue),
+  const data = Object.entries(chartData).map(([date, users]) => ({
+    date: new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    }),
+    users: Number(users),
   }));
 
-  // Get primary color from CSS variable
-  const primaryColor = "#1E5AA8";
-
-  // Format X-axis labels
-  const formatXAxis = (date: Date) => {
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  };
-
-  // Y-axis tick formatter
-  const formatYAxis = (value?: number) => {
-    if (value === undefined) return "";
-    if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + "M";
-    if (value >= 1_000) return (value / 1_000).toFixed(1) + "k";
-    return value.toString();
-  };
-
-  // Tooltip formatter
-  const tooltipFormatter = (value?: number) => {
-    if (value === undefined) return "";
-    if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + "M";
-    if (value >= 1_000) return (value / 1_000).toFixed(1) + "k";
-    return value.toString();
-  };
-
   return (
-    <div className="w-full h-[400px] flex flex-col">
-      {/* Heading */}
-      <div className="px-6 py-2">
-        <h3 className="text-[16px] font-semibold text-[var(--heading-color)]">
-          Daily Active Users
-        </h3>
-        <span className="text-[14px] text-[var(--text-body)]">
-          User activity trends
-        </span>
-      </div>
-
-      {/* Chart fills remaining space */}
-      <div className="flex-1">
-        <ResponsiveContainer width="100%" height="100%">
+    <Card>
+      <CardHeader>
+        <CardTitle>Daily Active Users</CardTitle>
+        <CardDescription>User activity trends</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig} className="h-[350px] w-full">
           <LineChart
+            accessibilityLayer
             data={data}
-            margin={{ top: 20, right: 20, left: 0, bottom: 20 }}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
           >
-            <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+            <CartesianGrid vertical={false} />
             <XAxis
               dataKey="date"
-              tickFormatter={formatXAxis}
-              tick={{ fontSize: 12 }}
-              minTickGap={20}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
             />
-            <YAxis tickFormatter={formatYAxis} tick={{ fontSize: 12 }} />
-            <Tooltip
-              formatter={tooltipFormatter}
-              labelFormatter={(label: Date) =>
-                label.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })
-              }
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
             />
             <Line
+              dataKey="users"
               type="monotone"
-              dataKey="revenue"
-              stroke={primaryColor}
-              strokeWidth={3}
-              dot={{ r: 5, stroke: primaryColor, strokeWidth: 2, fill: "#fff" }}
+              stroke="var(--color-users)"
+              strokeWidth={2}
+              dot={{
+                fill: "var(--color-users)",
+              }}
+              activeDot={{
+                r: 6,
+              }}
             />
-            <defs>
-              <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={primaryColor} stopOpacity={0.4} />
-                <stop
-                  offset="95%"
-                  stopColor={primaryColor}
-                  stopOpacity={0.05}
-                />
-              </linearGradient>
-            </defs>
           </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+        </ChartContainer>
+      </CardContent>
+    </Card>
   );
 }

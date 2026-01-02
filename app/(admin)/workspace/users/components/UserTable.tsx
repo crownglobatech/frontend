@@ -20,7 +20,6 @@ import Pagination from "../../Pagination";
 import { useEffect, useState } from "react";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { getAllUsersAdmin } from "@/lib/api/admin";
-import { MdMoreVert } from "react-icons/md";
 import { RowActions } from "../../RowActions";
 
 export default function UserTable() {
@@ -29,7 +28,6 @@ export default function UserTable() {
   const [users, setUsers] = useState<any>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [paginatedData, setPaginatedData] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const token =
@@ -92,9 +90,8 @@ export default function UserTable() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Success">Success</SelectItem>
-              <SelectItem value="Failed">Failed</SelectItem>
+              <SelectItem value="Active">Active</SelectItem>
+              <SelectItem value="Inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>

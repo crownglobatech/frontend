@@ -95,3 +95,27 @@ export const getAllUsersAdmin = async (token: string, page?: number) => {
     throw new Error("Unknown Error");
   }
 };
+
+export const getAdminDashboardData = async (token: string) => {
+  if (!base) throw new Error("Base URL not defined");
+  if (!token) throw new Error("User not authenticated — token missing.");
+  try {
+    const response = await fetch(`${base}/api/admin/dashboard`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch admin users data.");
+    }
+    return data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error; // preserve message + stack
+    }
+    throw new Error("Unknown Error");
+  }
+};

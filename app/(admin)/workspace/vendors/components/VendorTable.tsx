@@ -7,7 +7,6 @@ import {
   SelectTrigger,
   SelectContent,
 } from "@/components/ui/select";
-import { MdMoreVert } from "react-icons/md";
 import {
   Table,
   TableBody,
@@ -101,6 +100,7 @@ export default function VendorTable() {
                 <SelectItem value="Cleaning">Cleaning</SelectItem>
                 <SelectItem value="Plumbing">Plumbing</SelectItem>
                 <SelectItem value="Furniture">Furniture</SelectItem>
+                <SelectItem value="Agent">Agent</SelectItem>
                 {/* Add more service items as needed */}
               </SelectContent>
             </Select>
@@ -111,10 +111,9 @@ export default function VendorTable() {
                 {statusFilter || "Status"}
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="_empty_">All</SelectItem>
-                <SelectItem value="In Progress">In Progress</SelectItem>
-                <SelectItem value="Confirmed">Confirmed</SelectItem>
-                <SelectItem value="Closed">Closed</SelectItem>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="Active">Active</SelectItem>
+                <SelectItem value="Inactive">Inactive</SelectItem>
               </SelectContent>
             </Select>
           </div>
