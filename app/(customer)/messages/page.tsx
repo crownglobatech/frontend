@@ -43,7 +43,7 @@ export default function Messages() {
         const user = JSON.parse(userString);
         setCurrentUserId(user.id);
         setCurrentUserName(`${user.first_name} ${user.last_name}`);
-        console.log("👤 Current user ID:", user.id);
+        // console.log("👤 Current user ID:", user.id);
       }
     }
   }, []);
@@ -54,7 +54,7 @@ export default function Messages() {
       setLoadingConversations(true);
       try {
         const data = await fetchAllConversations();
-        console.log(" Loaded conversations:", data.length);
+        // console.log(" Loaded conversations:", data.length);
         setConversations(data);
       } catch (err) {
         console.error(" Failed to load conversations:", err);
@@ -78,7 +78,7 @@ export default function Messages() {
 
       // HARD STOP: if user is already inside this chat
       if (chatId === selectedChatRef.current) {
-        console.log("Realtime ignored – chat already open");
+        // console.log("Realtime ignored – chat already open");
         return;
       }
 
@@ -100,14 +100,12 @@ export default function Messages() {
 
   useEffect(() => {
     if (!selectedChatId) return;
-
     const pusher = initPusher();
     const channelName = `private-conversation.${selectedChatId}`;
     const channel = pusher?.subscribe(channelName);
 
     channel?.bind("booking.status.updated", (data: any) => {
       console.log("[REALTIME] Booking update received:", data);
-
       const { id, status } = data.booking ?? data;
       // single source of truth
       setSelectedBookingId(id);
@@ -128,7 +126,7 @@ export default function Messages() {
     setLoadingMessages(true);
     try {
       const messages = await fetchConversationMessages(chatId);
-      console.log(" Fetched messages for chat", chatId, ":", messages.length);
+      // console.log(" Fetched messages for chat", chatId, ":", messages.length);
       setSelectedMessages(messages);
     } catch (err) {
       console.error(" Failed to load messages:", err);
@@ -140,8 +138,7 @@ export default function Messages() {
   // Handle chat selection
   const handleSelectChat = (chatId: string) => {
     if (selectedChatId === chatId) return;
-
-    console.log(" Selecting chat:", chatId);
+    // console.log(" Selecting chat:", chatId);
     setSelectedChatId(chatId);
 
     // Clear unread count when opening a chat
@@ -189,31 +186,29 @@ export default function Messages() {
   // Handle message sent by current user (optimistic update)
   const handleMessageSent = useCallback(
     (newMessage: Message) => {
-      console.log(" [SENT] Optimistic message update:", {
-        messageId: newMessage.id,
-        conversationId: newMessage.conversation_id,
-        selectedChatId,
-        preview: newMessage.message.substring(0, 30) + "...",
-      });
-
+      // console.log(" [SENT] Optimistic message update:", {
+      //   messageId: newMessage.id,
+      //   conversationId: newMessage.conversation_id,
+      //   selectedChatId,
+      //   preview: newMessage.message.substring(0, 30) + "...",
+      // });
       // Add message to active view if it belongs to the currently open chat
       if (String(newMessage.conversation_id) === selectedChatId) {
         setSelectedMessages((prev) => {
           // 1. Skip if real message already exists
           if (newMessage.id && prev.some((m) => m.id === newMessage.id)) {
-            console.log("[SENT] Message already exists, skipping");
+            // console.log("[SENT] Message already exists, skipping");
             return prev;
           }
-
           // Replace optimistic message by client_uuid
           const optIndex = prev.findIndex(
             (m) => m.id && m.id === newMessage.id
           );
 
           if (optIndex !== -1) {
-            console.log(
-              "[SENT] Replaced optimistic message with server-confirmed message"
-            );
+            // console.log(
+            //   "[SENT] Replaced optimistic message with server-confirmed message"
+            // );
             const updated = [...prev];
             updated[optIndex] = newMessage;
 
@@ -226,7 +221,7 @@ export default function Messages() {
           }
 
           // New message from this user
-          console.log("[SENT] Adding new message to UI");
+          // console.log("[SENT] Adding new message to UI");
           const updated = [...prev, newMessage];
           return updated.sort(
             (a, b) =>
@@ -249,14 +244,12 @@ export default function Messages() {
   const handleNewRemoteMessage = useCallback(
     (newMessage: Message) => {
       const chatId = String(newMessage.conversation_id);
-
       // Update sidebar immediately
       const isOwnMessage = currentUserId === newMessage.sender_id;
       updateConversationSnippet(chatId, newMessage, isOwnMessage);
 
       // Only update current chat
       if (chatId !== selectedChatId) return;
-
       setSelectedMessages((prev) => {
         // 1. Skip if real message already exists
         if (newMessage.id && prev.some((m) => m.id === newMessage.id)) {
@@ -264,13 +257,13 @@ export default function Messages() {
           return prev;
         }
 
-        // 2. Replace optimistic message by client_uuid
+        //  Replace optimistic message by client_uuid
         const optIndex = prev.findIndex((m) => m.id && m.id === newMessage.id);
 
         if (optIndex !== -1) {
-          console.log(
-            "Replaced optimistic message with server-confirmed message"
-          );
+          // console.log(
+          //   "Replaced optimistic message with server-confirmed message"
+          // );
           const updated = [...prev];
           updated[optIndex] = newMessage;
 
@@ -281,8 +274,8 @@ export default function Messages() {
           );
         }
 
-        // 3. New real message
-        console.log("New real message added");
+        // New real message
+        // console.log("New real message added");
         const updated = [...prev, newMessage];
         return updated.sort(
           (a, b) =>
@@ -298,14 +291,12 @@ export default function Messages() {
 
   useEffect(() => {
     if (!selectedChatId) {
-      console.log("No current conversation to load bookings for.");
+      // console.log("No current conversation to load bookings for.");
       return;
-    } else {
-      console.log("Loading bookings for conversation:", selectedChatId);
     }
     const loadBookings = async () => {
       const data = await getMyBookings();
-      console.log("Provider bookings:", data);
+      // console.log("Provider bookings:", data);
       setAllBookings(data.data);
     };
     loadBookings();
@@ -319,11 +310,11 @@ export default function Messages() {
       (b: any) => b.conversation_id === Number(selectedChatId)
     );
     if (booking) {
-      console.log("Found booking for current conversation:", booking);
+      // console.log("Found booking for current conversation:", booking);
       setCurrentBooking(booking);
     } else {
       setCurrentBooking(null);
-      console.log("No booking found for current conversation.");
+      // console.log("No booking found for current conversation.");
     }
   }, [allBookings, selectedChatId]);
 
@@ -364,8 +355,7 @@ export default function Messages() {
     const channel = pusher?.subscribe(channelName);
 
     channel?.bind("booking.status.updated", (data: any) => {
-      console.log("[REALTIME] Booking update received:", data);
-
+      // console.log("[REALTIME] Booking update received:", data);
       const booking = data.booking;
       const { id, status } = data.booking ?? data;
       setSelectedBookingId(id);
@@ -374,8 +364,8 @@ export default function Messages() {
         setCurrentBooking(booking);
         setBookingstatus(status);
       }
-      console.log(currentBooking);
-      console.log(status);
+      // console.log(currentBooking);
+      // console.log(status);
       localStorage.setItem(`booking_id_${selectedChatId}`, String(id));
       localStorage.setItem(`booking_status_${selectedChatId}`, status);
     });

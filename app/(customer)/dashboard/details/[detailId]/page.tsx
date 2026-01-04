@@ -24,9 +24,6 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
   let adData;
   try {
     adData = await getCustomerAdsById(detailId);
-    console.log("Addata");
-
-    console.log(adData);
     if (!adData) {
       notFound();
     }
@@ -37,19 +34,17 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
     }
     throw error;
   }
-
   // Convert 0/1 to boolean
   const isMessagingCredible = adData?.business?.is_verified === 1;
   const photos = Array.isArray(adData.photo_urls) ? adData.photo_urls : [];
-
   const vendorReviews = adData?.reviews || [];
-  console.log(vendorReviews);
+  // const relatedServices = adData
 
   return (
     <div>
       {/* can be set to layout instead of repitition */}
       <div className="top-0 z-[1000] sticky w-full">
-        {/* --- Top Bar --- */}
+        {/*  Top Bar  */}
         <div className="flex justify-between gap-[50px] bg-white shadow-sm px-6 py-4">
           <div className="flex gap-2 w-full">
             <div className="relative w-[100px]">

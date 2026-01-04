@@ -5,7 +5,11 @@ import { SendIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MdAttachFile } from "react-icons/md";
 import ProgressBar from "./ProgressBar";
-import { confirmCompletion, rejectBooking } from "@/lib/api/bookings";
+import {
+  acceptCustomBooking,
+  confirmCompletion,
+  rejectBooking,
+} from "@/lib/api/bookings";
 import LoadingDots from "@/app/components/general/LoadingDots";
 import ReviewPopUpBox from "./ReviewPopUpBox";
 
@@ -32,12 +36,8 @@ export default function ChatFooter({
   const { notify } = useNotification();
   const [isSending, setIsSending] = useState(false);
   const [openReviewPopup, setOpenReviewPopup] = useState(false);
-  // Helper to get current user info for optimistic display
-  useEffect(() => {
-    console.log("Booking status updated:", bookingstatus);
-    console.log(currentBooking);
-  });
 
+  console.log(currentBooking);
   useEffect(() => {
     if (currentBooking?.status === "completed") {
       notify(
@@ -47,13 +47,6 @@ export default function ChatFooter({
       );
     }
   }, [currentBooking?.status === "completed"]);
-  // const getCurrentUser = () => {
-  //   const userString =
-  //     typeof window !== "undefined" ? localStorage.getItem("user") : null;
-  //   return userString
-  //     ? JSON.parse(userString)
-  //     : { id: 0, first_name: "You", role: "customer" };
-  // };
 
   const handleSendMessage = async () => {
     if (!token) {
@@ -69,11 +62,11 @@ export default function ChatFooter({
     try {
       setLoading(true);
       setMessage("");
-      console.log(
-        "Sending message in",
-        `private-conversation.${chatId}`,
-        "room"
-      );
+      // console.log(
+      //   "Sending message in",
+      //   `private-conversation.${chatId}`,
+      //   "room"
+      // );
       if (!chatId) {
         throw new Error("Failed to get conversation ID from server");
       }
@@ -95,8 +88,24 @@ export default function ChatFooter({
 
   // cancel booking
   const handleRejectBooking = async () => {
-    const res = await rejectBooking(bookingId!);
-    notify("Booking cancelled successfully.", "success", "Booking Cancelled");
+    const res = await rejectBooking(currentBooking.booking_code!);
+    notify(
+      res.message || "Booking cancelled successfully.",
+      "success",
+      "Booking Cancelled"
+    );
+    localStorage.removeItem(`booking_status_${chatId}`);
+    localStorage.removeItem(`booking_id_${chatId}`);
+  };
+  const handleAcceptBooking = async () => {
+    console.log(currentBooking.booking_code);
+
+    const res = await acceptCustomBooking(currentBooking.booking_code!);
+    notify(
+      res.message || "Booking accepted successfully.",
+      "success",
+      "Booking Cancelled"
+    );
     localStorage.removeItem(`booking_status_${chatId}`);
     localStorage.removeItem(`booking_id_${chatId}`);
   };
@@ -136,7 +145,7 @@ export default function ChatFooter({
   }, [currentBooking?.status]);
 
   // confirm completion
-  const markAsCloased = async () => {
+  const markAsClosed = async () => {
     if (!currentBooking?.booking_code) return;
     await confirmCompletion("closed", currentBooking?.booking_code);
     setOpenReviewPopup(true);
@@ -179,6 +188,45 @@ export default function ChatFooter({
             Discuss service details before booking.
           </p>
 
+          {currentBooking?.status &&
+            currentBooking?.status === "custom_pending" && (
+              <div className="w-full mt-3 px-8">
+                <div className="flex flex-col items-start mb-4 w-full">
+                  <h2 className="text-[18px] font-semibold text-[var(--heading-color)]">
+                    Service Progress
+                  </h2>
+                  {/* progress */}
+                  <div className="flex flex-col w-full mt-2 gap-3">
+                    <div>
+                      <ProgressBar
+                        steps={steps}
+                        completedSteps={completedSteps}
+                        currentStep={currentStep}
+                      />
+                    </div>
+                    <div className="bg-[#FBF7EB] border border-[#D4AF37] rounded-sm px-4 py-1.5 w-full flex items-center justify-between">
+                      <p className="text-[#D4AF37] text-[10px]">
+                        You have a custom booking request.
+                      </p>
+                      <div className="flex gap-2 items-center">
+                        <span
+                          onClick={handleRejectBooking}
+                          className="bg-transparent border border-[#E63946] text-[10px] font-thin text-[#E63946] shadow-sm px-4 py-1.5 rounded cursor-pointer"
+                        >
+                          Reject Booking
+                        </span>
+                        <span
+                          onClick={handleAcceptBooking}
+                          className="bg-[var(--success-color)] rounded cursor-pointer text-[10px] font-thin text-white border border-[var(--success-color )] shadow-sm px-4 py-1.5"
+                        >
+                          Accept Booking
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           {currentBooking?.status && currentBooking?.status === "pending" && (
             <div className="w-full mt-3 px-8">
               <div className="flex flex-col items-start mb-4 w-full">
@@ -295,7 +343,7 @@ export default function ChatFooter({
                   </p>
                   <div className="flex gap-2">
                     <span
-                      onClick={markAsCloased}
+                      onClick={markAsClosed}
                       className="bg-[var(--success-color)] text-[10px] font-semibold text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
                     >
                       Confirm Completion

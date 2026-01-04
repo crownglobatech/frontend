@@ -59,18 +59,9 @@ export default function ChatFooter({
     }
   }, [currentBooking?.status]);
 
-  useEffect(() => {
-    console.log("Booking status updated:", currentBooking?.status);
-  });
-
   const handleSendMessage = async () => {
     if (!message.trim()) return;
-
-    const userString =
-      typeof window !== "undefined" ? localStorage.getItem("user") : null;
-    const currentUser = userString ? JSON.parse(userString) : "";
     const trimmedMessage = message.trim();
-
     try {
       setLoading(true);
       setMessage("");
@@ -99,7 +90,6 @@ export default function ChatFooter({
     // onRejectBooking?.();
     notify("Booking cancelled successfully.", "success", "Booking Cancelled");
   };
-  console.log(currentBooking);
 
   const handleAcceptBooking = async () => {
     if (!currentBooking) return;
@@ -147,6 +137,34 @@ export default function ChatFooter({
       </div>
 
       {/* Booking Progress Card */}
+      {currentBooking && currentBooking.status === "custom_pending" && (
+        <div className="w-full mt-3 px-8">
+          <div className="flex flex-col items-start mb-4 w-full">
+            <h2 className="text-[18px] font-semibold text-[var(--heading-color)]">
+              Service Progress
+            </h2>
+
+            <div className="flex flex-col w-full mt-2 gap-3">
+              <ProgressBar
+                steps={steps}
+                completedSteps={completedSteps}
+                currentStep={currentStep}
+              />
+              <div className="bg-[#FBF7EB] border border-[#D4AF37] rounded-sm px-4 py-1.5 w-full flex items-center justify-between">
+                <p className="text-[#D4AF37] text-[10px]">
+                  Awaiting customer to accept your offer.
+                </p>
+                {/* <span
+                    onClick={handleRejectBooking}
+                    className="bg-[#E63946] text-[10px] font-thin text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
+                  >
+                    Cancel Booking
+                  </span> */}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {currentBooking && currentBooking.status === "pending" && (
         <div className="w-full mt-3 px-8">
           <div className="flex flex-col items-start mb-4 w-full">

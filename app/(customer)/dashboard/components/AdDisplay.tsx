@@ -8,15 +8,21 @@ interface AdDisplayProps {
   loading: boolean;
   ads: CustomerAd[] | null;
   error?: string | null;
+  isInitialLoad: boolean;
 }
 
-export default function AdDisplay({ loading, ads, error }: AdDisplayProps) {
+export default function AdDisplay({
+  loading,
+  ads,
+  error,
+  isInitialLoad,
+}: AdDisplayProps) {
   // Loading
-  if (loading && ads === null) {
+  if (loading && isInitialLoad) {
     return <Loader />;
   }
 
-  // 2. Error
+  //  Error
   if (error) {
     return (
       <div className="flex flex-col gap-2 justify-center items-center py-40 text-center">
@@ -51,6 +57,11 @@ export default function AdDisplay({ loading, ads, error }: AdDisplayProps) {
   // Normal results
   return (
     <div className="">
+      {loading && !isInitialLoad && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70">
+          <Loader />
+        </div>
+      )}
       <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {ads?.map((ad) => (
           <Link href={`/dashboard/details/${ad.id}`} key={ad.id}>

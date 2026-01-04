@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CustomerHeader from "./CustomerHeader";
 import AdDisplay from "./AdDisplay";
 import Pagination from "./Pagination";
+import Loader from "@/app/components/general/Loader";
 
 export default function DashboardComponent() {
   const [token, setToken] = useState<string | null>(null);
@@ -27,10 +28,15 @@ export default function DashboardComponent() {
   const [paginatedAds, setPaginatedAds] = useState<CustomerAdsResponse | null>(
     null
   );
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [category, query, filters]);
+
+  useEffect(() => {
+    setIsInitialLoad(true);
+  }, [category, query, filters, currentPage]);
 
   useEffect(() => {
     const t = localStorage.getItem("token");
@@ -79,9 +85,12 @@ export default function DashboardComponent() {
     const fetchAds = async () => {
       setLoading(true);
       setError(null);
+
+      if (isInitialLoad) {
+        setAds(null);
+      }
       const params = buildQueryParams();
       router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-
       try {
         let res;
         if (token) {
@@ -92,9 +101,8 @@ export default function DashboardComponent() {
         } else {
           res = await getCustomerAdsNoAuth(category, { query, filters });
         }
-        if (res && res.data) {
+        if (res?.data) {
           setAds(res.data.data ?? []);
-          setCurrentPage(Number(res.data.current_page) || 1);
           setLastPage(Number(res.data.last_page) || 1);
           setTotalResults(Number(res.data.total) || 0);
           setPaginatedAds(res);
@@ -105,16 +113,13 @@ export default function DashboardComponent() {
             ? "No internet connection"
             : "Failed to load listings. Please try again."
         );
-        console.error("Error fetching ads:", err);
       } finally {
         setLoading(false);
+        setIsInitialLoad(false);
       }
     };
-
     fetchAds();
   }, [category, query, filters, currentPage]);
-  console.log(ads);
-  console.log(paginatedAds);
 
   return (
     <div className="">
@@ -129,11 +134,14 @@ export default function DashboardComponent() {
           totalResults={totalResults}
         />
       </div>
-
       <div className="px-6">
-        <AdDisplay ads={ads} loading={loading} error={error} />
+        <AdDisplay
+          ads={ads}
+          loading={loading}
+          error={error}
+          isInitialLoad={isInitialLoad}
+        />
       </div>
-
       {ads && ads.length > 0 && paginatedAds && (
         <div className="mb-4">
           <Pagination

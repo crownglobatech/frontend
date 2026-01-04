@@ -44,8 +44,7 @@ export default function ChatClient({
       console.warn(" No chatId provided to ChatClient");
       return;
     }
-
-    console.log(`Subscribing to private-conversation.${chatId}`);
+    // console.log(`Subscribing to private-conversation.${chatId}`);
     const cleanup = subscribeToChat(chatId, (msg: Message) => {
       // CRITICAL FIX: Force conversation_id because backend doesn't send it
       const messageWithChatId: Message = {
@@ -53,14 +52,14 @@ export default function ChatClient({
         conversation_id: Number(chatId), // THIS IS THE MAGIC LINE
       };
 
-      console.log("Pusher message received → forcing conversation_id:", chatId);
+      // console.log("Pusher message received → forcing conversation_id:", chatId);
       onNewRemoteMessageRef.current(messageWithChatId);
     });
 
     return () => {
-      console.log(
-        `🔌 [ChatClient] Unsubscribing from private-conversation.${chatId}`
-      );
+      // console.log(
+      //   `🔌 [ChatClient] Unsubscribing from private-conversation.${chatId}`
+      // );
       cleanup?.();
     };
   }, [chatId]);

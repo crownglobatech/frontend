@@ -66,11 +66,6 @@ export default function ChatHeader({
           <h3 className="font-bold text-lg text-gray-900">
             {other_user.full_name}
           </h3>
-          {/* {service_ad && (
-            <p className="text-xs text-gray-500 mt-1">
-              {service_ad.title}
-            </p>
-          )} */}
         </div>
       </div>
 

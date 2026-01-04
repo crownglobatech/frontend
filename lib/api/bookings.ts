@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { getTokenFromCookies } from "@/lib/utils";
 
 const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api`;
@@ -51,6 +51,7 @@ export const bookProvider = async (conversationId: string) => {
     }
   }
 };
+// edit the functins below to throw proper erros for proper ux
 export const updateBookingStatus = async (
   status: string,
   bookingId: number
@@ -67,6 +68,12 @@ export const rejectBooking = async (bookingId: number) => {
   return res.data.data || res.data;
 };
 
+export const acceptCustomBooking = async (bookingId: number) => {
+  const res = await apiClient.patch(`/customer/bookings/${bookingId}/accept`);
+  console.log(res);
+  return res.data.data || res.data;
+};
+
 export const showBookingDetails = async (bookingId: number) => {
   const res = await apiClient.get(`/service-provider/bookings/${bookingId}`);
   console.log(res.data.data);
@@ -79,7 +86,7 @@ export const getProviderBookings = async () => {
 };
 export const vendorRejectBooking = async (bookingId: number) => {
   const res = await apiClient.post(
-    `service-provider/bookings/${bookingId}/reject`
+    `/service-provider/bookings/${bookingId}/reject`
   );
   console.log(res);
   return res;
@@ -120,4 +127,29 @@ export const confirmCompletion = async (
       status: status,
     }
   );
+};
+
+export const initiateCustomBooking = async (
+  conversationId: string,
+  customPrice: number
+) => {
+  try {
+    const res = await apiClient.post(
+      `/service-provider/conversations/${conversationId}/custom-offer`,
+      {
+        conversation_id: Number(conversationId),
+        custom_price: customPrice,
+      }
+    );
+    return res.data.data || res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      // Laravel-style error extraction
+      const message =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Booking failed";
+      throw new Error(message);
+    }
+  }
 };
