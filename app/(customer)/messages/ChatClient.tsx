@@ -10,11 +10,13 @@ interface ChatClientProps {
   chatId: string;
   initialMessages: Message[]; // Messages loaded by parent
   onNewRemoteMessage: (message: Message) => void; // Callback for Pusher-received messages
+  loadingMessages: boolean
 }
 
 export default function ChatClient({
   chatId,
   initialMessages,
+  loadingMessages,
   onNewRemoteMessage,
 }: ChatClientProps) {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
@@ -90,14 +92,20 @@ export default function ChatClient({
   const adTitle = currentConversation?.service_ad.title;
   const adPrice = currentConversation?.service_ad.price;
 
+  if (loadingMessages) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500">
+        <p className="text-lg">Loading messages...</p>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col h-full bg-[#f0f2f5]">
       {/* Ad Banner Display */}
       <div className="top-0 z-[10] sticky flex justify-between items-center bg-[var(--foundation-primary)] px-8 py-2 w-full">
         <h2 className="font-bold text-[var(--primary-color)]">{adTitle}</h2>
-        <p className="font-semibold text-[var(--primary-color)]">{`₦${
-          adPrice ? adPrice : ""
-        }`}</p>
+        <p className="font-semibold text-[var(--primary-color)]">{`₦${adPrice ? adPrice : ""
+          }`}</p>
       </div>
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-20">
         <div className="space-y-4">
@@ -111,11 +119,10 @@ export default function ChatClient({
                 className={`flex ${isMe ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-xs px-4 py-3 rounded-2xl shadow-sm ${
-                    isMe
-                      ? "bg-blue-600 text-white rounded-br-none"
-                      : "bg-white border border-gray-200 text-gray-800 rounded-bl-none"
-                  }`}
+                  className={`max-w-xs px-4 py-3 rounded-2xl shadow-sm ${isMe
+                    ? "bg-blue-600 text-white rounded-br-none"
+                    : "bg-white border border-gray-200 text-gray-800 rounded-bl-none"
+                    }`}
                 >
                   {!isMe && (
                     <p className="text-xs font-semibold opacity-80 mb-1">
@@ -126,9 +133,8 @@ export default function ChatClient({
                     {msg.message}
                   </p>
                   <p
-                    className={`text-[10px] mt-1 block ${
-                      isMe ? "opacity-60" : "opacity-80"
-                    }`}
+                    className={`text-[10px] mt-1 block ${isMe ? "opacity-60" : "opacity-80"
+                      }`}
                   >
                     {new Date(msg.created_at).toLocaleTimeString([], {
                       hour: "2-digit",

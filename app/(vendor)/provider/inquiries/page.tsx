@@ -214,8 +214,8 @@ export default function VendorMessages() {
           unread_count: isOpen
             ? 0
             : isOwnMessage
-            ? target.unread_count || 0
-            : (target.unread_count || 0) + 1,
+              ? target.unread_count || 0
+              : (target.unread_count || 0) + 1,
         };
 
         return [updated, ...prev.filter((_, i) => i !== index)];
@@ -259,24 +259,22 @@ export default function VendorMessages() {
       // Update sidebar immediately
       const isOwnMessage = currentUserId === newMessage.sender_id;
       updateConversationSnippet(chatId, newMessage, isOwnMessage);
-
       // Only update current chat
       if (chatId !== selectedChatId) return;
-
       setSelectedMessages((prev) => {
         // 1. Real message with server ID already exists? → skip
         if (newMessage.id && prev.some((m) => m.id === newMessage.id)) {
           // console.log("Duplicate prevented");
           return prev;
         }
-        // 2. Find optimistic message by EXACT text match + time proximity
+        // Find optimistic message by EXACT text match + time proximity
         const optIndex = prev.findIndex(
           (m) =>
             (m.id === undefined || m.id < 0) &&
             m.message === newMessage.message &&
             Math.abs(
               new Date(m.created_at).getTime() -
-                new Date(newMessage.created_at).getTime()
+              new Date(newMessage.created_at).getTime()
             ) < 8000
         );
 
@@ -286,8 +284,7 @@ export default function VendorMessages() {
           updated[optIndex] = newMessage;
           return updated;
         }
-
-        // 3. New message from someone else
+        // New message from someone else
         // console.log("New real message added");
         return [...prev, newMessage];
       });

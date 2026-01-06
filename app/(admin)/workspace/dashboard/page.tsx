@@ -1,4 +1,5 @@
 "use client";
+import LoadingSpinner from "@/app/components/general/LoadingSpinner";
 import Header from "../components/Header";
 import {
   Select,
@@ -65,12 +66,13 @@ export default function AdminDashboard() {
     // Add your filter logic here - you might want to refetch data with the filter
   };
 
+  // ... imports
+
+  // ... inside component
   if (loading)
     return (
-      <div className="flex h-screen justify-center items-center space-x-1">
-        <span className="bg-[var(--primary-color)] rounded-full w-4 h-4 animate-bounceDot [animation-delay:-0.32s]"></span>
-        <span className="bg-[var(--primary-color)] rounded-full w-4 h-4 animate-bounceDot [animation-delay:-0.16s]"></span>
-        <span className="bg-[var(--primary-color)] rounded-full w-4 h-4 animate-bounceDot"></span>
+      <div className="flex h-screen justify-center items-center">
+        <LoadingSpinner size="lg" variant="primary" />
       </div>
     );
   return (

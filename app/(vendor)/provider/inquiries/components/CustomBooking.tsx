@@ -24,12 +24,12 @@ export default function CustomBooking({
   const [newPrice, setNewPrice] = useState("");
   const { notify } = useNotification();
   const [loading, setLoading] = useState<boolean>(false);
-  const [bookingStatus, setBookingstatus] = useState("");
 
   const initiateBooking = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log(newPrice);
       const response = await initiateCustomBooking(
         conversationId,
         Number(newPrice)
@@ -40,11 +40,10 @@ export default function CustomBooking({
         return;
       }
       notify(response.message, "success", "Booking Successful");
-      setBookingstatus(response?.data?.status);
+      setNewPrice('')
       setTimeout(() => {
         onOpenChange(false);
       }, 600);
-      console.log(response?.data?.status);
     } catch (error) {
       error &&
         error instanceof Error &&

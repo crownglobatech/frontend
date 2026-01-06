@@ -119,14 +119,15 @@ export const markStatusAsCompleted = async (
 };
 export const confirmCompletion = async (
   status: string,
-  bookingCode: string
+  bookingId: number
 ) => {
   const res = await apiClient.patch(
-    `/customer/bookings/${bookingCode}/status`,
+    `/customer/bookings/${bookingId}/status`,
     {
       status: status,
     }
   );
+  return res.data;
 };
 
 export const initiateCustomBooking = async (
@@ -144,11 +145,27 @@ export const initiateCustomBooking = async (
     return res.data.data || res.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      // Laravel-style error extraction
       const message =
         error.response?.data?.message ||
         error.response?.data?.error ||
         "Booking failed";
+      throw new Error(message);
+    }
+  }
+};
+
+export const initializePayment = async (bookingCode: string) => {
+  try {
+    const res = await apiClient.post(`/customer/payments/initialize`, {
+      booking_code: bookingCode,
+    });
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const message =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Payment failed";
       throw new Error(message);
     }
   }

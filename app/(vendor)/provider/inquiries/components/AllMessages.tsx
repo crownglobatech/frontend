@@ -1,3 +1,4 @@
+import LoadingSpinner from "@/app/components/general/LoadingSpinner";
 import { ConversationItem } from "@/lib/types";
 import MessageShowcaseCard from "./MessageShowCaseCard";
 import { useMemo } from "react";
@@ -10,7 +11,6 @@ interface AllMessagesProps {
 }
 
 export default function AllMessages({ conversations, onSelectChat, loading, selectedChatId }: AllMessagesProps) {
-  const primaryColor = '#3b82f6';
 
   // CRITICAL: Sort conversations by most recent message timestamp
   const sortedConversations = useMemo(() => {
@@ -24,10 +24,8 @@ export default function AllMessages({ conversations, onSelectChat, loading, sele
   // Show loading only on initial load
   if (loading && (!conversations || conversations.length === 0)) {
     return (
-      <div className='flex justify-center items-center space-x-1 h-screen'>
-        <span style={{ backgroundColor: primaryColor }} className='rounded-full w-2 h-2 animate-bounceDot [animation-delay:-0.32s]'></span>
-        <span style={{ backgroundColor: primaryColor }} className='rounded-full w-2 h-2 animate-bounceDot [animation-delay:-0.16s]'></span>
-        <span style={{ backgroundColor: primaryColor }} className='rounded-full w-2 h-2 animate-bounceDot'></span>
+      <div className='flex justify-center items-center h-screen'>
+        <LoadingSpinner size="lg" variant="primary" />
       </div>
     );
   }
@@ -48,9 +46,10 @@ export default function AllMessages({ conversations, onSelectChat, loading, sele
           <div
             key={conv.conversation_id}
             onClick={() => onSelectChat(String(conv.conversation_id))}
-            className="cursor-pointer hover:bg-gray-100 rounded-lg transition-all"
+            className="cursor-pointer rounded-lg transition-all"
           >
             <MessageShowcaseCard
+              isActive={String(conv.conversation_id) === selectedChatId}
               providerName={conv.other_user.full_name || 'Unknown'}
               lastMessageSnippet={conv.last_message || 'No messages'}
               timestamp={conv.last_message_at}

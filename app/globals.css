@@ -73,7 +73,8 @@
   }
 
   .animate-bounceDot {
-    animation: bounceDot 1.4s infinite ease-in-out both;
+    @apply animate-bounce;
+    animation: bounce 1.4s infinite ease-in-out both;
   }
 }
 

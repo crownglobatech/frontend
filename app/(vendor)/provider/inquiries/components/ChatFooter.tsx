@@ -22,7 +22,6 @@ interface ChatFooterProps {
 
 export default function ChatFooter({
   chatId,
-  onMessageSent,
   currentBooking,
 }: ChatFooterProps) {
   const [message, setMessage] = useState("");
@@ -85,30 +84,56 @@ export default function ChatFooter({
   };
 
   const handleRejectBooking = async () => {
-    if (!currentBooking) return;
-    await vendorRejectBooking(currentBooking.id);
-    // onRejectBooking?.();
-    notify("Booking cancelled successfully.", "success", "Booking Cancelled");
+    try {
+      if (!currentBooking) return;
+      await vendorRejectBooking(currentBooking.id);
+      // onRejectBooking?.();
+      notify("Booking cancelled successfully.", "success", "Booking Cancelled");
+    } catch (error) {
+      error &&
+        error instanceof Error &&
+        notify(
+          error.message || "An unknown error occurred",
+          "error",
+          "Booking Error"
+        );
+    }
   };
 
   const handleAcceptBooking = async () => {
-    if (!currentBooking) return;
-    await vendorAcceptBooking(currentBooking.booking_code);
-    notify("Booking accepted successfully.,", "success", "Booking Accepted");
+    try {
+      if (!currentBooking) return;
+      await vendorAcceptBooking(currentBooking.booking_code);
+      notify("Booking accepted successfully.,", "success", "Booking Accepted");
+    } catch (error) {
+      error &&
+        error instanceof Error &&
+        notify(
+          error.message || "An unknown error occurred",
+          "error",
+          "Booking Error"
+        );
+    }
   };
-  const handlePaymentSuccess = async () => {
-    if (!currentBooking.booking_code) return;
-    await customerUpdateStatus("in_progress", currentBooking.booking_code);
-    notify("Your booking is in progress", "success", "Booking In Progress");
-  };
+
   const markAsCompleted = async () => {
-    if (!currentBooking.booking_code) return;
-    await markStatusAsCompleted("completed", currentBooking.booking_code);
-    notify(
-      "Service as been successfully marked as completed",
-      "success",
-      "Service Completed"
-    );
+    try {
+      if (!currentBooking.booking_code) return;
+      await markStatusAsCompleted("completed", currentBooking.booking_code);
+      notify(
+        "Service as been successfully marked as completed",
+        "success",
+        "Service Completed"
+      );
+    } catch (error) {
+      error &&
+        error instanceof Error &&
+        notify(
+          error.message || "An unknown error occurred",
+          "error",
+          "Booking Error"
+        );
+    }
   };
 
   return (
@@ -189,13 +214,13 @@ export default function ChatFooter({
                     onClick={handleRejectBooking}
                     className="bg-transparent border border-[#E63946] text-[10px] font-thin text-[#E63946] shadow-sm px-4 py-1.5 rounded cursor-pointer"
                   >
-                    Reject Booking
+                    {loading ? <LoadingDots /> : "Reject Booking"}
                   </span>
                   <span
                     onClick={handleAcceptBooking}
                     className="bg-[var(--success-color)] rounded cursor-pointer text-[10px] font-thin text-white border border-[var(--success-color )] shadow-sm px-4 py-1.5"
                   >
-                    Accept Booking
+                    {loading ? <LoadingDots /> : "Accept Booking"}
                   </span>
                 </div>
               </div>
@@ -219,46 +244,12 @@ export default function ChatFooter({
             </div>
             <div className="bg-[#FBF7EB] border border-[#D4AF37] rounded-sm px-4 py-1.5 w-full flex items-center justify-between">
               <p className="text-[#D4AF37] text-[10px]">
-                Click on 'Completed' when services are finished
-              </p>
-              <div className="flex gap-2">
-                <span
-                  onClick={handlePaymentSuccess}
-                  className="bg-[var(--success-color)] opacity-50 text-[10px] font-semibold text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
-                >
-                  In Progress
-                </span>
-                <span
-                  onClick={handleRejectBooking}
-                  className="bg-[var(--success-color)] text-[10px] font-semibold text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
-                >
-                  Completed
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* {currentBooking && currentBooking.status === 'confirmed' && (
-        <div className="w-full mt-3 px-8">
-          <div className="flex flex-col items-start mb-4 w-full">
-            <h2 className="text-[18px] font-semibold">Service Progress</h2>
-
-            <ProgressBar
-              steps={steps}
-              completedSteps={completedSteps}
-              currentStep={currentStep}
-            />
-
-            <div className="bg-[#FBF7EB] border border-[#D4AF37] rounded-sm px-4 py-2 w-full mt-3">
-              <p className="text-[#D4AF37] text-[12px]">
                 Booking accepted. Awaiting customer payment.
               </p>
             </div>
           </div>
         </div>
-      )} */}
-
+      )}
       {currentBooking && currentBooking.status === "in_progress" && (
         <div className="w-full mt-3 px-8">
           <div className="flex flex-col gap-2 items-start mb-4 w-full">
@@ -279,16 +270,10 @@ export default function ChatFooter({
               </p>
               <div className="flex gap-2">
                 <span
-                  onClick={handlePaymentSuccess}
-                  className="bg-[var(--success-color)] opacity-50 text-[10px] font-semibold text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
-                >
-                  In Progress
-                </span>
-                <span
                   onClick={markAsCompleted}
                   className="bg-[var(--success-color)] text-[10px] font-semibold text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
                 >
-                  Completed
+                  {loading ? <LoadingDots /> : "Completed"}
                 </span>
               </div>
             </div>

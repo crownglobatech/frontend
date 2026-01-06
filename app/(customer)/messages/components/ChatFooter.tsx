@@ -8,10 +8,12 @@ import ProgressBar from "./ProgressBar";
 import {
   acceptCustomBooking,
   confirmCompletion,
+  initializePayment,
   rejectBooking,
 } from "@/lib/api/bookings";
 import LoadingDots from "@/app/components/general/LoadingDots";
 import ReviewPopUpBox from "./ReviewPopUpBox";
+import { ConversationItem } from "@/lib/types";
 
 interface ChatFooterProps {
   chatId: string;
@@ -20,16 +22,16 @@ interface ChatFooterProps {
   bookingId?: number;
   bookingCode?: string;
   currentBooking?: any | null;
+  conversations: ConversationItem[];
 }
 export default function ChatFooter({
   chatId,
-  onMessageSent,
-  bookingstatus,
-  bookingId,
   currentBooking,
-  bookingCode,
+  conversations,
 }: ChatFooterProps) {
   const [message, setMessage] = useState("");
+  const [currentConversation, setCurrentConversation] =
+    useState<ConversationItem | null>(null);
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const [loading, setLoading] = useState(false);
@@ -37,7 +39,14 @@ export default function ChatFooter({
   const [isSending, setIsSending] = useState(false);
   const [openReviewPopup, setOpenReviewPopup] = useState(false);
 
-  console.log(currentBooking);
+  useEffect(() => {
+    const conv = conversations.find(
+      (c: ConversationItem) => String(c.conversation_id) === chatId
+    );
+    setCurrentConversation(conv || null);
+  }, [chatId, conversations, currentBooking]);
+
+  const initialPrice = currentConversation?.service_ad.price;
   useEffect(() => {
     if (currentBooking?.status === "completed") {
       notify(
@@ -62,11 +71,6 @@ export default function ChatFooter({
     try {
       setLoading(true);
       setMessage("");
-      // console.log(
-      //   "Sending message in",
-      //   `private-conversation.${chatId}`,
-      //   "room"
-      // );
       if (!chatId) {
         throw new Error("Failed to get conversation ID from server");
       }
@@ -88,26 +92,63 @@ export default function ChatFooter({
 
   // cancel booking
   const handleRejectBooking = async () => {
-    const res = await rejectBooking(currentBooking.booking_code!);
-    notify(
-      res.message || "Booking cancelled successfully.",
-      "success",
-      "Booking Cancelled"
-    );
-    localStorage.removeItem(`booking_status_${chatId}`);
-    localStorage.removeItem(`booking_id_${chatId}`);
+    setLoading(true);
+    try {
+      const res = await rejectBooking(currentBooking.booking_code!);
+      notify(
+        res.message || "Booking cancelled successfully.",
+        "success",
+        "Booking Cancelled"
+      );
+      localStorage.removeItem(`booking_status_${chatId}`);
+      localStorage.removeItem(`booking_id_${chatId}`);
+    } catch (error: any) {
+      notify(error.message, "error");
+    } finally {
+      setLoading(false);
+    }
   };
   const handleAcceptBooking = async () => {
-    console.log(currentBooking.booking_code);
+    setLoading(true);
+    try {
+      const res = await acceptCustomBooking(currentBooking.booking_code!);
+      notify(
+        res.message || "Booking accepted successfully.",
+        "success",
+        "Booking Cancelled"
+      );
+      localStorage.removeItem(`booking_status_${chatId}`);
+      localStorage.removeItem(`booking_id_${chatId}`);
+    } catch (error: any) {
+      notify(error.message, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const res = await acceptCustomBooking(currentBooking.booking_code!);
-    notify(
-      res.message || "Booking accepted successfully.",
-      "success",
-      "Booking Cancelled"
-    );
-    localStorage.removeItem(`booking_status_${chatId}`);
-    localStorage.removeItem(`booking_id_${chatId}`);
+  const [paymentData, setPaymentData] = useState<any>(null)
+  const handlePayment = async () => {
+    if (!currentBooking) return;
+    setLoading(true);
+    try {
+      const response = await initializePayment(currentBooking.booking_code);
+      const paymentUrl = response?.data?.payment_url;
+      if (!paymentUrl) {
+        throw new Error("Payment link not available");
+      }
+      setPaymentData(response?.data)
+      //  signaling intent before redirect
+      notify("Redirecting to payment gateway…", "info", "Payment");
+      // Hard redirect – expected and correct
+      window.location.href = paymentUrl;
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Payment was unsuccessful";
+      notify(message, "error", "Error");
+      console.log(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Added onKeyPress to handle sending with Enter key
@@ -146,15 +187,26 @@ export default function ChatFooter({
 
   // confirm completion
   const markAsClosed = async () => {
-    if (!currentBooking?.booking_code) return;
-    await confirmCompletion("closed", currentBooking?.booking_code);
-    setOpenReviewPopup(true);
-    notify(
-      "You have confirmed completion, Nice doing business with you",
-      "success",
-      "Completion Confirmed"
-    );
+    setLoading(true);
+    try {
+      if (!currentBooking?.booking_code) {
+        setLoading(false);
+        return;
+      }
+      await confirmCompletion("closed", currentBooking?.booking_code);
+      setOpenReviewPopup(true);
+      notify(
+        "You have confirmed completion, Nice doing business with you",
+        "success",
+        "Completion Confirmed"
+      );
+    } catch (error: any) {
+      notify(error.message, "error");
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <>
       <div className="flex flex-col border-t">
@@ -206,20 +258,21 @@ export default function ChatFooter({
                     </div>
                     <div className="bg-[#FBF7EB] border border-[#D4AF37] rounded-sm px-4 py-1.5 w-full flex items-center justify-between">
                       <p className="text-[#D4AF37] text-[10px]">
-                        You have a custom booking request.
+                        You have a custom booking request{" "}
+                        {currentBooking.custom_price}
                       </p>
                       <div className="flex gap-2 items-center">
                         <span
                           onClick={handleRejectBooking}
                           className="bg-transparent border border-[#E63946] text-[10px] font-thin text-[#E63946] shadow-sm px-4 py-1.5 rounded cursor-pointer"
                         >
-                          Reject Booking
+                          {loading ? <LoadingDots /> : "Reject Booking"}
                         </span>
                         <span
                           onClick={handleAcceptBooking}
                           className="bg-[var(--success-color)] rounded cursor-pointer text-[10px] font-thin text-white border border-[var(--success-color )] shadow-sm px-4 py-1.5"
                         >
-                          Accept Booking
+                          {loading ? <LoadingDots /> : "Accept Booking"}
                         </span>
                       </div>
                     </div>
@@ -250,7 +303,7 @@ export default function ChatFooter({
                       onClick={handleRejectBooking}
                       className="bg-[#E63946] text-[10px] font-thin text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
                     >
-                      Cancel Booking
+                      {loading ? <LoadingDots /> : "Cancel Booking"}
                     </span>
                   </div>
                 </div>
@@ -269,7 +322,7 @@ export default function ChatFooter({
                     Sub-total
                   </h3>
                   <p className="text-[var(--heading-color)] text-[12px]">
-                    ₦50000
+                    {currentBooking?.price_breakdown?.service_price || '_'}
                   </p>
                 </div>
                 <div className="flex justify-between items-center w-full">
@@ -277,7 +330,7 @@ export default function ChatFooter({
                     Service Fee
                   </h3>
                   <p className="text-[var(--heading-color)] text-[12px]">
-                    ₦1000
+                    {currentBooking?.price_breakdown?.platform_fee || "_"}
                   </p>
                 </div>
                 <div className="flex justify-between items-center w-full">
@@ -285,12 +338,15 @@ export default function ChatFooter({
                     Total
                   </h3>
                   <p className="text-[var(--heading-color)] font-semibold text-[12px]">
-                    ₦50100
+                    {currentBooking?.custom_price ? currentBooking?.custom_price : currentBooking?.price_breakdown?.total_payable || "_"}
                   </p>
                 </div>
               </div>
-              <button className="text-white w-full mb-2 py-1.5 rounded px-4 font-semibold cursor-pointer shadow-sm bg-[var(--success-color)] text-[14px]">
-                Proceed with payment
+              <button
+                onClick={handlePayment}
+                className="text-white w-full mb-2 py-1.5 rounded px-4 font-semibold cursor-pointer shadow-sm bg-[var(--success-color)] text-[14px]"
+              >
+                {loading ? <LoadingDots /> : "Proceed with payment"}
               </button>
             </div>
           )}
@@ -346,7 +402,7 @@ export default function ChatFooter({
                       onClick={markAsClosed}
                       className="bg-[var(--success-color)] text-[10px] font-semibold text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
                     >
-                      Confirm Completion
+                      {loading ? <LoadingDots /> : "Confirm Completion"}
                     </span>
                   </div>
                 </div>

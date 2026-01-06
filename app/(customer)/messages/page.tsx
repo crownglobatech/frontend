@@ -3,6 +3,8 @@ import {
   fetchAllConversations,
   fetchConversationMessages,
 } from "@/services/api";
+import LoadingSpinner from "@/app/components/general/LoadingSpinner";
+import { useSearchParams } from "next/navigation";
 import ChatFooter from "./components/ChatFooter";
 import ChatHeader from "./components/ChatHeader";
 import ChatPane from "./components/ChatPane";
@@ -13,7 +15,9 @@ import { bookProvider, getMyBookings } from "@/lib/api/bookings";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { initPusher } from "@/services/pusher";
 
-export default function Messages() {
+import { Suspense } from "react";
+
+function MessagesContent() {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedMessages, setSelectedMessages] = useState<Message[]>([]);
@@ -32,9 +36,14 @@ export default function Messages() {
   const [allBookings, setAllBookings] = useState([]);
   const [currentBooking, setCurrentBooking] = useState<null | []>(null);
 
+  const searchParams = useSearchParams();
+  const urlConversationId = searchParams.get("conversationId");
+
   useEffect(() => {
     selectedChatRef.current = selectedChatId;
   }, [selectedChatId]);
+
+
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -153,6 +162,12 @@ export default function Messages() {
     fetchAndSetMessages(chatId);
   };
 
+  useEffect(() => {
+    if (urlConversationId && !selectedChatId) {
+      handleSelectChat(urlConversationId);
+    }
+  }, [urlConversationId, selectedChatId]);
+
   // Update conversation snippet in sidebar
   const updateConversationSnippet = useCallback(
     (chatId: string, message: Message, isOwnMessage: boolean) => {
@@ -173,8 +188,8 @@ export default function Messages() {
           unread_count: isOpen
             ? 0
             : isOwnMessage
-            ? target.unread_count || 0
-            : (target.unread_count || 0) + 1,
+              ? target.unread_count || 0
+              : (target.unread_count || 0) + 1,
         };
 
         return [updated, ...prev.filter((_, i) => i !== index)];
@@ -186,13 +201,6 @@ export default function Messages() {
   // Handle message sent by current user (optimistic update)
   const handleMessageSent = useCallback(
     (newMessage: Message) => {
-      // console.log(" [SENT] Optimistic message update:", {
-      //   messageId: newMessage.id,
-      //   conversationId: newMessage.conversation_id,
-      //   selectedChatId,
-      //   preview: newMessage.message.substring(0, 30) + "...",
-      // });
-      // Add message to active view if it belongs to the currently open chat
       if (String(newMessage.conversation_id) === selectedChatId) {
         setSelectedMessages((prev) => {
           // 1. Skip if real message already exists
@@ -312,6 +320,7 @@ export default function Messages() {
     if (booking) {
       // console.log("Found booking for current conversation:", booking);
       setCurrentBooking(booking);
+      console.log(booking);
     } else {
       setCurrentBooking(null);
       // console.log("No booking found for current conversation.");
@@ -357,6 +366,8 @@ export default function Messages() {
     channel?.bind("booking.status.updated", (data: any) => {
       // console.log("[REALTIME] Booking update received:", data);
       const booking = data.booking;
+      console.log(booking);
+
       const { id, status } = data.booking ?? data;
       setSelectedBookingId(id);
       setBookingstatus(status);
@@ -376,12 +387,13 @@ export default function Messages() {
     };
   }, [selectedChatId]);
 
+  // ... imports
+
+  // ... inside component
   if (loadingConversations) {
     return (
-      <div className="flex justify-center h-screen items-center space-x-1">
-        <span className="bg-[var(--primary-color)] rounded-full w-2 h-2 animate-bounceDot [animation-delay:-0.32s]"></span>
-        <span className="bg-[var(--primary-color)] rounded-full w-2 h-2 animate-bounceDot [animation-delay:-0.16s]"></span>
-        <span className="bg-[var(--primary-color)] rounded-full w-2 h-2 animate-bounceDot"></span>
+      <div className="flex justify-center h-screen items-center">
+        <LoadingSpinner size="lg" variant="primary" />
       </div>
     );
   }
@@ -410,7 +422,7 @@ export default function Messages() {
               <ChatClient
                 chatId={selectedChatId}
                 initialMessages={selectedMessages}
-                // PASS NEW PROP: For remote message updates (Vendor's reply)
+                loadingMessages={loadingMessages}
                 onNewRemoteMessage={handleNewRemoteMessage}
               />
             </div>
@@ -420,6 +432,7 @@ export default function Messages() {
               bookingstatus={bookingstatus}
               onMessageSent={handleMessageSent}
               currentBooking={currentBooking}
+              conversations={conversations}
             />
           </>
         ) : (
@@ -429,5 +442,19 @@ export default function Messages() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function Messages() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center h-screen items-center">
+          <LoadingSpinner size="lg" variant="primary" />
+        </div>
+      }
+    >
+      <MessagesContent />
+    </Suspense>
   );
 }
