@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { getAllVendorsAdmin } from "@/lib/api/admin";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { RowActions } from "../../RowActions";
+import { logger } from "@/lib/logger";
 
 export default function VendorTable() {
   const { notify } = useNotification();
@@ -177,13 +178,12 @@ export default function VendorTable() {
                   </TableCell>
                   <TableCell>
                     <span
-                      className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${
-                        vendor.verification_status === "Pending"
+                      className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${vendor.verification_status === "Pending"
                           ? "bg-[#FFF4D3] text-[var(--brand-accent-color)]"
                           : vendor.verification_status === "Verified"
-                          ? "bg-[#C8FFD5] text-[var(--success-color)]"
-                          : "bg-[#FFD3D3] text-[#E63946]"
-                      }`}
+                            ? "bg-[#C8FFD5] text-[var(--success-color)]"
+                            : "bg-[#FFD3D3] text-[#E63946]"
+                        }`}
                     >
                       {vendor.verification_status}
                     </span>
@@ -196,8 +196,8 @@ export default function VendorTable() {
                   </TableCell>
                   <TableCell className="text-[var(--heading-color)] text-[8px]">
                     <RowActions
-                      onActivate={() => console.log("")}
-                      onDeActivate={() => console.log("")}
+                      onActivate={() => logger.log("")}
+                      onDeActivate={() => logger.log("")}
                     />{" "}
                   </TableCell>
                 </TableRow>
@@ -218,7 +218,7 @@ export default function VendorTable() {
             currentPage={vendors?.pagination?.current_page}
             lastPage={vendors?.pagination?.last_page}
             onPageChange={(page) => {
-              console.log(currentPage);
+              logger.log(currentPage);
               if (page === currentPage) return;
               setCurrentPage(page);
             }}

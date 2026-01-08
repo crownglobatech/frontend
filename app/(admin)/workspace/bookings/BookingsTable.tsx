@@ -15,6 +15,7 @@ import { useEffect, useState, useMemo } from "react";
 import { getAllBookingsAdmin } from "@/lib/api/admin";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { useSearchParams } from "next/navigation";
+import { logger } from "@/lib/logger";
 
 export default function BookingsTable() {
   const [loading, setLoading] = useState(false);
@@ -46,7 +47,7 @@ export default function BookingsTable() {
       }
     };
     fetchAllBookings();
-    console.log(bookings);
+    logger.log(bookings);
   }, [currentPage]);
 
   //  Filter bookings based on search input
@@ -61,7 +62,7 @@ export default function BookingsTable() {
         (b.service || "").toLowerCase().includes(lower)
     );
   }, [bookings, searchTerm, currentPage]);
-  console.log(paginatedData);
+  logger.log(paginatedData);
 
   return (
     <>
@@ -157,16 +158,15 @@ export default function BookingsTable() {
                   </TableCell>
                   <TableCell>
                     <span
-                      className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${
-                        data.status === "In progress"
+                      className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${data.status === "In progress"
                           ? "bg-[#D4E6FF] text-[var(--primary-color)]"
                           : data.status === "Closed" ||
                             data.status === "Confirmed"
-                          ? "bg-[#C8FFD5] text-[var(--success-color)]"
-                          : data.status === "Cancelled"
-                          ? "bg-[#FFD3D3] text-[#E63946]"
-                          : "bg-[#FFD3D3] text-[#E63946]"
-                      }`}
+                            ? "bg-[#C8FFD5] text-[var(--success-color)]"
+                            : data.status === "Cancelled"
+                              ? "bg-[#FFD3D3] text-[#E63946]"
+                              : "bg-[#FFD3D3] text-[#E63946]"
+                        }`}
                     >
                       {data.status}
                     </span>
@@ -194,7 +194,7 @@ export default function BookingsTable() {
             currentPage={paginatedData?.pagination?.current_page}
             lastPage={paginatedData?.pagination?.last_page}
             onPageChange={(page) => {
-              console.log(currentPage);
+              logger.log(currentPage);
               if (page === currentPage) return;
               setCurrentPage(page);
             }}

@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { getAllUsersAdmin } from "@/lib/api/admin";
 import { RowActions } from "../../RowActions";
+import { logger } from "@/lib/logger";
 
 export default function UserTable() {
   const { notify } = useNotification();
@@ -51,7 +52,7 @@ export default function UserTable() {
     };
     fetchAllUsers();
   }, []);
-  console.log(users);
+  logger.log(users);
 
   const filteredUsers = users?.data?.filter((user: any) => {
     const term = searchTerm.toLowerCase();
@@ -154,8 +155,8 @@ export default function UserTable() {
                   </TableCell>
                   <TableCell className="text-[var(--heading-color)] text-[12px]">
                     <RowActions
-                      onSuspend={() => console.log("")}
-                      onRevive={() => console.log("")}
+                      onSuspend={() => logger.log("")}
+                      onRevive={() => logger.log("")}
                     />
                   </TableCell>
                 </TableRow>
@@ -176,7 +177,7 @@ export default function UserTable() {
             currentPage={users?.pagination?.current_page}
             lastPage={users?.pagination?.last_page}
             onPageChange={(page) => {
-              console.log(currentPage);
+              logger.log(currentPage);
               if (page === currentPage) return;
               setCurrentPage(page);
             }}

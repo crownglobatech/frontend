@@ -14,8 +14,10 @@ import { ConversationItem, Message } from "@/lib/types";
 import { bookProvider, getMyBookings } from "@/lib/api/bookings";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { initPusher } from "@/services/pusher";
+import { logger } from "@/lib/logger";
 
 import { Suspense } from "react";
+import { useRouter } from "next/navigation";
 
 function MessagesContent() {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
@@ -38,6 +40,7 @@ function MessagesContent() {
 
   const searchParams = useSearchParams();
   const urlConversationId = searchParams.get("conversationId");
+  const router = useRouter()
 
   useEffect(() => {
     selectedChatRef.current = selectedChatId;
@@ -66,7 +69,7 @@ function MessagesContent() {
         // console.log(" Loaded conversations:", data.length);
         setConversations(data);
       } catch (err) {
-        console.error(" Failed to load conversations:", err);
+        logger.error(" Failed to load conversations:", err);
       } finally {
         setLoadingConversations(false);
       }
@@ -114,7 +117,7 @@ function MessagesContent() {
     const channel = pusher?.subscribe(channelName);
 
     channel?.bind("booking.status.updated", (data: any) => {
-      console.log("[REALTIME] Booking update received:", data);
+      logger.log("[REALTIME] Booking update received:", data);
       const { id, status } = data.booking ?? data;
       // single source of truth
       setSelectedBookingId(id);
@@ -138,7 +141,7 @@ function MessagesContent() {
       // console.log(" Fetched messages for chat", chatId, ":", messages.length);
       setSelectedMessages(messages);
     } catch (err) {
-      console.error(" Failed to load messages:", err);
+      logger.error(" Failed to load messages:", err);
     } finally {
       setLoadingMessages(false);
     }
@@ -163,10 +166,26 @@ function MessagesContent() {
   };
 
   useEffect(() => {
-    if (urlConversationId && !selectedChatId) {
+    if (!urlConversationId) return;
+    if (loadingConversations) return;
+    if (selectedChatId) return;
+    // check if conversation exists
+    const exists = conversations.some(
+      (c) => String(c.conversation_id) === urlConversationId
+    );
+
+    if (exists) {
       handleSelectChat(urlConversationId);
+    } else {
+      // Recovery path
+      notify(
+        "This conversation no longer exists or you don’t have access.",
+        "error",
+        "Conversation Not Found"
+      );
+      router.replace("/messages");
     }
-  }, [urlConversationId, selectedChatId]);
+  }, [urlConversationId, conversations, loadingConversations, selectedChatId]);
 
   // Update conversation snippet in sidebar
   const updateConversationSnippet = useCallback(
@@ -229,7 +248,6 @@ function MessagesContent() {
           }
 
           // New message from this user
-          // console.log("[SENT] Adding new message to UI");
           const updated = [...prev, newMessage];
           return updated.sort(
             (a, b) =>
@@ -261,7 +279,7 @@ function MessagesContent() {
       setSelectedMessages((prev) => {
         // 1. Skip if real message already exists
         if (newMessage.id && prev.some((m) => m.id === newMessage.id)) {
-          console.log("Duplicate prevented");
+          logger.log("Duplicate prevented");
           return prev;
         }
 
@@ -320,7 +338,7 @@ function MessagesContent() {
     if (booking) {
       // console.log("Found booking for current conversation:", booking);
       setCurrentBooking(booking);
-      console.log(booking);
+      logger.log(booking);
     } else {
       setCurrentBooking(null);
       // console.log("No booking found for current conversation.");
@@ -366,7 +384,7 @@ function MessagesContent() {
     channel?.bind("booking.status.updated", (data: any) => {
       // console.log("[REALTIME] Booking update received:", data);
       const booking = data.booking;
-      console.log(booking);
+      logger.log(booking);
 
       const { id, status } = data.booking ?? data;
       setSelectedBookingId(id);

@@ -12,6 +12,7 @@ import { ConversationItem, Message } from "@/lib/types";
 import ChatClient from "./ChatClient";
 import { initPusher } from "@/services/pusher";
 import { getProviderBookings } from "@/lib/api/bookings";
+import { logger } from "@/lib/logger";
 
 export default function VendorMessages() {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
@@ -55,7 +56,7 @@ export default function VendorMessages() {
         setConversations(data);
       } catch (err) {
         // do better error handling
-        console.error(" Failed to load conversations:", err);
+        logger.error(" Failed to load conversations:", err);
       } finally {
         setLoadingConversations(false);
       }
@@ -169,7 +170,7 @@ export default function VendorMessages() {
       // console.log(" Fetched messages for chat", chatId, ":", messages.length);
       setSelectedMessages(messages);
     } catch (err) {
-      console.error(" Failed to load messages:", err);
+      logger.error(" Failed to load messages:", err);
     } finally {
       setLoadingMessages(false);
     }

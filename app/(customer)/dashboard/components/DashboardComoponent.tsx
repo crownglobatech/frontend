@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getCustomerAds, getCustomerAdsNoAuth } from "@/lib/api";
 import { CustomerAd, CustomerAdsResponse } from "@/lib/types";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CustomerHeader from "./CustomerHeader";
 import AdDisplay from "./AdDisplay";
 import Pagination from "./Pagination";
-import Loader from "@/app/components/general/Loader";
 
 export default function DashboardComponent() {
   const [token, setToken] = useState<string | null>(null);
@@ -29,6 +28,10 @@ export default function DashboardComponent() {
     null
   );
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+useEffect(() => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}, [currentPage]);
 
   useEffect(() => {
     setCurrentPage(1);

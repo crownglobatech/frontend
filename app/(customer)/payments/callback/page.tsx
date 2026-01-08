@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { Suspense } from "react";
+import { logger } from "@/lib/logger";
 
 function CallbackContent() {
   const router = useRouter();
@@ -34,7 +35,7 @@ function CallbackContent() {
           router.replace(`/payments/error?ref=${reference}`);
         }
       } catch (error) {
-        console.error("Error verifying payment:", error);
+        logger.error("Error verifying payment:", error);
         router.replace("/payments/error");
       }
     };

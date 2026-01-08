@@ -3,6 +3,7 @@ import LoadingDots from "@/app/components/general/LoadingDots";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { useEffect, useState } from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
+import { logger } from "@/lib/logger";
 
 interface Props {
   detailId: string;
@@ -38,13 +39,13 @@ export default function CreateReview({ detailId }: Props) {
           }
         );
         if (!res.ok) {
-          console.error("Error", res.statusText);
+          logger.error("Error", res.statusText);
           return;
         }
         const resData = await res.json();
         setReviewEligibility(resData.can_review);
         setBookingCode(resData.booking_code);
-        console.log("Review Eligibility:", resData);
+        logger.log("Review Eligibility:", resData);
       } catch {
         setReviewEligibility(false);
       }
@@ -79,7 +80,7 @@ export default function CreateReview({ detailId }: Props) {
       feedback: text,
     };
 
-    console.log("Review Payload:", payload);
+    logger.log("Review Payload:", payload);
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/reviews`,
@@ -93,7 +94,7 @@ export default function CreateReview({ detailId }: Props) {
         }
       );
       if (!res.ok) {
-        console.error("Failed to submit review:", res.statusText);
+        logger.error("Failed to submit review:", res.statusText);
         notify("Could not submit review", "error", "Submission Error");
       }
       notify("Review submitted successfully", "success", "Success");
@@ -102,7 +103,7 @@ export default function CreateReview({ detailId }: Props) {
       setText("");
       setReviewEligibility(false); // Disable further reviews
     } catch (error) {
-      console.error("Error submitting review:", error);
+      logger.error("Error submitting review:", error);
       notify(
         "Failed to submit review. Please try again later.",
         "error",
@@ -113,7 +114,7 @@ export default function CreateReview({ detailId }: Props) {
       setLoading(false);
     }
   };
-  console.log("Review Eligibility State:", reviewEligibility);
+  logger.log("Review Eligibility State:", reviewEligibility);
 
   return (
     <div

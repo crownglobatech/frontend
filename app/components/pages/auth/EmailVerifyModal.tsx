@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { toast } from 'react-toastify'
 import LoadingDots from '../../general/LoadingDots'
+import { logger } from '@/lib/logger'
 
 interface EmailVerifyModalProps {
   open: boolean
@@ -18,7 +19,7 @@ interface EmailVerifyModalProps {
   onSuccess: () => void // 🔹 new prop
 }
 
-export default function EmailVerifyModal ({
+export default function EmailVerifyModal({
   open,
   onOpenChange,
   userEmail,
@@ -71,14 +72,14 @@ export default function EmailVerifyModal ({
       if (!res.ok) {
         const error = await res.json()
         toast.error(error.message || 'Please try again')
-        console.error(error.message)
+        logger.error(error.message)
         return
       }
       const data = await res.json()
       toast.success(data.message || 'OTP Resent')
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-      console.error('Error:', errorMessage)
+      logger.error('Error:', errorMessage)
     }
   }
   const handleVerify = async () => {
@@ -111,7 +112,7 @@ export default function EmailVerifyModal ({
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : 'An Unknown Error Occurred'
-        console.error(errorMessage)
+        logger.error(errorMessage)
       } finally {
         setLoading(false)
       }

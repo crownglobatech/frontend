@@ -1,5 +1,6 @@
 "use client";
 import { useNotification } from "@/app/contexts/NotificationProvider";
+import { logger } from "@/lib/logger";
 import {
   Dialog,
   DialogClose,
@@ -29,7 +30,7 @@ export default function CustomBooking({
     e.preventDefault();
     setLoading(true);
     try {
-      console.log(newPrice);
+      logger.log(newPrice);
       const response = await initiateCustomBooking(
         conversationId,
         Number(newPrice)

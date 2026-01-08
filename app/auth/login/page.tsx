@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { User } from "@/lib/types";
+import { logger } from "@/lib/logger";
 
 type LoginResponse = {
   message: string;
@@ -68,7 +69,7 @@ export default function SignUp() {
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      console.error("Login error:", errorMessage);
+      logger.error("Login error:", errorMessage);
     } finally {
       setLoading(false);
     }

@@ -7,6 +7,7 @@ import { getAllAds } from "@/lib/api";
 import { Ad } from "@/lib/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 
 export default function AllAds() {
   const [ads, setAds] = useState<Ad[]>([]);
@@ -25,7 +26,7 @@ export default function AllAds() {
         setAds(adsData);
         setFilteredAds(adsData);
       } catch (err) {
-        console.error(err);
+        logger.error(err);
       } finally {
         setLoading(false);
       }

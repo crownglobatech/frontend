@@ -15,6 +15,7 @@ import Revenue from "./charts/Revenue";
 import DailyActiveUsers from "./charts/DailyActiveUsers";
 import TotalBookings from "./charts/TotalBookings";
 import TopCategories from "./charts/TopCategories";
+import { logger } from "@/lib/logger";
 
 export default function AdminAnalytics() {
   const token =
@@ -30,7 +31,7 @@ export default function AdminAnalytics() {
       setLoading(true);
       try {
         if (!token) {
-          console.error("User not authenticated.");
+          logger.error("User not authenticated.");
           notify("User not authenticated.", "error", "Error");
           setLoading(false);
           return;
@@ -39,7 +40,7 @@ export default function AdminAnalytics() {
         setData(response);
       } catch (error) {
         error instanceof Error && notify(error.message, "error", "Error");
-        console.error("Error fetching analytics:", error);
+        logger.error("Error fetching analytics:", error);
       } finally {
         setLoading(false);
       }
@@ -81,7 +82,7 @@ export default function AdminAnalytics() {
 
   const handleFilterChange = (value: string) => {
     setTimeFilter(value);
-    console.log("Filter changed to:", value);
+    logger.log("Filter changed to:", value);
     // Add your filter logic here - you might want to refetch data with the filter
   };
 

@@ -3,6 +3,7 @@ import LoadingDots from "@/app/components/general/LoadingDots";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { toast } from "react-toastify";
+import { logger } from "@/lib/logger";
 
 export default function ResetPasswordComponent() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function ResetPasswordComponent() {
 
       setTimeout(() => router.replace("/auth/forgot-password/success"), 500);
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       toast.error("Something went wrong.");
     } finally {
       setLoading(false);

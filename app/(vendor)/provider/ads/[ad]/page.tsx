@@ -11,6 +11,7 @@ import { useNotification } from "@/app/contexts/NotificationProvider";
 import LoadingDots from "@/app/components/general/LoadingDots";
 import { useRouter } from "next/navigation";
 import { Ad } from "@/lib/types";
+import { logger } from "@/lib/logger";
 
 interface Props {
   params: Promise<{ ad: string }>;
@@ -31,7 +32,7 @@ export default function ManageAd({ params }: Props) {
       const res = await getAdById(token, ad);
       if (res.data) setAdData(res.data);
     } catch (err) {
-      console.error(err);
+      logger.error(err);
     } finally {
       setLoading(false);
     }
@@ -89,7 +90,7 @@ export default function ManageAd({ params }: Props) {
       );
       router.replace("/provider/ads");
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       notify("Something went wrong while deleting the ad.", "error");
     } finally {
       setLoading(false);

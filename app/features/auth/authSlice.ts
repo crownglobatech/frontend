@@ -1,6 +1,7 @@
 import { User } from '@/lib/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Cookies from 'js-cookie'
+import { logger } from '@/lib/logger'
 
 
 
@@ -86,7 +87,7 @@ const authSlice = createSlice({
       state.user = JSON.parse(userJson)
       state.isAuthenticated = true
     } catch (e) {
-      console.error('Failed to parse user from storage')
+      logger.error('Failed to parse user from storage')
     }
   }
 }

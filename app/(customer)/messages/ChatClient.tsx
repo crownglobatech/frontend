@@ -5,6 +5,7 @@ import { subscribeToChat } from "@/services/pusher";
 import { ConversationItem, Message } from "@/lib/types";
 import { useAppSelector } from "@/app/store-hooks";
 import { fetchAllConversations } from "@/services/api";
+import { logger } from "@/lib/logger";
 
 interface ChatClientProps {
   chatId: string;
@@ -43,7 +44,7 @@ export default function ChatClient({
 
   useEffect(() => {
     if (!chatId) {
-      console.warn(" No chatId provided to ChatClient");
+      logger.warn(" No chatId provided to ChatClient");
       return;
     }
     // console.log(`Subscribing to private-conversation.${chatId}`);

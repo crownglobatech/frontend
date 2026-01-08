@@ -12,6 +12,7 @@ import ActivityTable from "./components/ActivityTable";
 import { useEffect, useState } from "react";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { getAdminDashboardData } from "@/lib/api/admin";
+import { logger } from "@/lib/logger";
 export default function AdminDashboard() {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -35,7 +36,7 @@ export default function AdminDashboard() {
         setRecentActivities(response?.data?.recent_activities);
       } catch (error) {
         error instanceof Error && notify(error.message, "error", "Error");
-        console.error("Error fetching analytics:", error);
+        logger.error("Error fetching analytics:", error);
       } finally {
         setLoading(false);
       }
@@ -62,7 +63,7 @@ export default function AdminDashboard() {
   ];
   const handleFilterChange = (value: string) => {
     setTimeFilter(value);
-    console.log("Filter changed to:", value);
+    logger.log("Filter changed to:", value);
     // Add your filter logic here - you might want to refetch data with the filter
   };
 

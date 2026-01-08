@@ -12,6 +12,7 @@ import {
   vendorRejectBooking,
 } from "@/lib/api/bookings";
 import LoadingDots from "@/app/components/general/LoadingDots";
+import { logger } from "@/lib/logger";
 
 interface ChatFooterProps {
   chatId: string;
@@ -24,6 +25,9 @@ export default function ChatFooter({
   chatId,
   currentBooking,
 }: ChatFooterProps) {
+  const [loadingAction, setLoadingAction] = useState<
+    "accept" | "reject" | "completed" | null
+  >(null);
   const [message, setMessage] = useState("");
   const primaryColor = "blue-600";
   const [loading, setLoading] = useState(false);
@@ -68,7 +72,7 @@ export default function ChatFooter({
       await sendMessageCustomer(String(chatId), trimmedMessage);
       setIsSending(false);
     } catch (error: any) {
-      console.error("Error sending message:", error);
+      logger.error("Error sending message:", error);
       notify(error.message || "Failed to send message", "error", "Send Failed");
       setMessage(trimmedMessage);
     } finally {
@@ -85,6 +89,7 @@ export default function ChatFooter({
 
   const handleRejectBooking = async () => {
     try {
+      setLoadingAction("reject");
       if (!currentBooking) return;
       await vendorRejectBooking(currentBooking.id);
       // onRejectBooking?.();
@@ -97,11 +102,14 @@ export default function ChatFooter({
           "error",
           "Booking Error"
         );
+    } finally {
+      setLoadingAction(null);
     }
-  };
+  }
 
   const handleAcceptBooking = async () => {
     try {
+      setLoadingAction("accept");
       if (!currentBooking) return;
       await vendorAcceptBooking(currentBooking.booking_code);
       notify("Booking accepted successfully.,", "success", "Booking Accepted");
@@ -113,11 +121,14 @@ export default function ChatFooter({
           "error",
           "Booking Error"
         );
+    } finally {
+      setLoadingAction(null);
     }
   };
 
   const markAsCompleted = async () => {
     try {
+      setLoadingAction("completed");
       if (!currentBooking.booking_code) return;
       await markStatusAsCompleted("completed", currentBooking.booking_code);
       notify(
@@ -133,6 +144,8 @@ export default function ChatFooter({
           "error",
           "Booking Error"
         );
+    } finally {
+      setLoadingAction(null);
     }
   };
 
@@ -179,12 +192,6 @@ export default function ChatFooter({
                 <p className="text-[#D4AF37] text-[10px]">
                   Awaiting customer to accept your offer.
                 </p>
-                {/* <span
-                    onClick={handleRejectBooking}
-                    className="bg-[#E63946] text-[10px] font-thin text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
-                  >
-                    Cancel Booking
-                  </span> */}
               </div>
             </div>
           </div>
@@ -214,13 +221,13 @@ export default function ChatFooter({
                     onClick={handleRejectBooking}
                     className="bg-transparent border border-[#E63946] text-[10px] font-thin text-[#E63946] shadow-sm px-4 py-1.5 rounded cursor-pointer"
                   >
-                    {loading ? <LoadingDots /> : "Reject Booking"}
+                    {loadingAction === "reject" ? <LoadingDots /> : "Reject Booking"}
                   </span>
                   <span
                     onClick={handleAcceptBooking}
                     className="bg-[var(--success-color)] rounded cursor-pointer text-[10px] font-thin text-white border border-[var(--success-color )] shadow-sm px-4 py-1.5"
                   >
-                    {loading ? <LoadingDots /> : "Accept Booking"}
+                    {loadingAction === "accept" ? <LoadingDots /> : "Accept Booking"}
                   </span>
                 </div>
               </div>
@@ -273,7 +280,7 @@ export default function ChatFooter({
                   onClick={markAsCompleted}
                   className="bg-[var(--success-color)] text-[10px] font-semibold text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
                 >
-                  {loading ? <LoadingDots /> : "Completed"}
+                  {loadingAction === "completed" ? <LoadingDots /> : "Completed"}
                 </span>
               </div>
             </div>

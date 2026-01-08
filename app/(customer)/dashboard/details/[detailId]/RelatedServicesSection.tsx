@@ -5,13 +5,14 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import RelatedServices, {
   RelatedServicesHandle,
 } from "../../components/RelatedServices";
+import { logger } from "@/lib/logger";
 
 interface Props {
   relatedServices?: any[];
 }
 export default function RelatedServicesSection({ relatedServices }: Props) {
   if (relatedServices) {
-    console.log(relatedServices);
+    logger.log(relatedServices);
   }
   const relatedRef = useRef<RelatedServicesHandle>(null);
 

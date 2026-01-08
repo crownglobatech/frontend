@@ -14,6 +14,7 @@ import {
 import LoadingDots from "@/app/components/general/LoadingDots";
 import ReviewPopUpBox from "./ReviewPopUpBox";
 import { ConversationItem } from "@/lib/types";
+import { logger } from "@/lib/logger";
 
 interface ChatFooterProps {
   chatId: string;
@@ -30,6 +31,9 @@ export default function ChatFooter({
   conversations,
 }: ChatFooterProps) {
   const [message, setMessage] = useState("");
+  const [loadingAction, setLoadingAction] = useState<
+    "accept" | "reject" | null
+  >(null);
   const [currentConversation, setCurrentConversation] =
     useState<ConversationItem | null>(null);
   const token =
@@ -79,7 +83,7 @@ export default function ChatFooter({
       await sendMessageCustomer(String(chatId), message);
       setIsSending(false);
     } catch (error: any) {
-      console.error("Error in MiniChatBox:", error);
+      logger.error("Error in MiniChatBox:", error);
       notify(
         error.message || "Failed to send chat message. Please try again.",
         "error"
@@ -92,7 +96,7 @@ export default function ChatFooter({
 
   // cancel booking
   const handleRejectBooking = async () => {
-    setLoading(true);
+    setLoadingAction('reject')
     try {
       const res = await rejectBooking(currentBooking.booking_code!);
       notify(
@@ -105,11 +109,11 @@ export default function ChatFooter({
     } catch (error: any) {
       notify(error.message, "error");
     } finally {
-      setLoading(false);
+      setLoadingAction(null);
     }
   };
   const handleAcceptBooking = async () => {
-    setLoading(true);
+    setLoadingAction('accept');
     try {
       const res = await acceptCustomBooking(currentBooking.booking_code!);
       notify(
@@ -122,11 +126,9 @@ export default function ChatFooter({
     } catch (error: any) {
       notify(error.message, "error");
     } finally {
-      setLoading(false);
+      setLoadingAction(null);
     }
   };
-
-  const [paymentData, setPaymentData] = useState<any>(null)
   const handlePayment = async () => {
     if (!currentBooking) return;
     setLoading(true);
@@ -136,16 +138,15 @@ export default function ChatFooter({
       if (!paymentUrl) {
         throw new Error("Payment link not available");
       }
-      setPaymentData(response?.data)
       //  signaling intent before redirect
       notify("Redirecting to payment gateway…", "info", "Payment");
-      // Hard redirect – expected and correct
+      // Hard redirect
       window.location.href = paymentUrl;
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : "Payment was unsuccessful";
       notify(message, "error", "Error");
-      console.log(message);
+      logger.log(message);
     } finally {
       setLoading(false);
     }
@@ -201,7 +202,7 @@ export default function ChatFooter({
         "Completion Confirmed"
       );
     } catch (error: any) {
-      notify(error.message, "error");
+      notify('An error occurred', "error");
     } finally {
       setLoading(false);
     }
@@ -264,15 +265,15 @@ export default function ChatFooter({
                       <div className="flex gap-2 items-center">
                         <span
                           onClick={handleRejectBooking}
-                          className="bg-transparent border border-[#E63946] text-[10px] font-thin text-[#E63946] shadow-sm px-4 py-1.5 rounded cursor-pointer"
+                          className="bg-[#E63946] text-[10px] font-thin text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
                         >
-                          {loading ? <LoadingDots /> : "Reject Booking"}
+                          {loadingAction === 'reject' ? <LoadingDots /> : "Reject Booking"}
                         </span>
                         <span
                           onClick={handleAcceptBooking}
                           className="bg-[var(--success-color)] rounded cursor-pointer text-[10px] font-thin text-white border border-[var(--success-color )] shadow-sm px-4 py-1.5"
                         >
-                          {loading ? <LoadingDots /> : "Accept Booking"}
+                          {loadingAction === 'accept' ? <LoadingDots /> : "Accept Booking"}
                         </span>
                       </div>
                     </div>
@@ -322,23 +323,23 @@ export default function ChatFooter({
                     Sub-total
                   </h3>
                   <p className="text-[var(--heading-color)] text-[12px]">
-                    {currentBooking?.price_breakdown?.service_price || '_'}
+                    {currentBooking?.service_ad?.price || '_'}
                   </p>
                 </div>
-                <div className="flex justify-between items-center w-full">
+                {/* <div className="flex justify-between items-center w-full">
                   <h3 className="text-[var(--heading-color)] text-[12px]">
                     Service Fee
                   </h3>
                   <p className="text-[var(--heading-color)] text-[12px]">
                     {currentBooking?.price_breakdown?.platform_fee || "_"}
                   </p>
-                </div>
+                </div> */}
                 <div className="flex justify-between items-center w-full">
                   <h3 className="text-[heading-color] font-semibold text-[13px]">
                     Total
                   </h3>
                   <p className="text-[var(--heading-color)] font-semibold text-[12px]">
-                    {currentBooking?.custom_price ? currentBooking?.custom_price : currentBooking?.price_breakdown?.total_payable || "_"}
+                    {currentBooking?.custom_price ? currentBooking?.custom_price : currentBooking?.service_ad?.price || "_"}
                   </p>
                 </div>
               </div>

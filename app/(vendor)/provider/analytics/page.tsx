@@ -8,8 +8,9 @@ import { getVendorAnalytics } from '@/lib/api'
 import Loader from '@/app/components/general/Loader'
 import { AnalyticsApiResponse } from '@/lib/types'
 import { formatK } from '@/lib/utils'
+import { logger } from '@/lib/logger'
 
-export default function Analytics () {
+export default function Analytics() {
   const { notify } = useNotification()
   const [loading, setLoading] = useState(false)
   const [analytics, setAnalytics] = useState<AnalyticsApiResponse>()
@@ -34,7 +35,7 @@ export default function Analytics () {
           errorMessage = err
         }
         notify(errorMessage, 'error', 'Error')
-        console.error('Error:', errorMessage)
+        logger.error('Error:', errorMessage)
       } finally {
         setLoading(false)
       }
@@ -49,24 +50,24 @@ export default function Analytics () {
 
   const metrics = analytics
     ? [
-        {
-          title: 'Total Ads Posted',
-          value: analytics.data.overview.total_ads.toString()
-        },
-        {
-          title: 'Total Views',
-          value: formatK(analytics.data.overview.total_views)
-        },
-        {
-          title: 'Total Inquiries',
-          value: formatK(analytics.data.overview.total_inquiries)
-        },
-        {
-          title: 'Conversion Rate',
-          // Format the number to one decimal place and add a '%'
-          value: `${analytics.data.overview.conversion_rate}`
-        }
-      ]
+      {
+        title: 'Total Ads Posted',
+        value: analytics.data.overview.total_ads.toString()
+      },
+      {
+        title: 'Total Views',
+        value: formatK(analytics.data.overview.total_views)
+      },
+      {
+        title: 'Total Inquiries',
+        value: formatK(analytics.data.overview.total_inquiries)
+      },
+      {
+        title: 'Conversion Rate',
+        // Format the number to one decimal place and add a '%'
+        value: `${analytics.data.overview.conversion_rate}`
+      }
+    ]
     : []
 
   return (

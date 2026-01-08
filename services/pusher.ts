@@ -1,5 +1,6 @@
 import Pusher from "pusher-js";
 import { Message } from "@/lib/types";
+import { logger } from "@/lib/logger";
 
 const PUSHER_KEY = process.env.NEXT_PUBLIC_PUSHER_APP_KEY;
 const PUSHER_CLUSTER = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
@@ -9,7 +10,7 @@ let pusherClient: Pusher | null = null;
 export const initPusher = () => {
   if (!pusherClient) {
     if (!PUSHER_KEY || !PUSHER_CLUSTER) {
-      console.error("Pusher key or cluster missing in .env.local");
+      logger.error("Pusher key or cluster missing in .env.local");
       return null;
     }
 
@@ -17,8 +18,7 @@ export const initPusher = () => {
       typeof window !== "undefined"
         ? localStorage.getItem("token") || localStorage.getItem("access_token")
         : null;
-
-    // --- CRITICAL FIX 1: Updated authEndpoint to match backend config ---
+        
     pusherClient = new Pusher(PUSHER_KEY, {
       cluster: PUSHER_CLUSTER,
       forceTLS: true,
@@ -47,7 +47,7 @@ export const subscribeToChat = (
   const pusher = initPusher();
   // console.log("Pusher instance:", pusher);
   if (!pusher) {
-    console.warn("Pusher not initialized");
+    logger.warn("Pusher not initialized");
     return () => {};
   }
 
@@ -70,7 +70,7 @@ export const subscribeToChat = (
   });
 
   channel.bind("pusher:subscription_error", (status: any) => {
-    console.error("❌ SUBSCRIPTION ERROR:", status);
+    logger.error("❌ SUBSCRIPTION ERROR:", status);
   });
 
   return () => {
@@ -87,11 +87,11 @@ export const subscribeToNotification = (
   // console.log("Initializing susbscription to notification channel");
   const pusher = initPusher();
   if (!pusher) {
-    console.warn("Pusher not initialized");
+    logger.warn("Pusher not initialized");
     return () => {};
   }
   const channelName = `private-notification.${chatId}`;
-  console.log("Subscribing to notification channel:", channelName);
+  logger.log("Subscribing to notification channel:", channelName);
   const channel = pusher.subscribe(channelName);
 
   channel.bind(
@@ -112,7 +112,7 @@ export const subscribeToNotification = (
   });
 
   channel.bind("pusher:subscription_error", (status: any) => {
-    console.error("❌ SUBSCRIPTION ERROR:", status);
+    logger.error("❌ SUBSCRIPTION ERROR:", status);
   });
 
   return () => {

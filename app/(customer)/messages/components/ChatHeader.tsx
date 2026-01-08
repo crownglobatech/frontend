@@ -3,6 +3,7 @@
 import { ConversationItem } from "@/lib/types";
 import { fetchAllConversations } from "@/services/api";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface ChatHeaderProps {
   conversationId: string;
@@ -54,10 +55,13 @@ export default function ChatHeader({
     <div className="flex justify-between items-center bg-white p-4 border-b shadow-sm">
       <div className="flex items-center gap-3">
         <div className="relative">
-          <img
-            src={other_user.photo_url || "/default-avatar.png"}
+          <Image
+            src={other_user.photo_url || "/user copy.png"}
             alt={other_user.full_name}
-            className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+            width={10}
+            height={10}
+            objectFit="contain"
+            className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
           />
           <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
         </div>

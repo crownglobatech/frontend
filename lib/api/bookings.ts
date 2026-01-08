@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { getTokenFromCookies } from "@/lib/utils";
+import { logger } from "@/lib/logger";
 
 const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api`;
 export const apiClient = axios.create({
@@ -21,7 +22,7 @@ apiClient.interceptors.request.use((config) => {
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     } else {
-      console.warn("No auth token found");
+      logger.warn("No auth token found");
     }
   }
   return config;
@@ -63,32 +64,32 @@ export const updateBookingStatus = async (
 };
 export const rejectBooking = async (bookingId: number) => {
   const res = await apiClient.post(`/customer/bookings/${bookingId}/reject`);
-  console.log(res);
+  logger.log(res);
 
   return res.data.data || res.data;
 };
 
 export const acceptCustomBooking = async (bookingId: number) => {
   const res = await apiClient.patch(`/customer/bookings/${bookingId}/accept`);
-  console.log(res);
+  logger.log(res);
   return res.data.data || res.data;
 };
 
 export const showBookingDetails = async (bookingId: number) => {
   const res = await apiClient.get(`/service-provider/bookings/${bookingId}`);
-  console.log(res.data.data);
+  logger.log(res.data.data);
   return res.data.data || res.data;
 };
 export const getProviderBookings = async () => {
   const res = await apiClient.get("/service-provider/bookings");
-  console.log(res.data.data);
+  logger.log(res.data.data);
   return res.data.data || res.data;
 };
 export const vendorRejectBooking = async (bookingId: number) => {
   const res = await apiClient.post(
     `/service-provider/bookings/${bookingId}/reject`
   );
-  console.log(res);
+  logger.log(res);
   return res;
 };
 export const vendorAcceptBooking = async (bookingCode: number) => {
@@ -104,7 +105,7 @@ export const customerUpdateStatus = async (
   const res = await apiClient.patch(`/customer/bookings/${bookingId}/status`, {
     status: status,
   });
-  console.log(res.data);
+  logger.log(res.data);
 };
 export const markStatusAsCompleted = async (
   status: string,
@@ -119,10 +120,10 @@ export const markStatusAsCompleted = async (
 };
 export const confirmCompletion = async (
   status: string,
-  bookingId: number
+  bookingCode: string
 ) => {
   const res = await apiClient.patch(
-    `/customer/bookings/${bookingId}/status`,
+    `/customer/bookings/${bookingCode}/status`,
     {
       status: status,
     }

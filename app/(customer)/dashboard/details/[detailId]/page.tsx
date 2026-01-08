@@ -15,6 +15,7 @@ import { getCustomerAdsById } from "@/lib/api";
 import { notFound } from "next/navigation";
 import RelatedServicesSection from "./RelatedServicesSection";
 import { Input } from "@/components/ui/input";
+import { logger } from "@/lib/logger";
 
 interface Props {
   params: Promise<{ detailId: string }>;
@@ -28,7 +29,7 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
       notFound();
     }
   } catch (error: unknown) {
-    console.error("Failed to fetch ad:", error);
+    logger.error("Failed to fetch ad:", error);
     if (error instanceof Error && error.message.includes("404")) {
       notFound();
     }
@@ -111,9 +112,8 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
             )}
           </div>
           <div
-            className={`flex items-center gap-2 ${
-              isMessagingCredible ? "" : "blur-sm"
-            }`}
+            className={`flex items-center gap-2 ${isMessagingCredible ? "" : "blur-sm"
+              }`}
           >
             <Image
               alt="profile avatar"
@@ -127,9 +127,8 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
             </h2>
           </div>
           <div
-            className={`flex items-center gap-2 ${
-              isMessagingCredible ? "" : "blur-sm"
-            }`}
+            className={`flex items-center gap-2 ${isMessagingCredible ? "" : "blur-sm"
+              }`}
           >
             <Rating rate={5} />
           </div>
@@ -181,8 +180,8 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
                     {adData?.review_count && adData.review_count > 1
                       ? "Reviews"
                       : adData.review_count === 0
-                      ? "No Reviews"
-                      : "Review"}
+                        ? "No Reviews"
+                        : "Review"}
                     )
                   </span>
                 </div>

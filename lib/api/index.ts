@@ -31,6 +31,7 @@ import {
   DashboardResponse,
   vendorAd,
 } from "../types";
+import { logger } from "@/lib/logger";
 
 export async function postNewAd(formData: AdFormData) {
   const form = new FormData();
@@ -71,7 +72,7 @@ export async function postNewAd(formData: AdFormData) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error posting new ad:", error);
+    logger.error("Error posting new ad:", error);
     throw error;
   }
 }
@@ -115,7 +116,7 @@ export async function getAllAds(token: string): Promise<AllAdsResponse> {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching all ads:", error);
+    logger.error("Error fetching all ads:", error);
     throw error;
   }
 }
@@ -150,7 +151,7 @@ export async function getAdById(token: string, id: string): Promise<vendorAd> {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching all ads:", error);
+    logger.error("Error fetching all ads:", error);
     throw error;
   }
 }
@@ -179,7 +180,7 @@ export async function getVendorAnalytics(token: string) {
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error("Error fetching all ads:", error);
+    logger.error("Error fetching all ads:", error);
     throw error;
   }
 }
@@ -208,7 +209,7 @@ export async function getDashboardData(token: string) {
     const data: DashboardResponse = await res.json();
     return data;
   } catch (error) {
-    console.error("Error fetching all ads:", error);
+    logger.error("Error fetching all ads:", error);
     throw error;
   }
 }
@@ -343,7 +344,7 @@ export async function getCustomerAdsById(id: string): Promise<CustomerAd> {
     const data = await response.json();
     return data.data;
   } catch (error) {
-    console.error("Error fetching all ads:", error);
+    logger.error("Error fetching all ads:", error);
     throw error;
   }
 }

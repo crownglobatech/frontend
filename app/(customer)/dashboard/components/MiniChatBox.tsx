@@ -8,6 +8,7 @@ import LoadingDots from "@/app/components/general/LoadingDots"
 import { useNotification } from "@/app/contexts/NotificationProvider"
 import { initiateChat, sendMessageCustomer } from "@/services/api"
 import { useEffect, useState } from "react"
+import { logger } from "@/lib/logger"
 
 export default function MiniChatBox({ userId, isMesagingCredible }: MiniChatBoxProps) {
   const [userRole, setUserRole] = useState<string>('')
@@ -20,7 +21,7 @@ export default function MiniChatBox({ userId, isMesagingCredible }: MiniChatBoxP
       const userString = localStorage.getItem('user');
       if (userString) {
         const user = JSON.parse(userString);
-        console.log(' Current user ID:', user);
+        logger.log(' Current user ID:', user);
         setUserRole(user?.role)
       }
     }
@@ -42,7 +43,7 @@ export default function MiniChatBox({ userId, isMesagingCredible }: MiniChatBoxP
 
       //  Initiate chat
       const initiateResponse = await initiateChat({ service_ad_id: userId });
-      console.log('initiateChat response:', initiateResponse);
+      logger.log('initiateChat response:', initiateResponse);
 
       // Extract conversation_id safely — works for ALL Laravel responses
       const conversationId =
@@ -56,7 +57,7 @@ export default function MiniChatBox({ userId, isMesagingCredible }: MiniChatBoxP
         throw new Error('Failed to get conversation ID from server');
       }
 
-      console.log('Conversation ID:', conversationId);
+      logger.log('Conversation ID:', conversationId);
 
       // Send first message
       await sendMessageCustomer(String(conversationId), message);
@@ -65,7 +66,7 @@ export default function MiniChatBox({ userId, isMesagingCredible }: MiniChatBoxP
       notify('Chat initiated successfully!', 'success', 'Success');
       setMessage('');
     } catch (error: any) {
-      console.error('Error in MiniChatBox:', error);
+      logger.error('Error in MiniChatBox:', error);
       alert(error.message || 'Failed to start chat. Please try again.');
     } finally {
       setLoading(false);

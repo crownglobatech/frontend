@@ -5,6 +5,7 @@ import ImageUpload from "./HandleImageUpload";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import Loader from "@/app/components/general/Loader";
 import { Ad } from "@/lib/types";
+import { logger } from "@/lib/logger";
 
 interface Props {
   adData: Ad;
@@ -156,7 +157,7 @@ export default function EditAd({ adData, onUpdate }: Props) {
       notify("Ad paused successfully.", "paused", "Ad Paused");
       onUpdate?.();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       setAdStatus(prevStatus);
     } finally {
       setProcessing(false);
@@ -196,7 +197,7 @@ export default function EditAd({ adData, onUpdate }: Props) {
       notify("Ad resumed successfully.", "resume", "Ad Resumed");
       onUpdate?.();
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       setAdStatus(prevStatus);
       notify("Something went wrong while resuming the ad.", "error");
     } finally {

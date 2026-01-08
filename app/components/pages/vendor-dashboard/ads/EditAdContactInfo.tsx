@@ -5,6 +5,7 @@ import { Ad } from '@/lib/types'
 import { FormEvent, useState } from 'react'
 import PhoneInput, { CountryData } from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import { logger } from "@/lib/logger"
 
 interface Props {
   adData: Ad
@@ -52,7 +53,7 @@ export default function EditContactInfo({ adData }: Props) {
         notify(data?.message || 'Failed to update contact info.', 'error')
       }
     } catch (error) {
-      console.error(error)
+      logger.error(error)
       notify('An unexpected error occurred.', 'error')
     } finally {
       setLoading(false)

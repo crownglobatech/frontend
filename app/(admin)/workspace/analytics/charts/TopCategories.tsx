@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { BarChart3, PieChartIcon } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 interface TopCategoriesProps {
   chartData: Record<string, number | string>;
@@ -45,7 +46,7 @@ export default function TopCategories({ chartData }: TopCategoriesProps) {
     setSelectedCategory(
       selectedCategory === categoryName ? null : categoryName
     );
-    console.log(`Selected category: ${categoryName}`);
+    logger.log(`Selected category: ${categoryName}`);
   };
 
   return (
@@ -59,21 +60,19 @@ export default function TopCategories({ chartData }: TopCategoriesProps) {
           <div className="flex gap-1 rounded-lg border p-1">
             <button
               onClick={() => setViewMode("bars")}
-              className={`p-2 rounded transition-colors ${
-                viewMode === "bars"
+              className={`p-2 rounded transition-colors ${viewMode === "bars"
                   ? "bg-primary text-primary-foreground"
                   : "hover:bg-muted"
-              }`}
+                }`}
             >
               <BarChart3 className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode("pie")}
-              className={`p-2 rounded transition-colors ${
-                viewMode === "pie"
+              className={`p-2 rounded transition-colors ${viewMode === "pie"
                   ? "bg-primary text-primary-foreground"
                   : "hover:bg-muted"
-              }`}
+                }`}
             >
               <PieChartIcon className="h-4 w-4" />
             </button>
@@ -87,11 +86,10 @@ export default function TopCategories({ chartData }: TopCategoriesProps) {
               <div
                 key={cat.name}
                 onClick={() => handleCategoryClick(cat.name)}
-                className={`space-y-2 cursor-pointer rounded-lg p-2 -mx-2 transition-all duration-200 ${
-                  selectedCategory === cat.name
+                className={`space-y-2 cursor-pointer rounded-lg p-2 -mx-2 transition-all duration-200 ${selectedCategory === cat.name
                     ? "bg-muted scale-105"
                     : "hover:bg-muted/50"
-                }`}
+                  }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">

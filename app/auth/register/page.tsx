@@ -17,6 +17,7 @@ import "react-phone-input-2/lib/style.css";
 import EmailVerifyModal from "@/app/components/pages/auth/EmailVerifyModal";
 import VerificationSuccessModal from "@/app/components/pages/auth/VerificationSuccessModal";
 import { useNotification } from "@/app/contexts/NotificationProvider";
+import { logger } from "@/lib/logger";
 
 type RegisterResponse = {
   message: string;
@@ -109,7 +110,7 @@ export default function SignUp() {
       if (err instanceof Error) {
         errorMessage = err;
       }
-      console.error(errorMessage?.message);
+      logger.error(errorMessage?.message);
     } finally {
       setLoading(false);
     }
@@ -174,7 +175,7 @@ export default function SignUp() {
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
       dispatch(setAuthError(errorMessage));
-      console.error(errorMessage);
+      logger.error(errorMessage);
     } finally {
       setLoading(false);
     }
