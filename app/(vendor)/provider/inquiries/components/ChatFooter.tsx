@@ -76,6 +76,7 @@ export default function ChatFooter({
       notify(error.message || "Failed to send message", "error", "Send Failed");
       setMessage(trimmedMessage);
     } finally {
+      setIsSending(false)
       setLoading(false);
     }
   };

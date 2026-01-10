@@ -1,3 +1,6 @@
+import { Activity } from "@/app/(vendor)/provider/dashboard/components/RecentActivities";
+import { ViewOverTime } from "@/app/components/general/AdChart";
+
 export interface Address {
   address_line1: string | null;
   address_line2: string | null;
@@ -96,7 +99,7 @@ export interface AnalyticsPerformance {
 
 // For the "overview" object
 export interface AnalyticsOverview {
-  total_ads: number;
+  total_ads_posted: number;
   total_views: number;
   total_searches: number;
   total_clicks: number;
@@ -107,7 +110,8 @@ export interface AnalyticsOverview {
 export interface AnalyticsData {
   overview: AnalyticsOverview;
   trend: unknown[]; // 'trend' is an empty array
-  performance: AnalyticsPerformance[];
+  individual_ad_performance: { [key: string]: AnalyticsPerformance } | undefined;
+  ad_views_over_time: ViewOverTime[];
 }
 
 export interface AnalyticsApiResponse {
@@ -176,8 +180,14 @@ export interface CustomerAd {
   business: Business; // Re-using the Business interface
   reviews?: any[];
   review_count?: number; // Optional reviews array
+  related_services: any[]
 }
 
+export interface ViewCustomerAd {
+  data: CustomerAd
+  reviews?: any[]
+  related_services?: any[]
+}
 // --- API Response for All Ads (Paginated) ---
 
 interface PaginationLink {
@@ -218,31 +228,22 @@ export interface RecentActivity {
 export interface RatingsFeedbacks {
   average_rating: number | null;
   total_feedbacks: number;
-  recent_feedbacks: Feedback[];
+  recent_reviews: Feedback[];
 }
 
 export interface Feedback {
-  // Add properties based on your actual feedback structure
-  // Example:
-  id?: string;
   rating: number;
-  comment?: string;
-  user_name?: string;
-  created_at?: string;
+  feedback?: string;
+  customer_name?: string;
+  date?: string;
 }
 
 export interface DashboardData {
   views_over_time: ViewOverTime[];
-  recent_activities: RecentActivity[];
+  recent_activities: { [key: string]: Activity } | Activity[];
   ratings_feedbacks: RatingsFeedbacks;
 }
 
-export interface ViewOverTime {
-  // Add properties based on your actual views data
-  // Example:
-  date: string;
-  views: number;
-}
 
 export interface DashboardResponse {
   status: "success" | "error"; // or string if you want more flexibility

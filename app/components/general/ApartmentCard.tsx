@@ -65,7 +65,7 @@ export default function ApartmentCard({
               />
             ))}
             <span className="ml-1 text-[10px] text-[var(--foundation-neutral-8)]">
-              {rating.toFixed(1)}
+              {Number.isFinite(rating) ? Number(rating.toFixed(1)) : "N/A"}
             </span>
           </div>
         </div>

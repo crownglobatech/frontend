@@ -27,7 +27,7 @@ export default function ApartmentCard({
   status = "Active",
 }: ApartmentCardProps) {
   return (
-    <div className="bg-white shadow-md hover:shadow-lg rounded-xl w-[320px] overflow-hidden transition-shadow cursor-pointer">
+    <div className="bg-white shadow-sm hover:shadow-sm rounded-xl w-[320px] overflow-hidden transition-shadow cursor-pointer">
       {/* Image */}
       <div className="relative mx-2 my-2">
         <img

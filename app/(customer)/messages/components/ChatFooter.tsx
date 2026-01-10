@@ -90,6 +90,7 @@ export default function ChatFooter({
       );
       setMessage(message);
     } finally {
+      setIsSending(false)
       setLoading(false);
     }
   };
@@ -171,7 +172,7 @@ export default function ChatFooter({
     if (!currentBooking?.status) return;
     if (
       currentBooking?.status === "pending" ||
-      currentBooking?.status === "confirmed"
+      currentBooking?.status === "confirmed" || currentBooking?.status === 'custom_pending'
     ) {
       setCurrentStep(0);
       setCompletedSteps([false, false, false]);
@@ -259,7 +260,7 @@ export default function ChatFooter({
                     </div>
                     <div className="bg-[#FBF7EB] border border-[#D4AF37] rounded-sm px-4 py-1.5 w-full flex items-center justify-between">
                       <p className="text-[#D4AF37] text-[10px]">
-                        You have a custom booking request{" "}
+                        You have a custom booking request of{" "}
                         {currentBooking.custom_price}
                       </p>
                       <div className="flex gap-2 items-center">
@@ -345,6 +346,7 @@ export default function ChatFooter({
               </div>
               <button
                 onClick={handlePayment}
+                disabled={loading}
                 className="text-white w-full mb-2 py-1.5 rounded px-4 font-semibold cursor-pointer shadow-sm bg-[var(--success-color)] text-[14px]"
               >
                 {loading ? <LoadingDots /> : "Proceed with payment"}
@@ -417,6 +419,7 @@ export default function ChatFooter({
         <ReviewPopUpBox
           open={openReviewPopup}
           onOpenChange={setOpenReviewPopup}
+          bookingCode={currentBooking?.booking_code}
         />
       )}
     </>

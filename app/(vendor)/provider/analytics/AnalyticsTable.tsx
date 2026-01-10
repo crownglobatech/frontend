@@ -9,11 +9,18 @@ import {
 import { AnalyticsPerformance } from '@/lib/types'
 
 interface AnalyticsTableProps {
-  performanceData: AnalyticsPerformance[] | undefined
+  performanceData: { [key: string]: AnalyticsPerformance } | undefined
 }
-export default function AnalyticsTable ({
+
+export default function AnalyticsTable({
   performanceData
 }: AnalyticsTableProps) {
+  const performance: AnalyticsPerformance[] = !performanceData
+    ? []
+    : Array.isArray(performanceData)
+      ? performanceData
+      : Object.values(performanceData);
+
   return (
     <div className='mt-4 px-6 py-4 border border-[var(--foundation-neutral-6)]'>
       <div className='flex justify-between items-center mb-2'>
@@ -32,7 +39,7 @@ export default function AnalyticsTable ({
 
       <Table className='max-h-20 overflow-y-scroll scrollbar-hide'>
         <TableHeader>
-          <TableRow className='bg-[var(--foundation-neutral-4)]'>
+          <TableRow className='bg-[var(--foundation-neutral-4)] z-[-999]'>
             <TableHead className='w-[20%] font-semibold text-[var(--heading-color)]'>
               Ad Title
             </TableHead>
@@ -55,7 +62,7 @@ export default function AnalyticsTable ({
         </TableHeader>
 
         <TableBody>
-          {!performanceData ? (
+          {performance.length === 0 ? (
             <TableRow>
               <TableCell
                 colSpan={14}
@@ -65,7 +72,7 @@ export default function AnalyticsTable ({
               </TableCell>
             </TableRow>
           ) : (
-            performanceData.map((data, index) => (
+            performance.map((data: AnalyticsPerformance, index: number) => (
               <TableRow key={index} className='border-none'>
                 <TableCell className='text-[var(--heading-color)]'>{data.title}</TableCell>
                 <TableCell className='text-[var(--heading-color)]'>{data.searches}</TableCell>
@@ -74,15 +81,14 @@ export default function AnalyticsTable ({
                 <TableCell className='text-[var(--heading-color)]'>{data.inquiries}</TableCell>
                 <TableCell>
                   <span
-                    className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${
-                      data.status === 'paused'
-                        ? 'bg-[#FFF4D3] text-[var(--brand-accent-color)]'
-                        : data.status === 'approved'
+                    className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${data.status === 'paused'
+                      ? 'bg-[#FFF4D3] text-[var(--brand-accent-color)]'
+                      : data.status === 'Approved'
                         ? 'bg-[#C8FFD5] text-[var(--success-color)]'
                         : 'bg-[var(--text-body)] text-white'
-                    }`}
+                      }`}
                   >
-                    {data.status === 'approved' ? 'Active' : data.status}
+                    {data.status === 'Approved' ? 'Active' : data.status}
                   </span>
                 </TableCell>
               </TableRow>

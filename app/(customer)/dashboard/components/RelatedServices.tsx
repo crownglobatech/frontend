@@ -10,7 +10,7 @@ export type RelatedServicesHandle = {
 interface Props {
   relatedServices: any[];
 }
-const RelatedServices = forwardRef<RelatedServicesHandle>((props, ref) => {
+const RelatedServices = forwardRef<RelatedServicesHandle, Props>((props, ref) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Expose methods to parent
@@ -56,128 +56,27 @@ const RelatedServices = forwardRef<RelatedServicesHandle>((props, ref) => {
       onMouseMove={handleMouseMove}
     >
       <div className="flex gap-4 px-2 py-2 w-max">
-        <Link href="/dashboard/details/200">
-          <ApartmentCard
-            baths={3}
-            beds={4}
-            image="/estate.png"
-            location="Agodi Awolowo, Ibadan"
-            price="50000000"
-            rating={5}
-            title="Vineyard Estate"
-            providerVerified={true}
-            status="For Sale"
-          />
-        </Link>
-
-        <Link href="/dashboard/details/200">
-          <ApartmentCard
-            baths={3}
-            beds={4}
-            image="/estate.png"
-            location="Agodi Awolowo, Ibadan"
-            price="50000000"
-            rating={5}
-            title="Vineyard Estate"
-            providerVerified={true}
-            status="For Rent"
-          />
-        </Link>
-        <Link href="/dashboard/details/200">
-          <ApartmentCard
-            baths={3}
-            beds={4}
-            image="/estate.png"
-            location="Agodi Awolowo, Ibadan"
-            price="50000000"
-            rating={5}
-            title="Vineyard Estate"
-            providerVerified={true}
-            status="For Sale"
-          />
-        </Link>
-
-        <Link href="/dashboard/details/200">
-          <ApartmentCard
-            baths={3}
-            beds={4}
-            image="/estate.png"
-            location="Agodi Awolowo, Ibadan"
-            price="50000000"
-            rating={5}
-            title="Vineyard Estate"
-            providerVerified={true}
-            status="For Rent"
-          />
-        </Link>
-        <Link href="/dashboard/details/200">
-          <ApartmentCard
-            baths={3}
-            beds={4}
-            image="/estate.png"
-            location="Agodi Awolowo, Ibadan"
-            price="50000000"
-            rating={5}
-            title="Vineyard Estate"
-            providerVerified={true}
-            status="For Sale"
-          />
-        </Link>
-
-        <Link href="/dashboard/details/200">
-          <ApartmentCard
-            baths={3}
-            beds={4}
-            image="/estate.png"
-            location="Agodi Awolowo, Ibadan"
-            price="50000000"
-            rating={5}
-            title="Vineyard Estate"
-            providerVerified={true}
-            status="For Rent"
-          />
-        </Link>
-        <Link href="/dashboard/details/200">
-          <ApartmentCard
-            baths={3}
-            beds={4}
-            image="/estate.png"
-            location="Agodi Awolowo, Ibadan"
-            price="50000000"
-            rating={5}
-            title="Vineyard Estate"
-            providerVerified={true}
-            status="For Sale"
-          />
-        </Link>
-
-        <Link href="/dashboard/details/200">
-          <ApartmentCard
-            baths={3}
-            beds={4}
-            image="/estate.png"
-            location="Agodi Awolowo, Ibadan"
-            price="50000000"
-            rating={5}
-            title="Vineyard Estate"
-            providerVerified={true}
-            status="For Rent"
-          />
-        </Link>
-
-        <Link href="/dashboard/details/200">
-          <ApartmentCard
-            baths={3}
-            beds={4}
-            image="/estate.png"
-            location="Agodi Awolowo, Ibadan"
-            price="50000000"
-            rating={5}
-            title="Vineyard Estate"
-            providerVerified={true}
-            status="For Sale"
-          />
-        </Link>
+        {props.relatedServices && props.relatedServices.length > 0 ? (
+          props.relatedServices.map((item, index) => (
+            <Link key={item.id || index} href={`/dashboard/details/${item.id}`}>
+              <ApartmentCard
+                baths={item.bathrooms || 0}
+                beds={item.bedrooms || 0}
+                image={item.photo_url ? item.photo_url : "/placeholder.png"}
+                location={`${item.lga || ""}, ${item.state || ""}`}
+                price={item.price || "0"}
+                rating={item.rating}
+                title={item.title || "Untitled Ad"}
+                providerVerified={item.business?.is_verified === 1}
+                status={item.listing_type || "For Rent"}
+              />
+            </Link>
+          ))
+        ) : (
+          <div className="flex items-center justify-center p-8 w-full text-gray-500 italic">
+            No related services found.
+          </div>
+        )}
       </div>
     </div>
   );

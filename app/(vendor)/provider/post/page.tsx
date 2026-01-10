@@ -1,16 +1,16 @@
 import NewAdContent from '@/app/components/pages/vendor-dashboard/ads/NewAdContent'
 import Image from 'next/image'
-export default function PostNewAd () {
+export default function PostNewAd() {
   return (
     <div>
-      <div className='top-0 z-[1000] sticky bg-white shadow-lg px-6 py-4 w-full'>
+      <div className='top-0 z-30 sticky bg-white shadow-sm px-6 py-4 w-full'>
         <div className='flex justify-between items-center'>
           <h2 className='font-semibold text-[20px] text-[var(--heading-color)]'>
             Post New Ad
           </h2>
           {/* Icons */}
           <div className='flex flex-row-reverse items-center gap-8'>
-            <div className='shadow-md rounded-full'>
+            <div className='shadow-sm rounded-full'>
               <Image
                 src='/user.png'
                 alt='vendor profile avatar'
@@ -19,7 +19,7 @@ export default function PostNewAd () {
                 width={40}
               />
             </div>
-            <div className='shadow-md rounded-full'>
+            <div className='shadow-sm rounded-full'>
               <Image
                 src='/notify.png'
                 alt='notification icon'
@@ -35,7 +35,7 @@ export default function PostNewAd () {
       {/* content */}
       <div className='flex flex-col gap-4 px-16 py-8'>
         <div>
-          <NewAdContent  />
+          <NewAdContent />
         </div>
       </div>
     </div>

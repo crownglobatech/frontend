@@ -73,7 +73,7 @@ export default function MiniChatBox({ userId, isMesagingCredible }: MiniChatBoxP
     }
   };
   return (
-    <div className="flex flex-col items-center gap-2 shadow-lg hover:shadow-xl px-6 py-4 rounded-md transition-all duration-300 w-[300px]">
+    <div className="flex flex-col items-center gap-2 shadow-sm hover:shadow-xl px-6 py-4 rounded-md transition-all duration-300 w-[300px]">
       <h2 className="font-semibold text-[18px] text-[var(--foundation-neutral-8)]">
         Chat Vendor
       </h2>

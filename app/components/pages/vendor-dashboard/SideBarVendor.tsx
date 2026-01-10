@@ -1,5 +1,5 @@
 "use client";
-import { LogIn, LogOut, PanelRightClose } from "lucide-react";
+import { LogIn, LogOut, PanelRightClose, Settings } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { MdAddCircleOutline, MdDashboard } from "react-icons/md";
@@ -48,6 +48,7 @@ export default function SideBarVendor() {
   ];
 
   const bottomLinks = [
+    {href: "/provider/addBank", label: "Payment Settings", icon: Settings},
     { href: "/provider/faq", label: "Help & Support", icon: TbHelpCircle },
     isLoggedIn
       ? { href: "/auth/logout", label: "Signout", icon: LogOut }

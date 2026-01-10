@@ -30,6 +30,7 @@ import {
   CustomerAdsResponse,
   DashboardResponse,
   vendorAd,
+  ViewCustomerAd,
 } from "../types";
 import { logger } from "@/lib/logger";
 
@@ -157,10 +158,14 @@ export async function getAdById(token: string, id: string): Promise<vendorAd> {
 }
 
 // Analytics
-export async function getVendorAnalytics(token: string) {
+export async function getVendorAnalytics(token: string, filter?: string) {
   try {
+    const url = new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/ads-analytics`);
+    if (filter) {
+      url.searchParams.append("filter", filter);
+    }
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/ads-analytics`,
+      url.toString(),
       {
         method: "GET",
         next: {
@@ -186,10 +191,15 @@ export async function getVendorAnalytics(token: string) {
 }
 
 // vendor dashboard data
-export async function getDashboardData(token: string) {
+export async function getDashboardData(token: string, filter?: string) {
   try {
+    const url = new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/dashboard`);
+    if (filter) {
+        url.searchParams.append("filter", filter);
+    }
+
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/dashboard`,
+      url.toString(),
       {
         method: "GET",
         next: {
@@ -316,7 +326,7 @@ export async function getCustomerAdsNoAuth(
   return data;
 }
 
-export async function getCustomerAdsById(id: string): Promise<CustomerAd> {
+export async function getCustomerAdsById(id: string): Promise<ViewCustomerAd> {
   try {
     if (!id) {
       throw new Error("No product was selected.");
@@ -342,9 +352,103 @@ export async function getCustomerAdsById(id: string): Promise<CustomerAd> {
     }
 
     const data = await response.json();
-    return data.data;
+    return data;
   } catch (error) {
     logger.error("Error fetching all ads:", error);
+    throw error;
+  }
+}
+
+// Bank and Payment
+export async function resolveAccountDetails(
+  account_number: string,
+  bank_code: string
+) {
+  try {
+    const response = await fetch(
+      `https://api.paystack.co/bank/resolve?account_number=${account_number}&bank_code=${bank_code}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_PAYSTACK_SECRET_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      const errorData = await safeJson(response);
+      throw new Error(
+        errorData?.message || `Failed to resolve account (status: ${response.status})`
+      );
+    }
+    return await response.json();
+  } catch (error) {
+    logger.error("Error resolving account details:", error);
+    throw error;
+  }
+}
+
+export async function saveBankDetails(
+  token: string,
+  data: {
+    account_number: string;
+    bank_code: string;
+  }
+) {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/bank-details`,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      const errorData = await safeJson(response);
+      throw new Error(
+        errorData?.message || `Failed to save bank details (status: ${response.status})`
+      );
+    }
+    return await response.json();
+  } catch (error) {
+    logger.error("Error saving bank details:", error);
+    throw error;
+  }
+}
+
+export async function submitReview(
+  token: string,
+  data: {
+    booking_code: string;
+    rating: number;
+    feedback: string;
+  }
+) {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/reviews`,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      const errorData = await safeJson(response);
+      throw new Error(
+        errorData?.message || `Failed to submit review (status: ${response.status})`
+      );
+    }
+    return await response.json();
+  } catch (error) {
+    logger.error("Error submitting review:", error);
     throw error;
   }
 }

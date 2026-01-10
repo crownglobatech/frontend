@@ -1,9 +1,8 @@
 // lib/logger.ts
 
-/**
- * A logger utility that conditionally logs messages based on the environment.
- * Logs are suppressed in production environments.
- */
+// A logger utility that conditionally logs messages based on the environment.
+// Logs are suppressed in production environments.
+
 export const logger = {
   log: (...args: any[]) => {
     if (process.env.NODE_ENV !== 'production') {

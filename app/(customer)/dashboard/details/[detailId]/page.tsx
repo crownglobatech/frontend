@@ -16,6 +16,7 @@ import { notFound } from "next/navigation";
 import RelatedServicesSection from "./RelatedServicesSection";
 import { Input } from "@/components/ui/input";
 import { logger } from "@/lib/logger";
+import AdDetailsAnimator from "../../components/AdDetailsAnimator";
 
 interface Props {
   params: Promise<{ detailId: string }>;
@@ -28,6 +29,7 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
     if (!adData) {
       notFound();
     }
+    logger.log(adData)
   } catch (error: unknown) {
     logger.error("Failed to fetch ad:", error);
     if (error instanceof Error && error.message.includes("404")) {
@@ -36,10 +38,10 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
     throw error;
   }
   // Convert 0/1 to boolean
-  const isMessagingCredible = adData?.business?.is_verified === 1;
-  const photos = Array.isArray(adData.photo_urls) ? adData.photo_urls : [];
+  const isMessagingCredible = adData?.data?.business?.is_verified === 1;
+  const photos = Array.isArray(adData.data.photo_urls) ? adData.data.photo_urls : [];
   const vendorReviews = adData?.reviews || [];
-  // const relatedServices = adData
+  const relatedServices = adData?.related_services || []
 
   return (
     <div>
@@ -70,146 +72,152 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-col px-6">
-        {/* detail image */}
-        <div className="rounded-md w-full">
-          <Image
-            src={photos[0] || "/bg-overlay.png"}
-            alt="detail image, could be a house or a service description image"
-            width={300}
-            height={300}
-            className="rounded-md w-full max-h-[250px] object-cover"
-          />
-        </div>
-        <div className="mt-4">
-          <div className="">
-            <div className="flex items-center gap-1">
-              <CiLocationOn size={12} />
-              <p className="text-[10px] text-gray-500">
-                {adData.area || "Location not stated"}
-              </p>
-            </div>
-          </div>
-          {/* ad title and price */}
-          <div className="flex justify-between mt-1">
-            <h1 className="font-semibold text-[20px] text-black">
-              {adData?.title || "Title not stated"}
-            </h1>
-            <h1 className="font-semibold text-[20px] text-[var(--heading-color)]">
-              ₦{adData?.price}
-            </h1>
-          </div>
-        </div>
-
-        {/* provider profile and rating */}
-        <div className="relative flex items-center gap-4 mt-4">
-          <div className="top-10 right-0 absolute">
-            {isMessagingCredible && (
-              <MiniChatBox
-                userId={detailId}
-                isMesagingCredible={isMessagingCredible}
-              />
-            )}
-          </div>
-          <div
-            className={`flex items-center gap-2 ${isMessagingCredible ? "" : "blur-sm"
-              }`}
-          >
+      <AdDetailsAnimator>
+        <div className="flex flex-col px-6">
+          {/* detail image */}
+          <div className="rounded-md w-full">
             <Image
-              alt="profile avatar"
-              src="/user.png"
-              width={30}
-              height={30}
-              className="rounded-full object-contain"
+              src={photos[0] || "/bg-overlay.png"}
+              alt="detail image, could be a house or a service description image"
+              width={300}
+              height={300}
+              className="rounded-md w-full max-h-[250px] object-cover"
             />
-            <h2 className="font-semibold text-[12px]">
-              {adData?.business?.business_name || "Business name not stated"}
-            </h2>
           </div>
-          <div
-            className={`flex items-center gap-2 ${isMessagingCredible ? "" : "blur-sm"
-              }`}
-          >
-            <Rating rate={5} />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-4 mt-6 mb-8 w-[60%]">
-          {/* service description */}
-          <div className="flex flex-col items-start gap-2">
-            <h2 className="font-semibold text-[18px] text-black">
-              Service Description
-            </h2>
-            <p className="max-w-[80%] text-[13px] text-[var(--foundation-neutral-8)]">
-              {adData.description || "Description not available"}
-            </p>
-          </div>
-
-          {/* gallery (images) */}
-          <div className="flex flex-col items-start gap-4">
-            <h2 className="font-semibold text-[18px] text-black">Gallery</h2>
-            <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
-              {photos.map((url, index) => {
-                return (
-                  <Image
-                    key={index}
-                    alt={url.slice(69, 150)}
-                    src={url}
-                    width={300}
-                    height={300}
-                    className="rounded-md h-[260px] object-cover"
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          {/* reviews */}
-          <div>
-            <div className="flex justify-between items-center gap-2 w-full">
-              <div className="flex justify-between items-center gap-2">
-                <h2 className="font-semibold text-[18px] text-black">
-                  Customers Reviews
-                </h2>
-                <div className="flex items-center gap-1">
-                  <div className="flex items-center gap-2">
-                    <Rating rate={5} />
-                  </div>
-                  <span className="text-[10px]">
-                    ({adData.review_count !== 0 ? adData.review_count : ""}{" "}
-                    {adData?.review_count && adData.review_count > 1
-                      ? "Reviews"
-                      : adData.review_count === 0
-                        ? "No Reviews"
-                        : "Review"}
-                    )
-                  </span>
-                </div>
+          <div className="mt-4">
+            <div className="">
+              <div className="flex items-center gap-1">
+                <CiLocationOn size={12} />
+                <p className="text-[10px] text-gray-500">
+                  {adData?.data.area || "Location not stated"}
+                </p>
               </div>
             </div>
-            {/* all reviews */}
-            <div className="gap-4 grid grid-cols-1 mt-4 ">
-              {vendorReviews.length === 0 ? (
-                <p className="text-[12px] text-gray-500">No reviews yet.</p>
-              ) : (
-                vendorReviews
-                  .slice(0, 4)
-                  .map((review, index) => (
-                    <ReviewCard key={index} review={review} />
-                  ))
-              )}
+            {/* ad title and price */}
+            <div className="flex justify-between mt-1">
+              <h1 className="font-semibold text-[20px] text-black">
+                {adData?.data.title || "Title not stated"}
+              </h1>
+              <h1 className="font-semibold text-[20px] text-[var(--heading-color)]">
+                ₦{adData?.data.price}
+              </h1>
             </div>
           </div>
 
-          {/* create new review */}
-          <div className="">
-            <CreateReview detailId={detailId} />
+          {/* provider profile and rating */}
+          <div className="relative flex items-center gap-4 mt-4">
+            <div className="top-10 right-0 absolute">
+              {isMessagingCredible && (
+                <MiniChatBox
+                  userId={detailId}
+                  isMesagingCredible={isMessagingCredible}
+                />
+              )}
+            </div>
+            <div
+              className={`flex items-center gap-2 ${isMessagingCredible ? "" : "blur-sm"
+                }`}
+            >
+              <Image
+                alt="profile avatar"
+                src="/user.png"
+                width={30}
+                height={30}
+                className="rounded-full object-contain"
+              />
+              <h2 className="font-semibold text-[12px]">
+                {adData?.data.business?.business_name ||
+                  "Business name not stated"}
+              </h2>
+            </div>
+            <div
+              className={`flex items-center gap-2 ${isMessagingCredible ? "" : "blur-sm"
+                }`}
+            >
+              <Rating rate={5} />
+            </div>
           </div>
-        </div>
 
-        {/* Related Services */}
-        <RelatedServicesSection />
-      </div>
+          <div className="flex flex-col gap-4 mt-6 mb-8 w-[60%]">
+            {/* service description */}
+            <div className="flex flex-col items-start gap-2">
+              <h2 className="font-semibold text-[18px] text-black">
+                Service Description
+              </h2>
+              <p className="max-w-[80%] text-[13px] text-[var(--foundation-neutral-8)]">
+                {adData?.data.description || "Description not available"}
+              </p>
+            </div>
+
+            {/* gallery (images) */}
+            <div className="flex flex-col items-start gap-4">
+              <h2 className="font-semibold text-[18px] text-black">Gallery</h2>
+              <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+                {photos.map((url, index) => {
+                  return (
+                    <Image
+                      key={index}
+                      alt={url.slice(69, 150)}
+                      src={url}
+                      width={300}
+                      height={300}
+                      className="rounded-md h-[260px] object-cover"
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* reviews */}
+            <div>
+              <div className="flex justify-between items-center gap-2 w-full">
+                <div className="flex justify-between items-center gap-2">
+                  <h2 className="font-semibold text-[18px] text-black">
+                    Customers Reviews
+                  </h2>
+                  <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
+                      <Rating rate={5} />
+                    </div>
+                    <span className="text-[10px]">
+                      (
+                      {adData.data.review_count !== 0
+                        ? adData.data.review_count
+                        : ""}{" "}
+                      {adData?.data.review_count && adData.data.review_count > 1
+                        ? "Reviews"
+                        : adData.data.review_count === 0
+                          ? "No Reviews"
+                          : "Review"}
+                      )
+                    </span>
+                  </div>
+                </div>
+              </div>
+              {/* all reviews */}
+              <div className="gap-4 grid grid-cols-1 mt-4 ">
+                {vendorReviews.length === 0 ? (
+                  <p className="text-[12px] text-gray-500">No reviews yet.</p>
+                ) : (
+                  vendorReviews
+                    .slice(0, 4)
+                    .map((review, index) => (
+                      <ReviewCard key={index} review={review} />
+                    ))
+                )}
+              </div>
+            </div>
+
+            {/* create new review */}
+            <div className="">
+              <CreateReview detailId={detailId} />
+            </div>
+          </div>
+
+          {/* Related Services */}
+          <RelatedServicesSection relatedServices={relatedServices} />
+        </div>
+      </AdDetailsAnimator>
     </div>
   );
 }

@@ -10,11 +10,13 @@ import ContactInfo from "./newAdWidgets/ContactInfo";
 import LoadingDots from "@/app/components/general/LoadingDots";
 import { postNewAd } from "@/lib/api";
 import { useNotification } from "@/app/contexts/NotificationProvider";
+import PreviewAdDialog from "./PreviewAdDialog";
 
 export default function NewAdContent() {
   const { notify } = useNotification();
   const [loading, setLoading] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const toggleSection = (section: string) => {
@@ -175,9 +177,8 @@ export default function NewAdContent() {
           </span>
           <ChevronDownIcon
             size={15}
-            className={`transition-transform ${
-              openSection === "ad" ? "rotate-180" : ""
-            }`}
+            className={`transition-transform ${openSection === "ad" ? "rotate-180" : ""
+              }`}
           />
         </summary>
         <AdDetailForm data={formData} onChange={handleChange} />
@@ -200,9 +201,8 @@ export default function NewAdContent() {
           </span>
           <ChevronDownIcon
             size={15}
-            className={`transition-transform ${
-              openSection === "loc" ? "rotate-180" : ""
-            }`}
+            className={`transition-transform ${openSection === "loc" ? "rotate-180" : ""
+              }`}
           />
         </summary>
         <LocationForm data={formData} onChange={handleChange} />
@@ -225,9 +225,8 @@ export default function NewAdContent() {
           </span>
           <ChevronDownIcon
             size={15}
-            className={`transition-transform ${
-              openSection === "propInfo" ? "rotate-180" : ""
-            }`}
+            className={`transition-transform ${openSection === "propInfo" ? "rotate-180" : ""
+              }`}
           />
         </summary>
         <PropertyInfoForm data={formData} onChange={handleChange} />
@@ -250,9 +249,8 @@ export default function NewAdContent() {
           </span>
           <ChevronDownIcon
             size={15}
-            className={`transition-transform ${
-              openSection === "upload" ? "rotate-180" : ""
-            }`}
+            className={`transition-transform ${openSection === "upload" ? "rotate-180" : ""
+              }`}
           />
         </summary>
         <UploadMedia
@@ -278,9 +276,8 @@ export default function NewAdContent() {
           </span>
           <ChevronDownIcon
             size={15}
-            className={`transition-transform ${
-              openSection === "contact" ? "rotate-180" : ""
-            }`}
+            className={`transition-transform ${openSection === "contact" ? "rotate-180" : ""
+              }`}
           />
         </summary>
         <ContactInfo data={formData} onChange={handleChange} />
@@ -290,7 +287,8 @@ export default function NewAdContent() {
       <div className="flex gap-2">
         <button
           type="button"
-          className="bg-transparent px-12 py-1 border border-[var(--primary-color)] w-full font-semibold text-[var(--primary-color)]"
+          onClick={() => setPreviewOpen(true)}
+          className="bg-transparent px-12 py-1 border border-[var(--primary-color)] w-full font-semibold text-[var(--primary-color)] hover:bg-[var(--primary-color)]/5 transition-colors"
         >
           Preview Ad
         </button>
@@ -302,6 +300,11 @@ export default function NewAdContent() {
           {loading ? <LoadingDots /> : "Publish Ad"}
         </button>
       </div>
+      <PreviewAdDialog
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        data={formData}
+      />
     </form>
   );
 }

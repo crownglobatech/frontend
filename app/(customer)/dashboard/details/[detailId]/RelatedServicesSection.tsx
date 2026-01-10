@@ -11,9 +11,6 @@ interface Props {
   relatedServices?: any[];
 }
 export default function RelatedServicesSection({ relatedServices }: Props) {
-  if (relatedServices) {
-    logger.log(relatedServices);
-  }
   const relatedRef = useRef<RelatedServicesHandle>(null);
 
   return (
@@ -40,7 +37,7 @@ export default function RelatedServicesSection({ relatedServices }: Props) {
       </div>
 
       <div className="overflow-x-hidden">
-        <RelatedServices ref={relatedRef} />
+        <RelatedServices ref={relatedRef} relatedServices={relatedServices!} />
       </div>
     </div>
   );

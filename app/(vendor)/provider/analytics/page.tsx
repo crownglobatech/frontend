@@ -2,7 +2,7 @@
 import { useNotification } from '@/app/contexts/NotificationProvider'
 import AnalyticsTable from './AnalyticsTable'
 import HeadBanner from './HeadBanner'
-import Image from 'next/image'
+import AdChart from '@/app/components/general/AdChart'
 import { useEffect, useState } from 'react'
 import { getVendorAnalytics } from '@/lib/api'
 import Loader from '@/app/components/general/Loader'
@@ -14,6 +14,7 @@ export default function Analytics() {
   const { notify } = useNotification()
   const [loading, setLoading] = useState(false)
   const [analytics, setAnalytics] = useState<AnalyticsApiResponse>()
+  const [filter, setFilter] = useState('this_week')
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -25,7 +26,7 @@ export default function Analytics() {
           throw new Error('User not authenticated')
         }
 
-        const data: AnalyticsApiResponse = await getVendorAnalytics(token)
+        const data: AnalyticsApiResponse = await getVendorAnalytics(token, filter)
         setAnalytics(data)
       } catch (err: unknown) {
         let errorMessage = 'An unknown error occurred'
@@ -42,17 +43,18 @@ export default function Analytics() {
     }
 
     fetchAnalytics()
-  }, [])
+  }, [filter])
 
   if (loading) {
     return <Loader />
   }
+  logger.log(analytics?.data)
 
   const metrics = analytics
     ? [
       {
         title: 'Total Ads Posted',
-        value: analytics.data.overview.total_ads.toString()
+        value: analytics?.data?.overview.total_ads_posted
       },
       {
         title: 'Total Views',
@@ -72,7 +74,7 @@ export default function Analytics() {
 
   return (
     <div>
-      <div className='top-0 sticky w-full'>
+      <div className='top-0 sticky w-full z-[999]'>
         <HeadBanner />
       </div>
       <div className='p-6'>
@@ -87,39 +89,23 @@ export default function Analytics() {
                 >
                   <h2 className='font-semibold text-[14px]'>{metric.title}</h2>
                   <span className='font-semibold text-[25px]'>
-                    {metric.value}
+                    {metric.value || 0}
                   </span>
                 </div>
               )
             })}
           </div>
-          <div className='flex flex-col gap-8 px-4 py-2 border border-[var(--foundation-neutral-6)]'>
-            <div className='flex justify-between items-center'>
-              <h2 className='font-semibold text-[14px] text-black'>
-                Ad Views Over Time
-              </h2>
-              <select
-                name='timeRange'
-                id='timeRange'
-                className='px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm text-[#334155] text-[12px]'
-              >
-                <option value='this week'>This Week</option>
-                <option value='this month'>This Month</option>
-              </select>
-            </div>
-            <div>
-              <Image
-                src='/viewchart.png'
-                alt='views chart'
-                height={300}
-                width={300}
-                className='w-full object-contain'
-              />
-            </div>
+          <div className='flex flex-col gap-8 px-4 py-2 border border-[var(--foundation-neutral-6)] overflow-hidden rounded-md'>
+            <AdChart
+              data={analytics?.data.ad_views_over_time}
+              selectedTimeRange={filter}
+              onTimeRangeChange={setFilter}
+              loading={loading}
+            />
           </div>
         </div>
         <div>
-          <AnalyticsTable performanceData={analytics?.data.performance} />
+          <AnalyticsTable performanceData={analytics?.data.individual_ad_performance} />
         </div>
       </div>
     </div>

@@ -23,9 +23,9 @@ export default function QuickActions() {
     },
     {
       icon: "/majestic.png",
-      title: "Verification Status",
-      desc: "Check your current verification status.",
-      href: "/provider/verification",
+      title: "Payment Settings",
+      desc: "Manage your payment settings.",
+      href: "/provider/addBank",
     },
   ];
 
@@ -35,7 +35,7 @@ export default function QuickActions() {
         <Link
           href={action.href}
           key={index}
-          className="flex flex-col justify-start items-start gap-2 bg-[var(--foundation-primary)] shadow-sm p-5 border-[var(--foundation-color)] border-2 rounded-xl hover:scale-[1.03] transition-all duration-300 cursor-pointer"
+          className="flex flex-col justify-start items-start shadow-sm gap-2 bg-[var(--foundation-primary)] p-5 border-[var(--foundation-color)] border-1 rounded-xl opacity-100 hover:opacity-70 transition-all duration-300 cursor-pointer"
         >
           {/* icon */}
           <div className="bg-[var(--foundation-neutral-3)] p-3 rounded-full">
@@ -49,7 +49,7 @@ export default function QuickActions() {
           </div>
 
           {/* title */}
-          <h2 className="font-semibold text-[15px] text-[var(--heading-color)]">
+          <h2 className="font-bold text-[15px] text-[var(--heading-color)]">
             {action.title}
           </h2>
 

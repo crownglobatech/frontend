@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
+import { error } from "console";
 import { twMerge } from "tailwind-merge";
+import { logger } from "./logger";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -92,3 +94,16 @@ export const formatPrice = (
 
   return new Intl.NumberFormat(locale).format(number);
 };
+
+export const getAllBankDetails = async () => {
+    try {
+      const response = await fetch("https://api.paystack.co/bank");
+    const data = await response.json();
+    if(!response.ok){
+      throw new Error (data.message || "Failed to fetch bank details" )
+    }
+    return data.data;
+    } catch (error) {
+      logger.error(error)
+    }
+};  

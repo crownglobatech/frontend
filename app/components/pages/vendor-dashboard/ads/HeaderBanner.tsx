@@ -9,7 +9,7 @@ interface Props {
 }
 export default function HeaderBanner({ query, setQuery }: Props) {
   return (
-    <div className="bg-white shadow-lg px-6 py-4 w-full">
+    <div className="bg-white shadow-sm px-6 py-4 w-full">
       {/* Top bar */}
       <div className="flex justify-between items-center">
         {/* Search Bar */}
@@ -31,7 +31,7 @@ export default function HeaderBanner({ query, setQuery }: Props) {
         <div className="flex flex-row-reverse items-center gap-4">
           <Rating rate={5} />
 
-          <div className="shadow-md rounded-full">
+          <div className="shadow-sm rounded-full">
             <Image
               src="/user.png"
               alt="vendor profile avatar"
@@ -40,7 +40,7 @@ export default function HeaderBanner({ query, setQuery }: Props) {
               width={40}
             />
           </div>
-          <div className="shadow-md rounded-full">
+          <div className="shadow-sm rounded-full">
             <Image
               src="/notify.png"
               alt="notification icon"

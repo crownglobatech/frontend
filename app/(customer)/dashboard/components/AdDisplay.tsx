@@ -11,6 +11,30 @@ interface AdDisplayProps {
   isInitialLoad: boolean;
 }
 
+import * as motion from "motion/react-client";
+
+interface AdDisplayProps {
+  loading: boolean;
+  ads: CustomerAd[] | null;
+  error?: string | null;
+  isInitialLoad: boolean;
+}
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+};
+
 export default function AdDisplay({
   loading,
   ads,
@@ -62,26 +86,33 @@ export default function AdDisplay({
           <Loader />
         </div>
       )}
-      <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+      >
         {ads?.map((ad) => (
-          <Link href={`/dashboard/details/${ad.id}`} key={ad.id}>
-            <ApartmentCard
-              baths={ad.bathrooms}
-              beds={ad.bedrooms}
-              image={
-                ad.photo_urls[0] ||
-                "https://placehold.co/600x400/eee/ccc?text=No+Image"
-              }
-              location={ad.area}
-              price={ad.price}
-              rating={5}
-              title={ad.title}
-              providerVerified={ad.business.is_verified === 1}
-              status={ad.listing_type}
-            />
-          </Link>
+          <motion.div key={ad.id} variants={itemVariants}>
+            <Link href={`/dashboard/details/${ad.id}`}>
+              <ApartmentCard
+                baths={ad.bathrooms}
+                beds={ad.bedrooms}
+                image={
+                  ad.photo_urls[0] ||
+                  "https://placehold.co/600x400/eee/ccc?text=No+Image"
+                }
+                location={ad.area}
+                price={ad.price}
+                rating={5}
+                title={ad.title}
+                providerVerified={ad.business.is_verified === 1}
+                status={ad.listing_type}
+              />
+            </Link>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }
