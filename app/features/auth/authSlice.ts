@@ -3,8 +3,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Cookies from 'js-cookie'
 import { logger } from '@/lib/logger'
 
-
-
 interface AuthState {
   user: User | null
   token: string | null

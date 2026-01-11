@@ -12,6 +12,7 @@ interface AdDisplayProps {
 }
 
 import * as motion from "motion/react-client";
+import ApartmentCardSkeleton from "@/app/components/general/ApartmentCardSkeleton";
 
 interface AdDisplayProps {
   loading: boolean;
@@ -43,7 +44,13 @@ export default function AdDisplay({
 }: AdDisplayProps) {
   // Loading
   if (loading && isInitialLoad) {
-    return <Loader />;
+    return (
+      <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {[...Array(6)].map((_, i) => (
+          <ApartmentCardSkeleton key={i} />
+        ))}
+      </div>
+    );
   }
 
   //  Error
@@ -93,7 +100,7 @@ export default function AdDisplay({
         className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
       >
         {ads?.map((ad) => (
-          <motion.div key={ad.id} variants={itemVariants}>
+          <div key={ad.id}>
             <Link href={`/dashboard/details/${ad.id}`}>
               <ApartmentCard
                 baths={ad.bathrooms}
@@ -104,13 +111,13 @@ export default function AdDisplay({
                 }
                 location={ad.area}
                 price={ad.price}
-                rating={5}
+                rating={ad.average_rating}
                 title={ad.title}
                 providerVerified={ad.business.is_verified === 1}
                 status={ad.listing_type}
               />
             </Link>
-          </motion.div>
+          </div>
         ))}
       </motion.div>
     </div>

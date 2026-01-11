@@ -1,5 +1,4 @@
 import AuthLoader from '@/app/components/general/AuthLoader'
-import Footer from '@/app/components/general/Footer'
 import SideBarVendor from '@/app/components/pages/vendor-dashboard/SideBarVendor'
 import React from 'react'
 

@@ -9,6 +9,7 @@ import EditAd from "@/app/components/pages/vendor-dashboard/ads/EditAd";
 import Loader from "@/app/components/general/Loader";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import LoadingDots from "@/app/components/general/LoadingDots";
+import Loading from "./loading";
 import { useRouter } from "next/navigation";
 import { Ad } from "@/lib/types";
 import { logger } from "@/lib/logger";
@@ -41,7 +42,7 @@ export default function ManageAd({ params }: Props) {
     fetchAd();
   }, [ad]);
 
-  if (loading) return <Loader />;
+  if (loading) return <Loading />;
   if (!adData)
     return (
       <div className="flex justify-center items-center p-6 text-[var(--danger-color)]">

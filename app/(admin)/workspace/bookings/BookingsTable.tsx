@@ -1,5 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectTrigger } from "@/components/ui/select";
 import {
   Table,
@@ -124,14 +125,16 @@ export default function BookingsTable() {
 
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="py-6 text-[var(--foundation-neutral-8)] text-center"
-                >
-                  Please wait...
-                </TableCell>
-              </TableRow>
+              // Skeleton rows
+              [...Array(5)].map((_, i) => (
+                <TableRow key={i} className="border-none">
+                  {[...Array(7)].map((_, j) => (
+                    <TableCell key={j}>
+                      <Skeleton className="w-full h-4" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : filteredBookings.length === 0 ? (
               <TableRow>
                 <TableCell
@@ -159,13 +162,13 @@ export default function BookingsTable() {
                   <TableCell>
                     <span
                       className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${data.status === "In progress"
-                          ? "bg-[#D4E6FF] text-[var(--primary-color)]"
-                          : data.status === "Closed" ||
-                            data.status === "Confirmed"
-                            ? "bg-[#C8FFD5] text-[var(--success-color)]"
-                            : data.status === "Cancelled"
-                              ? "bg-[#FFD3D3] text-[#E63946]"
-                              : "bg-[#FFD3D3] text-[#E63946]"
+                        ? "bg-[#D4E6FF] text-[var(--primary-color)]"
+                        : data.status === "Closed" ||
+                          data.status === "Confirmed"
+                          ? "bg-[#C8FFD5] text-[var(--success-color)]"
+                          : data.status === "Cancelled"
+                            ? "bg-[#FFD3D3] text-[#E63946]"
+                            : "bg-[#FFD3D3] text-[#E63946]"
                         }`}
                     >
                       {data.status}

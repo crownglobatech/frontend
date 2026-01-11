@@ -1,4 +1,5 @@
 import { CiLocationOn } from "react-icons/ci";
+import { BedDouble, Bath } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -42,6 +43,8 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
   const photos = Array.isArray(adData.data.photo_urls) ? adData.data.photo_urls : [];
   const vendorReviews = adData?.reviews || [];
   const relatedServices = adData?.related_services || []
+  console.log(relatedServices);
+
 
   return (
     <div>
@@ -149,6 +152,24 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
               </p>
             </div>
 
+            {/* Features (Bedrooms & Bathrooms) */}
+            {(adData?.data.bedrooms > 0 || adData?.data.bathrooms > 0) && (
+              <div className="flex items-center gap-4 mt-2">
+                {adData?.data.bedrooms > 0 && (
+                  <div className="flex items-center gap-2 bg-[#F5F5F5] px-4 py-2 rounded-md font-medium text-[var(--heading-color)] text-sm">
+                    <BedDouble size={18} className="text-gray-600" />
+                    <span>{adData.data.bedrooms} Bedrooms</span>
+                  </div>
+                )}
+                {adData?.data.bathrooms > 0 && (
+                  <div className="flex items-center gap-2 bg-[#F5F5F5] px-4 py-2 rounded-md font-medium text-[var(--heading-color)] text-sm">
+                    <Bath size={18} className="text-gray-600" />
+                    <span>{adData.data.bathrooms} Bathrooms</span>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* gallery (images) */}
             <div className="flex flex-col items-start gap-4">
               <h2 className="font-semibold text-[18px] text-black">Gallery</h2>
@@ -215,7 +236,7 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
           </div>
 
           {/* Related Services */}
-          <RelatedServicesSection relatedServices={relatedServices} />
+          <RelatedServicesSection relatedServices={adData?.related_services} />
         </div>
       </AdDetailsAnimator>
     </div>

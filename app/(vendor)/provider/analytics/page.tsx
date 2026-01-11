@@ -6,6 +6,7 @@ import AdChart from '@/app/components/general/AdChart'
 import { useEffect, useState } from 'react'
 import { getVendorAnalytics } from '@/lib/api'
 import Loader from '@/app/components/general/Loader'
+import Loading from './loading'
 import { AnalyticsApiResponse } from '@/lib/types'
 import { formatK } from '@/lib/utils'
 import { logger } from '@/lib/logger'
@@ -46,7 +47,7 @@ export default function Analytics() {
   }, [filter])
 
   if (loading) {
-    return <Loader />
+    return <Loading />
   }
   logger.log(analytics?.data)
 

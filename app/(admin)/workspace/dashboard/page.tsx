@@ -1,5 +1,5 @@
 "use client";
-import LoadingSpinner from "@/app/components/general/LoadingSpinner";
+import Loading from "./loading";
 import Header from "../components/Header";
 import {
   Select,
@@ -71,11 +71,7 @@ export default function AdminDashboard() {
 
   // ... inside component
   if (loading)
-    return (
-      <div className="flex h-screen justify-center items-center">
-        <LoadingSpinner size="lg" variant="primary" />
-      </div>
-    );
+    return <Loading />;
   return (
     <div>
       <div className="top-0 z-[100] sticky w-full">

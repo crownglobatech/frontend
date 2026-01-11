@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import LoadingSpinner from "@/app/components/general/LoadingSpinner";
+import Loading from "./loading";
 import Header from "../components/Header";
 import {
   Select,
@@ -49,11 +50,7 @@ export default function AdminAnalytics() {
   }, []);
 
   if (loading)
-    return (
-      <div className="flex h-screen justify-center items-center">
-        <LoadingSpinner size="lg" variant="primary" />
-      </div>
-    );
+    return <Loading />;
   const stats = data?.stats || {};
   const dashboardData = [
     {

@@ -160,6 +160,7 @@ export interface CustomerAd {
   area: string;
   country: string;
   state: string;
+  average_rating: number;
   lga: string;
   street: string;
   latitude: string | null; // Updated to allow null
@@ -186,7 +187,7 @@ export interface CustomerAd {
 export interface ViewCustomerAd {
   data: CustomerAd
   reviews?: any[]
-  related_services?: any[]
+  related_services?: CustomerAd[]
 }
 // --- API Response for All Ads (Paginated) ---
 

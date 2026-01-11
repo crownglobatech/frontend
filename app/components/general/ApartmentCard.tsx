@@ -1,6 +1,5 @@
-import { FaBed, FaBath } from "react-icons/fa";
+import { FaBed, FaBath, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import { MdVerifiedUser } from "react-icons/md";
-import { AiFillStar } from "react-icons/ai";
 import { CiLocationOn } from "react-icons/ci";
 
 interface ApartmentCardProps {
@@ -57,15 +56,18 @@ export default function ApartmentCard({
 
           {/* Rating */}
           <div className="flex items-center">
-            {[...Array(5)].map((_, i) => (
-              <AiFillStar
-                key={i}
-                size={10}
-                color={i < rating ? "#DDBF5F" : "transparent"}
-              />
-            ))}
+            {[...Array(5)].map((_, i) => {
+              const ratingValue = rating || 0;
+              if (ratingValue >= i + 1) {
+                return <FaStar key={i} size={10} color="#DDBF5F" />;
+              } else if (ratingValue >= i + 0.5) {
+                return <FaStarHalfAlt key={i} size={10} color="#DDBF5F" />;
+              } else {
+                return <FaRegStar key={i} size={10} color="#D9D9D9" />;
+              }
+            })}
             <span className="ml-1 text-[10px] text-[var(--foundation-neutral-8)]">
-              {Number.isFinite(rating) ? Number(rating.toFixed(1)) : "N/A"}
+              {rating > 0 ? rating.toFixed(1) : "0.0"}
             </span>
           </div>
         </div>

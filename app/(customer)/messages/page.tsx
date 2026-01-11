@@ -15,7 +15,6 @@ import { bookProvider, getMyBookings } from "@/lib/api/bookings";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { initPusher } from "@/services/pusher";
 import { logger } from "@/lib/logger";
-
 import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 
@@ -475,4 +474,4 @@ export default function Messages() {
       <MessagesContent />
     </Suspense>
   );
-}
+} 

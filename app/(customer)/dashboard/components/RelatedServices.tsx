@@ -2,13 +2,14 @@
 import { useImperativeHandle, useRef, forwardRef } from "react";
 import ApartmentCard from "@/app/components/general/ApartmentCard";
 import Link from "next/link";
+import { CustomerAd } from "@/lib/types";
 
 export type RelatedServicesHandle = {
   scrollLeft: () => void;
   scrollRight: () => void;
 };
 interface Props {
-  relatedServices: any[];
+  relatedServices: CustomerAd[];
 }
 const RelatedServices = forwardRef<RelatedServicesHandle, Props>((props, ref) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -46,6 +47,7 @@ const RelatedServices = forwardRef<RelatedServicesHandle, Props>((props, ref) =>
 
   const handleMouseUp = () => (isDown = false);
   const handleMouseLeave = () => (isDown = false);
+
   return (
     <div
       ref={scrollRef}
@@ -62,10 +64,10 @@ const RelatedServices = forwardRef<RelatedServicesHandle, Props>((props, ref) =>
               <ApartmentCard
                 baths={item.bathrooms || 0}
                 beds={item.bedrooms || 0}
-                image={item.photo_url ? item.photo_url : "/placeholder.png"}
+                image={Array.isArray(item.photo_urls) ? item.photo_urls[0] : '/placeholder.png'}
                 location={`${item.lga || ""}, ${item.state || ""}`}
                 price={item.price || "0"}
-                rating={item.rating}
+                rating={item.average_rating}
                 title={item.title || "Untitled Ad"}
                 providerVerified={item.business?.is_verified === 1}
                 status={item.listing_type || "For Rent"}

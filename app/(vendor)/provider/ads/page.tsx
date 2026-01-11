@@ -1,5 +1,6 @@
 "use client";
 import Loader from "@/app/components/general/Loader";
+import ApartmentCardSkeleton from "@/app/components/general/ApartmentCardSkeleton";
 import AdCard from "@/app/components/pages/vendor-dashboard/ads/AdCard";
 import AdFilter from "@/app/components/pages/vendor-dashboard/ads/AdFilter";
 import HeaderBanner from "@/app/components/pages/vendor-dashboard/ads/HeaderBanner";
@@ -57,7 +58,25 @@ export default function AllAds() {
     setFilteredAds(filtered);
   }, [searchQuery, ads]);
 
-  if (loading) return <Loader />;
+  if (loading) {
+    return (
+      <>
+        <div className="top-0 z-[1000] sticky w-full">
+          <HeaderBanner query={searchQuery} setQuery={setSearchQuery} />
+        </div>
+        <div className="px-6 py-6">
+          <AdFilter />
+        </div>
+        <div className="px-6 mb-4">
+          <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <ApartmentCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

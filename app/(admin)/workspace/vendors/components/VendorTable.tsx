@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectContent,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -147,14 +148,16 @@ export default function VendorTable() {
 
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="py-6 text-[var(--foundation-neutral-8)] text-center"
-                >
-                  Please wait...
-                </TableCell>
-              </TableRow>
+              // Skeleton rows
+              [...Array(5)].map((_, i) => (
+                <TableRow key={i} className="border-none">
+                  {[...Array(6)].map((_, j) => (
+                    <TableCell key={j}>
+                      <Skeleton className="w-full h-4" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : filteredVendors?.length === 0 ? (
               <TableRow>
                 <TableCell
@@ -179,10 +182,10 @@ export default function VendorTable() {
                   <TableCell>
                     <span
                       className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${vendor.verification_status === "Pending"
-                          ? "bg-[#FFF4D3] text-[var(--brand-accent-color)]"
-                          : vendor.verification_status === "Verified"
-                            ? "bg-[#C8FFD5] text-[var(--success-color)]"
-                            : "bg-[#FFD3D3] text-[#E63946]"
+                        ? "bg-[#FFF4D3] text-[var(--brand-accent-color)]"
+                        : vendor.verification_status === "Verified"
+                          ? "bg-[#C8FFD5] text-[var(--success-color)]"
+                          : "bg-[#FFD3D3] text-[#E63946]"
                         }`}
                     >
                       {vendor.verification_status}

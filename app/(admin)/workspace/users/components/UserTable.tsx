@@ -7,6 +7,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -121,14 +122,16 @@ export default function UserTable() {
 
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="py-6 text-[var(--foundation-neutral-8)] text-center"
-                >
-                  Please wait...
-                </TableCell>
-              </TableRow>
+              // Skeleton rows
+              [...Array(5)].map((_, i) => (
+                <TableRow key={i} className="border-none">
+                  {[...Array(5)].map((_, j) => (
+                    <TableCell key={j}>
+                      <Skeleton className="w-full h-4" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : filteredUsers?.length === 0 ? (
               <TableRow>
                 <TableCell
