@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import ChatFooter from "./components/ChatFooter";
 import ChatHeader from "./components/ChatHeader";
 import ChatPane from "./components/ChatPane";
-import ChatClient from "./ChatClient";
+import ChatClient from "./components/ChatClient";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { ConversationItem, Message } from "@/lib/types";
 import { bookProvider, getMyBookings } from "@/lib/api/bookings";
@@ -23,7 +23,7 @@ function MessagesContent() {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedMessages, setSelectedMessages] = useState<Message[]>([]);
   const [loadingConversations, setLoadingConversations] =
-    useState<boolean>(false);
+    useState<boolean>(true);
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [bookingstatus, setBookingstatus] = useState<string>("");
   const [isBooking, setIsBooking] = useState<boolean>(false);
@@ -36,6 +36,7 @@ function MessagesContent() {
   const selectedChatRef = useRef<string | null>(null);
   const [allBookings, setAllBookings] = useState([]);
   const [currentBooking, setCurrentBooking] = useState<null | []>(null);
+  const [paymentSummary, setPaymentSummary] = useState<null | []>(null);
 
   const searchParams = useSearchParams();
   const urlConversationId = searchParams.get("conversationId");
@@ -109,28 +110,7 @@ function MessagesContent() {
     };
   }, [currentUserId]);
 
-  useEffect(() => {
-    if (!selectedChatId) return;
-    const pusher = initPusher();
-    const channelName = `private-conversation.${selectedChatId}`;
-    const channel = pusher?.subscribe(channelName);
 
-    channel?.bind("booking.status.updated", (data: any) => {
-      logger.log("[REALTIME] Booking update received:", data);
-      const { id, status } = data.booking ?? data;
-      // single source of truth
-      setSelectedBookingId(id);
-      setBookingstatus(status);
-      // persistence for refresh survival
-      localStorage.setItem(`booking_id_${selectedChatId}`, String(id));
-      localStorage.setItem(`booking_status_${selectedChatId}`, status);
-    });
-
-    return () => {
-      channel?.unbind("booking.status.updated");
-      pusher?.unsubscribe(channelName);
-    };
-  }, [selectedChatId]);
 
   // Fetch messages for selected chat
   const fetchAndSetMessages = useCallback(async (chatId: string) => {
@@ -174,6 +154,7 @@ function MessagesContent() {
     );
 
     if (exists) {
+      logger.log(urlConversationId)
       handleSelectChat(urlConversationId);
     } else {
       // Recovery path
@@ -335,38 +316,34 @@ function MessagesContent() {
       (b: any) => b.conversation_id === Number(selectedChatId)
     );
     if (booking) {
-      // console.log("Found booking for current conversation:", booking);
       setCurrentBooking(booking);
       logger.log(booking);
     } else {
       setCurrentBooking(null);
-      // console.log("No booking found for current conversation.");
     }
   }, [allBookings, selectedChatId]);
 
-  // When booking succeeds → save status for THIS specific chat
-  const handleBookNow = async () => {
-    if (isBooking || !selectedChatId) return;
+
+  const handleBookNow = async (description: string) => {
+    if (isBooking || !selectedChatId) return false;
 
     try {
-      const res = await bookProvider(selectedChatId);
+      const res = await bookProvider(selectedChatId, description);
       if (!res) {
         notify("Please try again", "error", "Booking Failed");
-        return;
+        return false;
       }
       const status = res.status || "unknown";
       setBookingstatus(status);
       setSelectedBookingId(res.id);
-      // Persist per-conversation state
-      localStorage.setItem(`booking_status_${selectedChatId}`, status);
-      localStorage.setItem(`booking_id_${selectedChatId}`, String(res.id));
+      return true;
     } catch (error: any) {
-      // This is where the REAL API error lands
       notify(
         error.message || "Error booking provider",
         "error",
         "Booking-error"
       );
+      return false;
     } finally {
       setIsBooking(false);
     }
@@ -381,21 +358,25 @@ function MessagesContent() {
     const channel = pusher?.subscribe(channelName);
 
     channel?.bind("booking.status.updated", (data: any) => {
-      // console.log("[REALTIME] Booking update received:", data);
-      const booking = data.booking;
-      logger.log(booking);
+      console.log("[REALTIME] Booking update received:", data);
+      const booking = data.booking || data;
+      const payment_summary = data.payment_summary || data.payment_summary;
 
-      const { id, status } = data.booking ?? data;
-      setSelectedBookingId(id);
-      setBookingstatus(status);
-      if (String(booking.conversation_id) === selectedChatId) {
-        setCurrentBooking(booking);
-        setBookingstatus(status);
+      const { id, status } = booking;
+
+      if (payment_summary) {
+        setPaymentSummary(payment_summary);
       }
-      // console.log(currentBooking);
-      // console.log(status);
-      localStorage.setItem(`booking_id_${selectedChatId}`, String(id));
-      localStorage.setItem(`booking_status_${selectedChatId}`, status);
+
+      if (String(booking.conversation_id) === selectedChatId) {
+        setSelectedBookingId(id);
+        setBookingstatus(status);
+        setCurrentBooking(booking);
+
+        // Update local storage
+        localStorage.setItem(`booking_id_${selectedChatId}`, String(id));
+        localStorage.setItem(`booking_status_${selectedChatId}`, status);
+      }
     });
 
     return () => {
@@ -450,6 +431,7 @@ function MessagesContent() {
               onMessageSent={handleMessageSent}
               currentBooking={currentBooking}
               conversations={conversations}
+              paymentSummary={paymentSummary}
             />
           </>
         ) : (

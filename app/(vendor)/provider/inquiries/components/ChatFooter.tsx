@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { MdAttachFile } from "react-icons/md";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import ProgressBar from "@/app/(customer)/messages/components/ProgressBar";
+
 import {
   customerUpdateStatus,
   markStatusAsCompleted,
@@ -13,6 +14,22 @@ import {
 } from "@/lib/api/bookings";
 import LoadingDots from "@/app/components/general/LoadingDots";
 import { logger } from "@/lib/logger";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { generateBookingTermsPDF } from "@/lib/pdfUtils";
+import { FaDownload } from "react-icons/fa";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ChatFooterProps {
   chatId: string;
@@ -38,6 +55,7 @@ export default function ChatFooter({
   const [completedSteps, setCompletedSteps] = useState<boolean[]>(
     Array(steps.length).fill(false)
   );
+  const [openTermsDialog, setOpenTermsDialog] = useState(false);
 
   // Sync progress bar with bookingStatus
   useEffect(() => {
@@ -105,6 +123,7 @@ export default function ChatFooter({
         );
     } finally {
       setLoadingAction(null);
+      setOpenTermsDialog(false);
     }
   }
 
@@ -124,6 +143,7 @@ export default function ChatFooter({
         );
     } finally {
       setLoadingAction(null);
+      setOpenTermsDialog(false);
     }
   };
 
@@ -198,6 +218,7 @@ export default function ChatFooter({
           </div>
         </div>
       )}
+
       {currentBooking && currentBooking.status === "pending" && (
         <div className="w-full mt-3 px-8">
           <div className="flex flex-col items-start mb-4 w-full">
@@ -219,16 +240,10 @@ export default function ChatFooter({
                 </p>
                 <div className="flex gap-2 items-center">
                   <span
-                    onClick={handleRejectBooking}
-                    className="bg-transparent border border-[#E63946] text-[10px] font-thin text-[#E63946] shadow-sm px-4 py-1.5 rounded cursor-pointer"
+                    onClick={() => setOpenTermsDialog(true)}
+                    className="bg-[#D4AF37] text-[10px] font-semibold text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
                   >
-                    {loadingAction === "reject" ? <LoadingDots /> : "Reject Booking"}
-                  </span>
-                  <span
-                    onClick={handleAcceptBooking}
-                    className="bg-[var(--success-color)] rounded cursor-pointer text-[10px] font-thin text-white border border-[var(--success-color )] shadow-sm px-4 py-1.5"
-                  >
-                    {loadingAction === "accept" ? <LoadingDots /> : "Accept Booking"}
+                    View Request Details
                   </span>
                 </div>
               </div>
@@ -276,13 +291,30 @@ export default function ChatFooter({
               <p className="text-[#D4AF37] text-[10px]">
                 Click on 'Completed' when services are finished
               </p>
-              <div className="flex gap-2">
-                <span
-                  onClick={markAsCompleted}
-                  className="bg-[var(--success-color)] text-[10px] font-semibold text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
-                >
-                  {loadingAction === "completed" ? <LoadingDots /> : "Completed"}
-                </span>
+              <div className="flex gap-2 items-center">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => generateBookingTermsPDF(currentBooking)}
+                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-all group animate-bounce"
+                      >
+                        <FaDownload className="text-[var(--primary-color)] text-xs" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Download Booking Terms as PDF</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <div className="flex gap-2">
+                  <span
+                    onClick={markAsCompleted}
+                    className="bg-[var(--success-color)] text-[10px] font-semibold text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
+                  >
+                    {loadingAction === "completed" ? <LoadingDots /> : "Completed"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -305,6 +337,45 @@ export default function ChatFooter({
           </div>
         </div>
       )}
-    </div>
-  );
+
+      {/* Terms Dialog */}
+      <Dialog open={openTermsDialog} onOpenChange={setOpenTermsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-[var(--heading-color)] font-semibold">Booking Reference Details</DialogTitle>
+            <DialogDescription className="space-y-4 pt-4">
+              <span className="block text-black">
+                Below are the reference details provided by the customer for this booking.
+              </span>
+              <div className="bg-gray-50 border border-gray-100 rounded-md p-3">
+                <p className="text-sm text-gray-600 italic">
+                  "{currentBooking?.reference_terms || "No reference provided"}"
+                </p>
+              </div>
+              <span className="block">Note: CrownHaven will not be responsible for any transactions done outside this platform</span>
+
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-row gap-2 justify-end mt-4">
+            <span
+              onClick={() => {
+                handleRejectBooking();
+              }}
+              className="bg-transparent border border-[#E63946] text-[12px] font-medium text-[#E63946] shadow-sm px-6 py-2 rounded-md cursor-pointer hover:bg-red-50"
+            >
+              {loadingAction === "reject" ? <LoadingDots /> : "Reject Request"}
+            </span>
+            <span
+              onClick={() => {
+                handleAcceptBooking();
+              }}
+              className="bg-[var(--success-color)] rounded-md cursor-pointer text-[12px] font-medium text-white border border-[var(--success-color)] shadow-sm px-6 py-2 hover:opacity-90"
+            >
+              {loadingAction === "accept" ? <LoadingDots /> : "Accept Request"}
+            </span>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog >
+    </div >
+  )
 }

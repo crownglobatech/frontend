@@ -32,12 +32,16 @@ export const getMyBookings = async () => {
   const res = await apiClient.get("/customer/bookings");
   return res.data.data || res.data;
 };
-export const bookProvider = async (conversationId: string) => {
+export const bookProvider = async (
+  conversationId: string,
+  description: string
+) => {
   try {
     const res = await apiClient.post(
       `/customer/conversations/${conversationId}/book`,
       {
         conversation_id: Number(conversationId), // Laravel sometimes needs it
+        reference_terms: description,
       }
     );
     return res.data.data || res.data;

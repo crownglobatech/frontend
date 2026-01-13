@@ -15,6 +15,21 @@ import LoadingDots from "@/app/components/general/LoadingDots";
 import ReviewPopUpBox from "./ReviewPopUpBox";
 import { ConversationItem } from "@/lib/types";
 import { logger } from "@/lib/logger";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { generateBookingTermsPDF } from "@/lib/pdfUtils";
+import { FaDownload } from "react-icons/fa";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ChatFooterProps {
   chatId: string;
@@ -24,11 +39,13 @@ interface ChatFooterProps {
   bookingCode?: string;
   currentBooking?: any | null;
   conversations: ConversationItem[];
+  paymentSummary?: any | null;
 }
 export default function ChatFooter({
   chatId,
   currentBooking,
   conversations,
+  paymentSummary,
 }: ChatFooterProps) {
   const [message, setMessage] = useState("");
   const [loadingAction, setLoadingAction] = useState<
@@ -50,7 +67,6 @@ export default function ChatFooter({
     setCurrentConversation(conv || null);
   }, [chatId, conversations, currentBooking]);
 
-  const initialPrice = currentConversation?.service_ad.price;
   useEffect(() => {
     if (currentBooking?.status === "completed") {
       notify(
@@ -130,6 +146,7 @@ export default function ChatFooter({
       setLoadingAction(null);
     }
   };
+
   const handlePayment = async () => {
     if (!currentBooking) return;
     setLoading(true);
@@ -166,6 +183,7 @@ export default function ChatFooter({
   const [completedSteps, setCompletedSteps] = useState<boolean[]>(
     Array(steps.length).fill(false)
   );
+  const [openTermsDialog, setOpenTermsDialog] = useState(false);
 
   // Sync progress bar with bookingStatus
   useEffect(() => {
@@ -298,9 +316,17 @@ export default function ChatFooter({
                     />
                   </div>
                   <div className="bg-[#FBF7EB] border border-[#D4AF37] rounded-sm px-4 py-1.5 w-full flex items-center justify-between">
-                    <p className="text-[#D4AF37] text-[10px]">
-                      Awaiting vendor to accept booking.
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-[#D4AF37] text-[10px]">
+                        Awaiting vendor to accept booking.
+                      </p>
+                      <span
+                        onClick={() => setOpenTermsDialog(true)}
+                        className="text-[10px] text-[#D4AF37] underline cursor-pointer font-semibold"
+                      >
+                        View Details
+                      </span>
+                    </div>
                     <span
                       onClick={handleRejectBooking}
                       className="bg-[#E63946] text-[10px] font-thin text-white shadow-sm px-4 py-1.5 rounded cursor-pointer"
@@ -324,23 +350,23 @@ export default function ChatFooter({
                     Sub-total
                   </h3>
                   <p className="text-[var(--heading-color)] text-[12px]">
-                    {currentBooking?.service_ad?.price || '_'}
+                    {paymentSummary?.service_price || currentBooking?.service_ad.price || '_'}
                   </p>
                 </div>
-                {/* <div className="flex justify-between items-center w-full">
+                <div className="flex justify-between items-center w-full">
                   <h3 className="text-[var(--heading-color)] text-[12px]">
                     Service Fee
                   </h3>
                   <p className="text-[var(--heading-color)] text-[12px]">
-                    {currentBooking?.price_breakdown?.platform_fee || "_"}
+                    {paymentSummary?.protection_fee || currentBooking?.payment_summary?.protection_fee || "_"}
                   </p>
-                </div> */}
+                </div>
                 <div className="flex justify-between items-center w-full">
                   <h3 className="text-[heading-color] font-semibold text-[13px]">
                     Total
                   </h3>
                   <p className="text-[var(--heading-color)] font-semibold text-[12px]">
-                    {currentBooking?.custom_price ? currentBooking?.custom_price : currentBooking?.service_ad?.price || "_"}
+                    {paymentSummary?.total_to_pay ? paymentSummary?.total_to_pay : currentBooking?.final_price || "_"}
                   </p>
                 </div>
               </div>
@@ -375,6 +401,21 @@ export default function ChatFooter({
                         This is currently in progress, We will let you know once
                         the vendor confirms service completion
                       </p>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => generateBookingTermsPDF(currentBooking)}
+                              className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-all group animate-bounce"
+                            >
+                              <FaDownload className="text-[var(--primary-color)] text-xs" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Download Booking Terms as PDF</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </div>
                 </div>
@@ -422,6 +463,29 @@ export default function ChatFooter({
           bookingCode={currentBooking?.booking_code}
         />
       )}
+
+      {/* Terms Dialog */}
+      <Dialog open={openTermsDialog} onOpenChange={setOpenTermsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-[var(--primary-color)] font-semibold">Booking Reference Details</DialogTitle>
+            <DialogDescription className="space-y-4 pt-4">
+              <span className="block text-black">
+                Here are the reference details you provided for this booking.
+              </span>
+
+              <div className="bg-gray-50 border border-gray-100 rounded-md p-3">
+                <p className="text-xs font-semibold text-[var(--primary-color)] mb-1 uppercase tracking-wide">
+                  Reference Details
+                </p>
+                <p className="text-sm text-gray-600 italic">
+                  "{currentBooking?.reference_terms || "No reference provided"}"
+                </p>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

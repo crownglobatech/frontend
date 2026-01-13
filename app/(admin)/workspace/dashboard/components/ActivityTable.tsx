@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { logger } from "@/lib/logger";
 interface Props {
   recentActivities: any[];
 }
@@ -72,6 +73,7 @@ export default function ActivityTable({ recentActivities }: Props) {
   //       status: "Failed",
   //     },
   //   ];
+  logger.log(recentActivities)
   return (
     <Table className="max-h-20 overflow-y-scroll scrollbar-hide">
       <TableHeader className="bg-[var(--foundation-neutral-6)]">
@@ -114,15 +116,14 @@ export default function ActivityTable({ recentActivities }: Props) {
               </TableCell>
               <TableCell>
                 <span
-                  className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${
-                    data.status === "pending"
+                  className={`px-4 capitalize py-1 rounded-full text-[12px] font-semibold ${data.status === "pending"
                       ? "bg-[#FFF4D3] text-[var(--brand-accent-color)]"
                       : data.status === "success"
-                      ? "bg-[#C8FFD5] text-[var(--success-color)]"
-                      : data.status === "ongoing"
-                      ? "bg-[#C8FFD5]/70 text-[var(--success-color)]/70"
-                      : "bg-[#FFD3D3] text-[#E63946]"
-                  }`}
+                        ? "bg-[#C8FFD5] text-[var(--success-color)]"
+                        : data.status === "ongoing"
+                          ? "bg-[#C8FFD5]/70 text-[var(--success-color)]/70"
+                          : "bg-[#FFD3D3] text-[#E63946]"
+                    }`}
                 >
                   {data.status}
                 </span>

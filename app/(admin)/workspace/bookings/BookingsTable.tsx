@@ -17,6 +17,8 @@ import { getAllBookingsAdmin } from "@/lib/api/admin";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { useSearchParams } from "next/navigation";
 import { logger } from "@/lib/logger";
+import { generateBookingTermsPDF } from "@/lib/pdfUtils";
+import { FaDownload } from "react-icons/fa";
 
 export default function BookingsTable() {
   const [loading, setLoading] = useState(false);
@@ -109,6 +111,9 @@ export default function BookingsTable() {
                 Vendor
               </TableHead>
               <TableHead className="w-[15%] font-semibold text-[var(--heading-color)]">
+                Terms
+              </TableHead>
+              <TableHead className="w-[15%] font-semibold text-[var(--heading-color)]">
                 Service
               </TableHead>
               <TableHead className="w-[15%] font-semibold text-[var(--heading-color)]">
@@ -155,6 +160,15 @@ export default function BookingsTable() {
                   </TableCell>
                   <TableCell className="text-[var(--heading-color)] text-[12px]">
                     {data.vendor}
+                  </TableCell>
+                  <TableCell className="text-[var(--heading-color)] text-[12px]">
+                    <button
+                      onClick={() => generateBookingTermsPDF(data)}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors group"
+                      title="Download Reference Terms"
+                    >
+                      <FaDownload className="text-[var(--primary-color)] text-xs group-hover:scale-110 transition-transform" />
+                    </button>
                   </TableCell>
                   <TableCell className="text-[var(--heading-color)] text-[12px]">
                     {data.service}

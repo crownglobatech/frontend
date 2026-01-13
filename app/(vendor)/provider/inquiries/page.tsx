@@ -9,7 +9,7 @@ import ChatHeader from "./components/ChatHeader";
 import ChatPane from "./components/ChatPane";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { ConversationItem, Message } from "@/lib/types";
-import ChatClient from "./ChatClient";
+import ChatClient from "./components/ChatClient";
 import { initPusher } from "@/services/pusher";
 import { getProviderBookings } from "@/lib/api/bookings";
 import { logger } from "@/lib/logger";

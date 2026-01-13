@@ -4,10 +4,21 @@ import { ConversationItem } from "@/lib/types";
 import { fetchAllConversations } from "@/services/api";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useNotification } from "@/app/contexts/NotificationProvider";
+import LoadingSpinner from "@/app/components/general/LoadingSpinner";
 
 interface ChatHeaderProps {
   conversationId: string;
-  onBookNow?: (res: any) => void;
+  onBookNow?: (res: any) => Promise<boolean | void> | void;
 }
 
 export default function ChatHeader({
@@ -15,6 +26,11 @@ export default function ChatHeader({
   onBookNow,
 }: ChatHeaderProps) {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
+  const [openReferenceForm, setOpenReferenceForm] = useState(false)
+  const [referenceText, setReferenceText] = useState("");
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const { notify } = useNotification()
   const [currentConversation, setCurrentConversation] =
     useState<ConversationItem | null>(null);
 
@@ -45,9 +61,36 @@ export default function ChatHeader({
   const { other_user } = currentConversation;
 
   // handle booking
+  // handle booking
   const handleBookNow = () => {
-    if (onBookNow) {
-      onBookNow(conversationId);
+    setOpenReferenceForm(true);
+  };
+
+
+  const handleSubmitReference = () => {
+    if (!referenceText) {
+      notify('Please enter a reference text', 'error');
+      return;
+    };
+
+    setOpenReferenceForm(false);
+    setOpenConfirmDialog(true);
+  };
+
+  const handleConfirmBooking = async () => {
+    if (!referenceText) return;
+    setLoading(true);
+    try {
+      if (onBookNow) {
+        const success = await onBookNow(referenceText);
+        if (success) {
+          setOpenConfirmDialog(false);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,6 +124,59 @@ export default function ChatHeader({
           Book Now
         </button>
       </div>
+
+      {/* Reference Form Dialog */}
+      <Dialog open={openReferenceForm} onOpenChange={setOpenReferenceForm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-[var(--primary-color)] font-semibold">Details</DialogTitle>
+            <DialogDescription>
+              Please describe what you need done for this booking.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <textarea
+              className="flex min-h-[100px] w-full rounded-md resize-none border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="Describe your requirements..."
+              value={referenceText}
+              onChange={(e) => setReferenceText(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" className="text-[var(--primary-color)] font-semibold hover:text-[var(--primary-color)]/70 cursor-pointer" onClick={() => setOpenReferenceForm(false)}>Cancel</Button>
+            <Button className="bg-[var(--primary-color)] hover:bg-[var(--primary-color)]/70 cursor-pointer" onClick={handleSubmitReference}>Submit</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={openConfirmDialog} onOpenChange={setOpenConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-[var(--primary-color)] font-semibold">Confirm Booking</DialogTitle>
+            <DialogDescription className="space-y-4 pt-4">
+              <span className="block text-black">
+                Are you sure you want to proceed with this booking?
+              </span>
+
+              <span className="block bg-gray-50 border border-gray-100 rounded-md p-3">
+                <span className="block text-xs font-semibold text-[var(--primary-color)] mb-1 uppercase tracking-wide">
+                  Your Reference Details
+                </span>
+                <span className="text-sm block bg-local text-gray-600 italic">
+                  "{referenceText}"
+                </span>
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" className="text-[var(--heading-color)] font-semibold hover:text-[var(--heading-color)]/70 cursor-pointer" onClick={() => setOpenConfirmDialog(false)}>
+              Cancel
+            </Button>
+            <Button className="bg-[var(--primary-color)] hover:bg-[var(--primary-color)]/70 cursor-pointer" onClick={handleConfirmBooking}>{loading ? <LoadingSpinner size="sm" /> : 'Confirm'}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
