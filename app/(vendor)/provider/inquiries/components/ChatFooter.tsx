@@ -5,9 +5,8 @@ import { useState, useEffect } from "react";
 import { MdAttachFile } from "react-icons/md";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import ProgressBar from "@/app/(customer)/messages/components/ProgressBar";
-
+import dynamic from "next/dynamic";
 import {
-  customerUpdateStatus,
   markStatusAsCompleted,
   vendorAcceptBooking,
   vendorRejectBooking,
@@ -24,12 +23,6 @@ import {
 } from "@/components/ui/dialog";
 import { generateBookingTermsPDF } from "@/lib/pdfUtils";
 import { FaDownload } from "react-icons/fa";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface ChatFooterProps {
   chatId: string;
@@ -42,6 +35,25 @@ export default function ChatFooter({
   chatId,
   currentBooking,
 }: ChatFooterProps) {
+  const Tooltip = dynamic(
+    () => import("@/components/ui/tooltip.client").then(m => m.Tooltip),
+    { ssr: false }
+  );
+
+  const TooltipTrigger = dynamic(
+    () => import("@/components/ui/tooltip.client").then(m => m.TooltipTrigger),
+    { ssr: false }
+  );
+
+  const TooltipContent = dynamic(
+    () => import("@/components/ui/tooltip.client").then(m => m.TooltipContent),
+    { ssr: false }
+  );
+  const TooltipProvider = dynamic(
+    () => import("@/components/ui/tooltip.client").then(m => m.TooltipProvider),
+    { ssr: false }
+  );
+
   const [loadingAction, setLoadingAction] = useState<
     "accept" | "reject" | "completed" | null
   >(null);
