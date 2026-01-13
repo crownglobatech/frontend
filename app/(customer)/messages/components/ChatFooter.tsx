@@ -5,6 +5,7 @@ import { SendIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MdAttachFile } from "react-icons/md";
 import ProgressBar from "./ProgressBar";
+import dynamic from "next/dynamic";
 import {
   acceptCustomBooking,
   confirmCompletion,
@@ -24,12 +25,6 @@ import {
 } from "@/components/ui/dialog";
 import { generateBookingTermsPDF } from "@/lib/pdfUtils";
 import { FaDownload } from "react-icons/fa";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface ChatFooterProps {
   chatId: string;
@@ -47,6 +42,25 @@ export default function ChatFooter({
   conversations,
   paymentSummary,
 }: ChatFooterProps) {
+  const Tooltip = dynamic(
+    () => import("@/components/ui/tooltip.client").then(m => m.Tooltip),
+    { ssr: false }
+  );
+
+  const TooltipTrigger = dynamic(
+    () => import("@/components/ui/tooltip.client").then(m => m.TooltipTrigger),
+    { ssr: false }
+  );
+
+  const TooltipContent = dynamic(
+    () => import("@/components/ui/tooltip.client").then(m => m.TooltipContent),
+    { ssr: false }
+  );
+  const TooltipProvider = dynamic(
+    () => import("@/components/ui/tooltip.client").then(m => m.TooltipProvider),
+    { ssr: false }
+  );
+
   const [message, setMessage] = useState("");
   const [loadingAction, setLoadingAction] = useState<
     "accept" | "reject" | null
@@ -401,7 +415,7 @@ export default function ChatFooter({
                         This is currently in progress, We will let you know once
                         the vendor confirms service completion
                       </p>
-                      <TooltipProvider>
+                      <TooltipProvider delayDuration={20}>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <button
