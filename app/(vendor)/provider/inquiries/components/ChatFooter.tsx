@@ -36,21 +36,21 @@ export default function ChatFooter({
   currentBooking,
 }: ChatFooterProps) {
   const Tooltip = dynamic(
-    () => import("@/components/ui/tooltip.client").then(m => m.Tooltip),
+    () => import("@/components/ui/tooltip").then(m => m.Tooltip),
     { ssr: false }
   );
 
   const TooltipTrigger = dynamic(
-    () => import("@/components/ui/tooltip.client").then(m => m.TooltipTrigger),
+    () => import("@/components/ui/tooltip").then(m => m.TooltipTrigger),
     { ssr: false }
   );
 
   const TooltipContent = dynamic(
-    () => import("@/components/ui/tooltip.client").then(m => m.TooltipContent),
+    () => import("@/components/ui/tooltip").then(m => m.TooltipContent),
     { ssr: false }
   );
   const TooltipProvider = dynamic(
-    () => import("@/components/ui/tooltip.client").then(m => m.TooltipProvider),
+    () => import("@/components/ui/tooltip").then(m => m.TooltipProvider),
     { ssr: false }
   );
 
