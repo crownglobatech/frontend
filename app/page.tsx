@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import ApartmentCard from "./components/general/ApartmentCard";
 import Button from "./components/general/Button";
 import Footer from "./components/general/Footer";
@@ -8,6 +9,7 @@ import HomeFilter from "./components/pages/home/HomeFilter";
 import ServiceGallery from "./components/pages/home/ServiceGallery";
 import Services from "./components/pages/home/Services";
 import { motion, Variants } from "motion/react";
+import { useRouter } from "next/navigation";
 
 // --- Animation Variants ---
 const staggerContainer: Variants = {
@@ -44,15 +46,27 @@ const fadeInScale: Variants = {
 };
 
 export default function LandingPage() {
+  const router = useRouter();
   return (
     <main className="overflow-hidden w-full min-h-screen bg-white">
       {/* --- HERO SECTION --- */}
-      <section className="relative flex flex-col w-full h-[85vh] md:h-screen bg-[url('/herobg.png')] bg-cover bg-no-repeat bg-top overflow-hidden">
+      <section className="relative flex flex-col w-full h-[85vh] md:h-screen overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/herobg.png"
+            alt="Hero Background"
+            fill
+            priority
+            className="object-cover object-top"
+          />
+        </div>
+
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1E5AA882] via-[#1E5AA882] via-[51%] to-[#0C2342F0] to-[94%] pointer-events-none" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#1E5AA882] via-[#1E5AA882] via-[51%] to-[#0C2342F0] to-[94%] pointer-events-none" />
 
         {/* Header Container */}
-        <div className="relative flex justify-center w-full pt-6 md:pt-8 px-4">
+        <div className="relative z-20 flex justify-center w-full pt-6 md:pt-8 px-4">
           <motion.div
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -69,7 +83,7 @@ export default function LandingPage() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
-          className=" relative flex flex-col justify-center items-center h-full px-4 md:px-0 mt-[-60px] md:mt-0"
+          className="relative z-20 flex flex-col justify-center items-center h-full px-4 md:px-0 mt-[-60px] md:mt-0"
         >
           <div className="flex flex-col justify-center items-center max-w-full md:max-w-[700px] text-center space-y-4 md:space-y-6">
             <motion.h1
@@ -97,10 +111,12 @@ export default function LandingPage() {
               <Button
                 styles="bg-[var(--primary-color)] text-white hover:bg-opacity-90 font-semibold border-none rounded-md text-sm md:text-base px-6 py-3 transition-all"
                 title="View Property"
+                event={() => router.push("/dashboard?category=all")}
               />
               <Button
                 styles="bg-transparent border border-white text-white hover:bg-white hover:text-[var(--primary-color)] font-semibold rounded-md text-sm md:text-base px-6 py-3 transition-all"
                 title="Contact Now"
+                event={() => router.push("/about#contact")}
               />
             </motion.div>
           </div>
@@ -211,6 +227,7 @@ export default function LandingPage() {
           <Button
             styles="border border-[var(--primary-color)] rounded-md text-sm capitalize text-[var(--primary-color)] font-semibold px-6 py-2 bg-transparent hover:bg-[var(--primary-color)] hover:text-white transition-colors duration-300"
             title="View All Properties"
+            event={() => router.push("/dashboard?category=all")}
           />
         </motion.div>
       </section>
@@ -252,10 +269,12 @@ export default function LandingPage() {
           <Button
             styles="bg-[var(--primary-color)] text-white hover:bg-opacity-90 font-semibold border-none rounded-md text-sm px-6 py-3 transition-transform hover:scale-105"
             title="Find a Property"
+            event={() => router.push("/dashboard?category=all")}
           />
           <Button
             styles="border border-[var(--secondary-color)] text-[var(--secondary-color)] font-semibold hover:bg-[var(--secondary-color)] hover:text-white bg-transparent rounded-md text-sm px-6 py-3 transition-colors duration-300"
             title="Become a Partner"
+            event={() => router.push("/about#contact")}
           />
         </div>
       </motion.section>

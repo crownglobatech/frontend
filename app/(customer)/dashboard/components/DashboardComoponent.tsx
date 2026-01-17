@@ -11,27 +11,50 @@ import Pagination from "./Pagination";
 export default function DashboardComponent() {
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>("");
-  const [category, setCategory] = useState<string>("all");
+  const searchParams = useSearchParams();
+  const [category, setCategory] = useState<string>(
+    searchParams.get("category") || "all"
+  );
   const [query, setQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
   const [filters, setFilters] = useState<
     Record<string, string | { min?: number; max?: number }>
-  >({});
+  >(() => {
+    const initialFilters: Record<
+      string,
+      string | { min?: number; max?: number }
+    > = {};
+    const loc = searchParams.get("location");
+    const pType = searchParams.get("property_type");
+    const lType = searchParams.get("listing_type");
+    const pMin = searchParams.get("price_min");
+    const pMax = searchParams.get("price_max");
+
+    if (loc) initialFilters.location = loc;
+    if (pType) initialFilters.property_type = pType;
+    if (lType) initialFilters.listing_type = lType;
+    if (pMin || pMax) {
+      initialFilters.price = {
+        min: pMin ? Number(pMin) : undefined,
+        max: pMax ? Number(pMax) : undefined,
+      };
+    }
+    return initialFilters;
+  });
   const [ads, setAds] = useState<CustomerAd[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [totalResults, setTotalResults] = useState<number | null>(0);
   const router = useRouter();
-  const searchParams = useSearchParams();
   const pathname = usePathname();
   const [paginatedAds, setPaginatedAds] = useState<CustomerAdsResponse | null>(
     null
   );
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-useEffect(() => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}, [currentPage]);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
 
   useEffect(() => {
     setCurrentPage(1);

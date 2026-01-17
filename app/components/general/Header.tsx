@@ -27,10 +27,10 @@ export default function Header() {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
-    { name: "Buy", href: "/buy" },
-    { name: "Rent", href: "/rent" },
-    { name: "Services", href: "/services" },
-    { name: "Contact", href: "/contact" },
+    { name: "Buy", href: "/dashboard?category=buy-homes" },
+    { name: "Rent", href: "/dashboard?category=rent-homes" },
+    { name: "Services", href: "/dashboard?category=allied-services" },
+    { name: "Contact", href: "/about#contact" },
   ];
 
   return (

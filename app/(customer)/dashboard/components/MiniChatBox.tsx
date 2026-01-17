@@ -107,7 +107,7 @@ export default function MiniChatBox({ userId, isMesagingCredible }: MiniChatBoxP
             >
               Signup to request service
             </Link>
-            <p className="text-[#1E5AA8] mt-1 text-[12px] font-normal">
+            <p className="text-[var(--heading-color)] mt-1 text-[12px] font-normal">
               Create an account or sign in to connect directly with verified vendors on Crown-Haven
             </p>
           </div>

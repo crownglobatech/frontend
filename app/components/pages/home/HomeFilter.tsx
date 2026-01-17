@@ -1,20 +1,46 @@
+"use client"
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Button from '../../general/Button'
 
-export default function HomeFilter () {
+export default function HomeFilter() {
+  const router = useRouter()
+  const [listingType, setListingType] = useState('sale') // 'sale' (Buy) or 'rent' (Rent)
+  const [propertyType, setPropertyType] = useState('')
+  const [location, setLocation] = useState('')
+  const [beds, setBeds] = useState('')
+  const [budget, setBudget] = useState('')
+
+  const handleSearch = () => {
+    const params = new URLSearchParams()
+
+    if (listingType) params.append('listing_type', listingType)
+    if (propertyType) params.append('property_type', propertyType)
+    if (location) params.append('location', location)
+    if (budget) {
+      params.append('price_min', '0')
+      params.append('price_max', budget)
+    }
+    params.append('category', 'all')
+    router.push(`/dashboard?${params.toString()}`)
+  }
+
   return (
     <div className='w-full'>
       <div className='flex justify-center gap-1'>
         <Button
-          styles='bg-[var(--secondary-color)] w-[60px] text-sm font-semibold rounded-t-[4px] text-white uppercase p-1'
+          styles={`${listingType === 'sale' ? 'bg-[var(--secondary-color)] text-white' : 'bg-white text-[var(--heading-color)]'} w-[60px] text-sm font-semibold rounded-t-[4px] uppercase p-1 transition-colors`}
           title='buy'
+          event={() => setListingType('sale')}
         />
         <Button
-          styles='bg-white text-[var(--heading-color)] rounded-t-[4px] w-[60px] text-sm font-semibold uppercase p-1'
+          styles={`${listingType === 'rent' ? 'bg-[var(--secondary-color)] text-white' : 'bg-white text-[var(--heading-color)]'} text-sm font-semibold rounded-t-[4px] w-[60px] uppercase p-1 transition-colors`}
           title='rent'
+          event={() => setListingType('rent')}
         />
       </div>
       <div className='flex justify-center bg-white shadow-lg p-6 rounded-md'>
-        <form className='flex flex-wrap md:flex-nowrap items-end gap-6 w-full max-w-6xl'>
+        <div className='flex flex-wrap md:flex-nowrap items-end gap-6 w-full max-w-6xl'>
           {/* Looking For */}
           <div className='flex flex-col flex-1 min-w-[180px]'>
             <label
@@ -23,17 +49,18 @@ export default function HomeFilter () {
             >
               Looking For
             </label>
-            <div className='relative w-48'>
+            <div className='relative w-full'>
               <select
                 name='looking'
                 id='looking'
-                className='bg-white px-4 pr-10 border border-gray-300 focus:border-[var(--primary-color)] rounded-lg focus:outline-none w-full h-11 text-gray-400 appearance-none'
+                value={propertyType}
+                onChange={(e) => setPropertyType(e.target.value)}
+                className='bg-white px-4 pr-10 border border-gray-300 focus:border-[var(--primary-color)] rounded-lg focus:outline-none w-full h-11 text-gray-700 appearance-none'
               >
-                <option value=''>Property Type</option>
-                <option value='Property A'>Property A</option>
-                <option value='Property B'>Property B</option>
-                <option value='Property C'>Property C</option>
-                <option value='Property D'>Property D</option>
+                <option value=''>Any Type</option>
+                <option value='apartment'>Apartment</option>
+                <option value='house'>House</option>
+                <option value='land'>Land</option>
               </select>
 
               {/* Custom caret */}
@@ -62,17 +89,19 @@ export default function HomeFilter () {
             >
               Location
             </label>
-            <div className='relative w-48'>
+            <div className='relative w-full'>
               <select
                 name='location'
                 id='location'
-                className='bg-white px-4 pr-10 border border-gray-300 focus:border-[var(--primary-color)] rounded-lg focus:outline-none w-full h-11 text-gray-400 appearance-none'
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className='bg-white px-4 pr-10 border border-gray-300 focus:border-[var(--primary-color)] rounded-lg focus:outline-none w-full h-11 text-gray-700 appearance-none'
               >
-                <option value=''>Select Location</option>
-                <option value='Location A'>Location A</option>
-                <option value='Location B'>Location B</option>
-                <option value='Location C'>Location C</option>
-                <option value='Location D'>Location D</option>
+                <option value=''>Any Location</option>
+                <option value='lekki'>Lekki</option>
+                <option value='ikeja'>Ikeja</option>
+                <option value='ajah'>Ajah</option>
+                <option value='yaba'>Yaba</option>
               </select>
 
               {/* Custom caret */}
@@ -93,19 +122,21 @@ export default function HomeFilter () {
             </div>
           </div>
 
-          {/* Property Size */}
+          {/* Property Size - Optional for now or maps to nothing effectively */}
           <div className='flex flex-col flex-1 min-w-[150px]'>
             <label
               className='mb-1 font-semibold text-[var(--heading-color)] text-sm uppercase'
               htmlFor='size'
             >
-              Property Size
+              Bedrooms
             </label>
             <input
               className='shadow-sm px-4 border border-gray-300 focus:border-[var(--primary-color)] rounded-md focus:outline-none h-11 text-gray-700'
               type='number'
-              placeholder='Bedrooms'
+              placeholder='Any'
               min={0}
+              value={beds}
+              onChange={(e) => setBeds(e.target.value)}
             />
           </div>
 
@@ -115,24 +146,27 @@ export default function HomeFilter () {
               className='mb-1 font-semibold text-[var(--heading-color)] text-sm uppercase'
               htmlFor='budget'
             >
-              Budget
+              Max Price
             </label>
             <input
               className='shadow-sm px-4 border border-gray-300 focus:border-[var(--primary-color)] rounded-md focus:outline-none h-11 text-gray-700'
               type='number'
-              placeholder='Max Price'
+              placeholder='Any Price'
               min={0}
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
             />
           </div>
 
           {/* Search Button */}
           <div>
             <Button
-              styles='bg-[var(--primary-color)] text-white px-6 py-2 rounded-md font-semibold capitalize h-11'
+              styles='bg-[var(--primary-color)] text-white px-6 py-2 rounded-md font-semibold capitalize h-11 w-full md:w-auto'
               title='Search'
+              event={handleSearch}
             />
           </div>
-        </form>
+        </div>
       </div>
     </div>
   )
