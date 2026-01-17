@@ -5,12 +5,23 @@ import { motion } from "framer-motion";
 import Header from "../components/general/Header";
 import Footer from "../components/general/Footer";
 import { Mail, MapPin, Phone } from "lucide-react";
+import Image from "next/image";
 
 export default function AboutPage() {
     return (
         <main className="w-full min-h-screen bg-white overflow-hidden">
             {/* --- HERO SECTION --- */}
-            <section className="relative w-full h-[50vh] md:h-[60vh] bg-[url('/herobg.png')] bg-cover bg-center flex flex-col items-center">
+            <section className="relative w-full h-[50vh] md:h-[60vh] bg-cover bg-center flex flex-col items-center">
+                {/* Background Image */}
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src="/herobg.png"
+                        alt="Hero Background"
+                        fill
+                        priority
+                        className="object-cover object-top"
+                    />
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1E5AA8CC] to-[#0C2342F0] opacity-90" />
 
                 <div className="relative w-full z-10 pt-6 px-4 md:px-16">
