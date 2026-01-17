@@ -66,7 +66,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#1E5AA882] via-[#1E5AA882] via-[51%] to-[#0C2342F0] to-[94%] pointer-events-none" />
 
         {/* Header Container */}
-        <div className="relative z-20 flex justify-center w-full pt-6 md:pt-8 px-4">
+        <div className="relative z-50 flex justify-center w-full pt-6 md:pt-8 px-4">
           <motion.div
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
