@@ -31,8 +31,9 @@ export default function SideBarUser() {
 
   const navLinks = [
     { href: "/dashboard", label: "Dashboard", icon: MdDashboard },
-    { href: "/favourites", label: "My Favourites", icon: Heart },
-    { href: "/messages", label: "Messages", icon: TbMessageCircle },
+    ...(isLoggedIn
+      ? [{ href: "/messages", label: "Messages", icon: TbMessageCircle }]
+      : []),
   ];
 
   const bottomLinks = [
@@ -83,11 +84,10 @@ export default function SideBarUser() {
                   <li key={href}>
                     <Link
                       href={href}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${
-                        isActive
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${isActive
                           ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
                           : "text-white/70 hover:text-white hover:opacity-100"
-                      }`}
+                        }`}
                     >
                       <Icon size={20} />
                       <span className="text-[13px] leading-relaxed">
@@ -109,11 +109,10 @@ export default function SideBarUser() {
                   <li key={href}>
                     <Link
                       href={href}
-                      className={`flex gap-2 items-center px-3 py-2 rounded-md transition-all ${
-                        isActive
+                      className={`flex gap-2 items-center px-3 py-2 rounded-md transition-all ${isActive
                           ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
                           : "text-white/70 hover:text-white hover:opacity-100"
-                      } text-[13px] leading-relaxed`}
+                        } text-[13px] leading-relaxed`}
                     >
                       <Icon size={20} />
                       {label}

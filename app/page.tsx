@@ -5,11 +5,11 @@ import ApartmentCard from "./components/general/ApartmentCard";
 import Button from "./components/general/Button";
 import Footer from "./components/general/Footer";
 import Header from "./components/general/Header";
-import HomeFilter from "./components/pages/home/HomeFilter";
 import ServiceGallery from "./components/pages/home/ServiceGallery";
 import Services from "./components/pages/home/Services";
 import { motion, Variants } from "motion/react";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 
 // --- Animation Variants ---
 const staggerContainer: Variants = {
@@ -45,8 +45,43 @@ const fadeInScale: Variants = {
   },
 };
 
+import { parseSmartSearch } from "@/lib/smartSearch";
+
 export default function LandingPage() {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = React.useState("");
+
+  const handleSearch = () => {
+    if (!searchQuery.trim()) return;
+
+    // Smart Parse the query
+    const { search, filters } = parseSmartSearch(searchQuery);
+
+    const params = new URLSearchParams();
+    params.set("category", "all");
+
+    // Add parsed filters
+    Object.entries(filters).forEach(([key, value]) => {
+      params.set(key, value);
+    });
+
+    // Add remaining search text if it has meaningful content
+    if (search.length > 1) {
+      params.set("search", search);
+    } else {
+      // If the parser extracted everything (e.g. "Rent apartment"), pass original query as fallback name 
+      // OR simply rely on filters. Let's rely on filters but maybe pass full query as metadata if needed?
+      // Actually, if search is empty after extraction, we don't need to pass ?search= param.
+    }
+
+    router.push(`/dashboard?${params.toString()}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
   return (
     <main className="overflow-hidden w-full min-h-screen bg-white">
       {/* --- HERO SECTION --- */}
@@ -83,7 +118,7 @@ export default function LandingPage() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
-          className="relative z-20 flex flex-col justify-center items-center h-full px-4 md:px-0 mt-[-60px] md:mt-0"
+          className="relative z-20 flex flex-col justify-center items-center h-full px-4 md:px-0 mt-[-40px] md:mt-[-70px]"
         >
           <div className="flex flex-col justify-center items-center max-w-full md:max-w-[700px] text-center space-y-4 md:space-y-6">
             <motion.h1
@@ -103,47 +138,33 @@ export default function LandingPage() {
               reliable real estate services all in one platform.
             </motion.h3>
 
-            {/* CTA Buttons */}
-            <motion.div
-              variants={fadeInUp}
-              className="flex flex-wrap justify-center items-center gap-4 pt-2"
-            >
-              <Button
-                styles="bg-[var(--primary-color)] text-white hover:bg-opacity-90 font-semibold border-none rounded-md text-sm md:text-base px-6 py-3 transition-all"
-                title="View Property"
-                event={() => router.push("/dashboard?category=all")}
+            <motion.div variants={fadeInUp} className="flex items-center gap-2 w-full max-w-[600px] px-2 md:px-0">
+              <Input
+                placeholder="Search reliable real estate services"
+                className="h-12 flex-1 min-w-0 px-6 text-sm md:text-base font-normal bg-white rounded-md"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
-              <Button
-                styles="bg-transparent border border-white text-white hover:bg-white hover:text-[var(--primary-color)] font-semibold rounded-md text-sm md:text-base px-6 py-3 transition-all"
-                title="Contact Now"
-                event={() => router.push("/about#contact")}
-              />
+              <span
+                onClick={handleSearch}
+                className="flex items-center justify-center h-12 bg-[var(--secondary-color)] text-white hover:opacity-90 cursor-pointer font-normal border-none rounded-md text-sm md:text-base px-6 transition-all shrink-0"
+              >
+                Search
+              </span>
             </motion.div>
           </div>
         </motion.div>
       </section>
 
       {/* --- QUICK CATEGORIES & FILTER --- */}
-      <section className="relative my-10 md:my-16">
-        {/* Filter - Floating (Desktop Only as per original design intention) */}
-        <div className="hidden md:block absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-[900px] z-20">
-          <motion.div
-            initial={{ y: 40, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <HomeFilter />
-          </motion.div>
-        </div>
-
-        {/* Categories */}
+      <section className="">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          className="flex flex-col items-center pt-8 md:pt-[120px] pb-8"
+          className="flex flex-col items-center pt-8 md:pt-[80px] pb-8"
         >
           <motion.h2
             variants={fadeInUp}

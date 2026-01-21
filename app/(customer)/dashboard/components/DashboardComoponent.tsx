@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getCustomerAds, getCustomerAdsNoAuth } from "@/lib/api";
 import { CustomerAd, CustomerAdsResponse } from "@/lib/types";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -15,7 +15,7 @@ export default function DashboardComponent() {
   const [category, setCategory] = useState<string>(
     searchParams.get("category") || "all"
   );
-  const [query, setQuery] = useState<string>("");
+  const [query, setQuery] = useState<string>(searchParams.get("search") || "");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
   const [filters, setFilters] = useState<

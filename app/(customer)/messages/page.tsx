@@ -34,10 +34,9 @@ function MessagesContent() {
   const [currentUserId, setCurrentUserId] = useState<number | undefined>();
   const [currentUserName, setCurrentUserName] = useState<string>("");
   const selectedChatRef = useRef<string | null>(null);
-  const [allBookings, setAllBookings] = useState([]);
-  const [currentBooking, setCurrentBooking] = useState<null | []>(null);
-  const [paymentSummary, setPaymentSummary] = useState<null | []>(null);
-
+  const [allBookings, setAllBookings] = useState<any[]>([]);
+  const [currentBooking, setCurrentBooking] = useState<null | any>(null);
+  const [paymentSummary, setPaymentSummary] = useState<null | any>(null);
   const searchParams = useSearchParams();
   const urlConversationId = searchParams.get("conversationId");
   const router = useRouter()
@@ -51,6 +50,13 @@ function MessagesContent() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const userString = localStorage.getItem("user");
+      const role = localStorage.getItem("role");
+
+      if (!userString || !role) {
+        router.push("/auth/login");
+        return;
+      }
+
       if (userString) {
         const user = JSON.parse(userString);
         setCurrentUserId(user.id);
@@ -58,7 +64,7 @@ function MessagesContent() {
         // console.log("👤 Current user ID:", user.id);
       }
     }
-  }, []);
+  }, [router]);
 
   // Load conversations
   useEffect(() => {
@@ -317,6 +323,7 @@ function MessagesContent() {
     );
     if (booking) {
       setCurrentBooking(booking);
+      setPaymentSummary(booking.payment_summary);
       logger.log(booking);
     } else {
       setCurrentBooking(null);
@@ -385,7 +392,6 @@ function MessagesContent() {
     };
   }, [selectedChatId]);
 
-  // ... imports
 
   // ... inside component
   if (loadingConversations) {

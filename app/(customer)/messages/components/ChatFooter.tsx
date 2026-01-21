@@ -380,7 +380,10 @@ export default function ChatFooter({
                     Total
                   </h3>
                   <p className="text-[var(--heading-color)] font-semibold text-[12px]">
-                    {paymentSummary?.total_to_pay ? paymentSummary?.total_to_pay : currentBooking?.final_price || "_"}
+                    {paymentSummary?.total_to_pay ||
+                      paymentSummary?.total_paid_or_due ||
+                      currentBooking?.final_price ||
+                      "_"}
                   </p>
                 </div>
               </div>

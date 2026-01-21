@@ -11,7 +11,7 @@ export default function proxy(req: NextRequest) {
     if (
       // path.startsWith('/dashboard') ||
       path.startsWith("/provider") ||
-      path.startsWith("/workspace")
+      path.startsWith("/workspace") || path.startsWith("/messages")
     ) {
       return NextResponse.redirect(new URL("/auth/login", req.url));
     }

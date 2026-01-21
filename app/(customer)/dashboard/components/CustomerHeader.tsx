@@ -66,20 +66,6 @@ export default function CustomerHeader({
       {/* --- Top Bar --- */}
       <div className="flex justify-between gap-[50px] bg-white shadow-sm px-6 py-4">
         <div className="flex gap-2 w-full">
-          <Select>
-            <SelectTrigger className="text-[var(--text-body)] text-[12px]">
-              All Nigeria
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="plateau">
-                <option value="plateau">Plateau</option>
-              </SelectItem>
-              <SelectItem value="oyo">
-                <option value="oyo">Oyo</option>
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
           <Input
             type="text"
             placeholder="Search for homes and services"
@@ -122,11 +108,10 @@ export default function CustomerHeader({
               <button
                 key={item.key}
                 onClick={() => setCategory(item.key)}
-                className={`font-medium text-sm transition cursor-pointer ${
-                  currentCategory === item.key
-                    ? "text-[var(--primary-color)]"
-                    : ""
-                }`}
+                className={`font-medium text-sm transition cursor-pointer ${currentCategory === item.key
+                  ? "text-[var(--primary-color)]"
+                  : ""
+                  }`}
               >
                 {item.label}
               </button>
@@ -139,9 +124,6 @@ export default function CustomerHeader({
               <span className="flex justify-center items-center bg-[var(--danger-color)] rounded-full w-5 h-5 font-bold text-white text-xs">
                 {Object.keys(filters || {}).length}
               </span>
-            </span>
-            <span className="hover:opacity-80 font-bold text-gray-800 text-sm cursor-pointer">
-              Sorting
             </span>
           </div>
         </div>
@@ -166,16 +148,26 @@ export default function CustomerHeader({
               </SelectTrigger>
               <SelectContent className="z-[9999]">
                 <SelectItem value="__empty__">Price Range</SelectItem>
-                <SelectItem value={JSON.stringify({ min: 10000, max: 50000 })}>
-                  ₦10,000 - ₦50,000
+                <SelectItem value={JSON.stringify({ min: 0, max: 500000 })}>
+                  Under ₦500k
                 </SelectItem>
-                <SelectItem value={JSON.stringify({ min: 50000, max: 100000 })}>
-                  ₦50,000 - ₦100,000
+                <SelectItem value={JSON.stringify({ min: 500000, max: 1000000 })}>
+                  ₦500k - ₦1m
                 </SelectItem>
-                <SelectItem
-                  value={JSON.stringify({ min: 500000, max: 1000000 })}
-                >
-                  ₦500,000 - ₦1,000,000
+                <SelectItem value={JSON.stringify({ min: 1000000, max: 5000000 })}>
+                  ₦1m - ₦5m
+                </SelectItem>
+                <SelectItem value={JSON.stringify({ min: 5000000, max: 10000000 })}>
+                  ₦5m - ₦10m
+                </SelectItem>
+                <SelectItem value={JSON.stringify({ min: 10000000, max: 50000000 })}>
+                  ₦10m - ₦50m
+                </SelectItem>
+                <SelectItem value={JSON.stringify({ min: 50000000, max: 100000000 })}>
+                  ₦50m - ₦100m
+                </SelectItem>
+                <SelectItem value={JSON.stringify({ min: 100000000, max: undefined })}>
+                  Above ₦100m
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -196,9 +188,19 @@ export default function CustomerHeader({
                 <SelectItem value="__empty__">Location</SelectItem>
                 <SelectItem value="lekki">Lekki</SelectItem>
                 <SelectItem value="ikeja">Ikeja</SelectItem>
-                <SelectItem value="ajah">Ajah</SelectItem>
-                <SelectItem value="jljsjfjk">jljsjfjk</SelectItem>
+                <SelectItem value="victoria island">Victoria Island</SelectItem>
+                <SelectItem value="abuja">Abuja</SelectItem>
                 <SelectItem value="yaba">Yaba</SelectItem>
+                <SelectItem value="surulere">Surulere</SelectItem>
+                <SelectItem value="ajah">Ajah</SelectItem>
+                <SelectItem value="ikoyi">Ikoyi</SelectItem>
+                <SelectItem value="magodo">Magodo</SelectItem>
+                <SelectItem value="maryland">Maryland</SelectItem>
+                <SelectItem value="gbagada">Gbagada</SelectItem>
+                <SelectItem value="port harcourt">Port Harcourt</SelectItem>
+                <SelectItem value="ibadan">Ibadan</SelectItem>
+                <SelectItem value="New York">New York</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -221,6 +223,11 @@ export default function CustomerHeader({
                 <SelectItem value="__empty__">Property Type</SelectItem>
                 <SelectItem value="apartment">Apartment</SelectItem>
                 <SelectItem value="house">House</SelectItem>
+                <SelectItem value="land">Land</SelectItem>
+                <SelectItem value="duplex">Duplex</SelectItem>
+                <SelectItem value="bungalow">Bungalow</SelectItem>
+                <SelectItem value="shop">Shop</SelectItem>
+                <SelectItem value="office">Office</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -243,7 +250,7 @@ export default function CustomerHeader({
                 <SelectItem value="__empty__">Service Type</SelectItem>
                 <SelectItem value="sale">For Sale</SelectItem>
                 <SelectItem value="rent">For Rent</SelectItem>
-                <SelectItem value="Cleaning">Cleaning</SelectItem>
+                <SelectItem value="lease">Lease</SelectItem>
               </SelectContent>
             </Select>
           </div>
