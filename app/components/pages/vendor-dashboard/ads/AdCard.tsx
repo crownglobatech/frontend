@@ -2,6 +2,7 @@ import { FaBed, FaBath } from "react-icons/fa";
 import { AiFillStar } from "react-icons/ai";
 import { CiLocationOn } from "react-icons/ci";
 import { Calendar } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 
 interface ApartmentCardProps {
   image: string;
@@ -39,13 +40,12 @@ export default function ApartmentCard({
         {/* overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#1E5AA882] via-[#1E5AA882] via-[51%] to-[#0C2342F0] to-[94%] rounded-md" />
         <span
-          className={`${
-            status === "approved"
+          className={`${status === "approved"
               ? "bg-[#C8FFD5] text-[var(--success-color)]"
               : status === "paused"
-              ? "bg-[#FFF4D3] text-[var(--brand-accent-color)]"
-              : "bg-[var(--text-body)] text-white"
-          } top-3 left-3 absolute shadow px-3 py-1 rounded-md capitalize font-medium text-[12px]`}
+                ? "bg-[#FFF4D3] text-[var(--brand-accent-color)]"
+                : "bg-[var(--text-body)] text-white"
+            } top-3 left-3 absolute shadow px-3 py-1 rounded-md capitalize font-medium text-[12px]`}
         >
           {status === "approved" ? "active" : status}
         </span>
@@ -62,20 +62,6 @@ export default function ApartmentCard({
           <h3 className="font-semibold text-[14px] text-[var(--heading-color)]">
             {title}
           </h3>
-
-          {/* Rating */}
-          <div className="flex items-center">
-            {[...Array(5)].map((_, i) => (
-              <AiFillStar
-                key={i}
-                size={10}
-                color={i < rating ? "#DDBF5F" : "transparent"}
-              />
-            ))}
-            <span className="ml-1 text-[10px] text-[var(--foundation-neutral-8)]">
-              {rating.toFixed(1)}
-            </span>
-          </div>
         </div>
 
         {/* Details */}
@@ -94,7 +80,7 @@ export default function ApartmentCard({
         {/* Price + Button */}
         <div className="flex justify-between items-center mt-2">
           <span className="font-bold text-[18px] text-[var(--heading-color)]">
-            ₦{price}
+            ₦{formatPrice(price)}
           </span>
           <button className="bg-[var(--primary-color)] hover:bg-blue-700 px-4 py-2 rounded-md font-medium text-[12px] text-white transition-all cursor-pointer">
             Manage Ad

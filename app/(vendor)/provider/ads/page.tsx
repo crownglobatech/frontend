@@ -109,12 +109,12 @@ export default function AllAds() {
                   image={listing.photo_urls[0]}
                   location={listing.area}
                   price={listing.price}
-                  rating={4.3}
                   date={new Date(listing.created_at).toLocaleDateString(
                     "en-GB"
                   )}
                   status={listing.status}
                   title={listing.title}
+                  rating={4.3}
                 />
               </Link>
             ))}

@@ -1,4 +1,5 @@
 "use client";
+import { formatPrice } from "@/lib/utils";
 import ApartmentCard from "@/app/components/general/ApartmentCard";
 import Loader from "@/app/components/general/Loader";
 import { CustomerAd } from "@/lib/types";

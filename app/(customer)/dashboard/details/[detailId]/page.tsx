@@ -1,12 +1,5 @@
 import { CiLocationOn } from "react-icons/ci";
 import { BedDouble, Bath } from "lucide-react";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
 import Image from "next/image";
 import Rating from "@/app/components/general/Rating";
 import ReviewCard from "../../components/ReviewCard";
@@ -18,6 +11,7 @@ import RelatedServicesSection from "./RelatedServicesSection";
 import { Input } from "@/components/ui/input";
 import { logger } from "@/lib/logger";
 import AdDetailsAnimator from "../../components/AdDetailsAnimator";
+import { formatPrice } from "@/lib/utils";
 
 interface Props {
   params: Promise<{ detailId: string }>;
@@ -43,7 +37,7 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
   const photos = Array.isArray(adData.data.photo_urls) ? adData.data.photo_urls : [];
   const vendorReviews = adData?.reviews || [];
   const relatedServices = adData?.related_services || []
-  console.log(relatedServices);
+  logger.log(relatedServices);
 
 
   return (
@@ -53,19 +47,6 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
         {/*  Top Bar  */}
         <div className="flex justify-between gap-[50px] bg-white shadow-sm px-6 py-4">
           <div className="flex gap-2 w-full">
-            <div className="relative w-[100px]">
-              <Select>
-                <SelectTrigger className="w-full font-semibold text-[12px] text-gray-800">
-                  <SelectValue placeholder="All Areas" />
-                </SelectTrigger>
-                <SelectContent className="z-[9999] rounded-sm text-[12px]">
-                  <SelectItem value="all">All Areas</SelectItem>
-                  <SelectItem value="oyo">Oyo</SelectItem>
-                  <SelectItem value="plateau">Plateau</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
             <Input
               type="text"
               placeholder="Search for homes and services"
@@ -78,7 +59,7 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
       <AdDetailsAnimator>
         <div className="flex flex-col px-6">
           {/* detail image */}
-          <div className="rounded-md w-full">
+          <div className="rounded-md w-full mt-2">
             <Image
               src={photos[0] || "/bg-overlay.png"}
               alt="detail image, could be a house or a service description image"
@@ -102,7 +83,7 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
                 {adData?.data.title || "Title not stated"}
               </h1>
               <h1 className="font-semibold text-[20px] text-[var(--heading-color)]">
-                ₦{adData?.data.price}
+                ₦{formatPrice(adData?.data.price)}
               </h1>
             </div>
           </div>

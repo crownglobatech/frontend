@@ -1,6 +1,7 @@
 import { FaBed, FaBath, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import { MdVerifiedUser } from "react-icons/md";
 import { CiLocationOn } from "react-icons/ci";
+import { formatPrice } from "@/lib/utils";
 
 interface ApartmentCardProps {
   image: string;
@@ -91,7 +92,7 @@ export default function ApartmentCard({
         {/* Price + Button */}
         <div className="flex justify-between items-center mt-2">
           <span className="font-bold text-[18px] text-[var(--heading-color)]">
-            ₦{price}
+            ₦{formatPrice(price)}
           </span>
           <button className="bg-[var(--primary-color)] hover:bg-blue-700 px-4 py-2 rounded-md font-medium text-[12px] text-white transition-all cursor-pointer">
             View Details

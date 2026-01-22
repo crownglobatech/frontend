@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { subscribeToChat } from "@/services/pusher";
 import { ConversationItem, Message } from "@/lib/types";
+import { formatPrice } from "@/lib/utils";
 
 interface ChatClientProps {
   chatId: string;
@@ -99,13 +100,13 @@ export default function ChatClient({
       {/* Ad Banner */}
       <div className="top-0 z-[10] sticky flex justify-between items-center bg-[var(--foundation-primary)] px-8 py-2 w-full">
         <h2 className="font-bold text-[var(--primary-color)]">{adTitle}</h2>
-        <p className="font-semibold text-[var(--primary-color)]">{`₦${adPrice}`}</p>
+        <p className="font-semibold text-[var(--primary-color)]">₦{formatPrice(adPrice || "0")}</p>
       </div>
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 bg-[#f0f2f5] h-full">
         {sortedMessages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-500">
+          <div className="flex items-center justify-center h-full text-gray-500"> 
             <p className="text-lg">No messages yet. Start the conversation!</p>
           </div>
         ) : (
@@ -123,16 +124,14 @@ export default function ChatClient({
                 return (
                   <div
                     key={msg.id || `temp-${index}-${msg.created_at}`}
-                    className={`flex ${
-                      isCurrentUser ? "justify-end" : "justify-start"
-                    }`}
+                    className={`flex ${isCurrentUser ? "justify-end" : "justify-start"
+                      }`}
                   >
                     <div
-                      className={`max-w-[70%] px-4 py-2 rounded-lg shadow-sm ${
-                        isCurrentUser
-                          ? "bg-blue-500 text-white rounded-br-none"
-                          : "bg-white text-gray-800 rounded-bl-none"
-                      }`}
+                      className={`max-w-[70%] px-4 py-2 rounded-lg shadow-sm ${isCurrentUser
+                        ? "bg-blue-500 text-white rounded-br-none"
+                        : "bg-white text-gray-800 rounded-bl-none"
+                        }`}
                     >
                       {!isCurrentUser && (
                         <p className="text-xs font-semibold opacity-80 mb-1">
@@ -143,9 +142,8 @@ export default function ChatClient({
                         {msg.message}
                       </p>
                       <span
-                        className={`text-[10px] mt-1 block ${
-                          isCurrentUser ? "opacity-60" : "opacity-80"
-                        }`}
+                        className={`text-[10px] mt-1 block ${isCurrentUser ? "opacity-60" : "opacity-80"
+                          }`}
                       >
                         {new Date(msg.created_at).toLocaleTimeString([], {
                           hour: "2-digit",

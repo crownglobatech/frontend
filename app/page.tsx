@@ -10,6 +10,11 @@ import Services from "./components/pages/home/Services";
 import { motion, Variants } from "motion/react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { getCustomerAdsNoAuth } from "@/lib/api";
+import { CustomerAd } from "@/lib/types";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import ApartmentCardSkeleton from "@/app/components/general/ApartmentCardSkeleton";
 
 // --- Animation Variants ---
 const staggerContainer: Variants = {
@@ -50,6 +55,24 @@ import { parseSmartSearch } from "@/lib/smartSearch";
 export default function LandingPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [featuredAds, setFeaturedAds] = useState<CustomerAd[]>([]);
+  const [loadingAds, setLoadingAds] = useState(true);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      try {
+        const res = await getCustomerAdsNoAuth("all");
+        if (res?.data?.data) {
+          setFeaturedAds(res.data.data.slice(0, 3));
+        }
+      } catch (e) {
+        console.error("Failed to fetch featured ads", e);
+      } finally {
+        setLoadingAds(false);
+      }
+    };
+    fetchFeatured();
+  }, []);
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
@@ -82,6 +105,7 @@ export default function LandingPage() {
       handleSearch();
     }
   };
+
   return (
     <main className="overflow-hidden w-full min-h-screen bg-white">
       {/* --- HERO SECTION --- */}
@@ -190,53 +214,42 @@ export default function LandingPage() {
           Featured Properties
         </motion.h2>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+        <div
+          // variants={staggerContainer}
+          // initial="hidden"
+          // whileInView="visible"
+          // viewport={{ once: true, amount: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-8 max-w-[1200px]"
         >
-          <motion.div variants={fadeInUp}>
-            <ApartmentCard
-              baths={3}
-              beds={4}
-              image="/estate.png"
-              location="Agodi Awolowo, Ibadan"
-              price="50000000"
-              rating={5}
-              title="Vineyard Estate"
-              providerVerified={true}
-              status="For Sale"
-            />
-          </motion.div>
-          <motion.div variants={fadeInUp}>
-            <ApartmentCard
-              baths={3}
-              beds={4}
-              image="/estate.png"
-              location="Agodi Awolowo, Ibadan"
-              price="50000000"
-              rating={5}
-              title="Vineyard Estate"
-              providerVerified={true}
-              status="For Rent"
-            />
-          </motion.div>
-          <motion.div variants={fadeInUp}>
-            <ApartmentCard
-              baths={3}
-              beds={4}
-              image="/estate.png"
-              location="Agodi Awolowo, Ibadan"
-              price="50000000"
-              rating={5}
-              title="Vineyard Estate"
-              providerVerified={true}
-              status="For Sale"
-            />
-          </motion.div>
-        </motion.div>
+          {loadingAds ? (
+            [...Array(3)].map((_, i) => (
+              <ApartmentCardSkeleton key={i} />
+            ))
+          ) : featuredAds.length > 0 ? (
+            featuredAds.map((ad) => (
+              <motion.div key={ad.id} variants={fadeInUp}>
+                <Link href={`/dashboard/details/${ad.id}`}>
+                  <ApartmentCard
+                    baths={ad.bathrooms}
+                    beds={ad.bedrooms}
+                    image={ad.photo_urls[0] || "/estate.png"}
+                    location={`${ad.area}, ${ad.state}`}
+                    price={ad.price}
+                    rating={ad.average_rating || 0}
+                    title={ad.title}
+                    providerVerified={ad.business?.is_verified === 1}
+                    status={ad.listing_type}
+                  />
+                </Link>
+              </motion.div>
+            ))
+          ) : (
+            // Fallback content if no ads found, maybe keep static as backup or show message?
+            // User asked for "collect from real data", if empty, showing nothing might be valid or fallback.
+            // I'll show a message or empty.
+            <div className="col-span-full text-center text-gray-500">No properties found.</div>
+          )}
+        </div>
 
         <motion.div
           initial={{ opacity: 0 }}

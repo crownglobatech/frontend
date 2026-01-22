@@ -11,6 +11,10 @@ import LoadingDots from "@/app/components/general/LoadingDots";
 import { postNewAd } from "@/lib/api";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import PreviewAdDialog from "./PreviewAdDialog";
+import { useSelector } from "react-redux";
+import { selectUser } from "@/app/features/auth/authSlice";
+import { logger } from "@/lib/logger";
+
 
 export default function NewAdContent() {
   const { notify } = useNotification();
@@ -18,11 +22,14 @@ export default function NewAdContent() {
   const [openSection, setOpenSection] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const user = useSelector(selectUser);
+  logger.log(user)
 
   const toggleSection = (section: string) => {
     setOpenSection((prev) => (prev === section ? null : section));
   };
 
+  // const {user} = 
   const initialFormData = {
     title: "",
     description: "",
@@ -221,7 +228,7 @@ export default function NewAdContent() {
           className="flex justify-between items-center cursor-pointer select-none"
         >
           <span className="font-semibold text-[var(--heading-color)]">
-            Property Info
+            Property Info (For Property Ads)
           </span>
           <ChevronDownIcon
             size={15}

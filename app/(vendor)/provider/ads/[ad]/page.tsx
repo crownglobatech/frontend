@@ -6,7 +6,6 @@ import Cookies from "js-cookie";
 import { getAdById } from "@/lib/api";
 import AdDetails from "@/app/components/pages/vendor-dashboard/ads/AdDetail";
 import EditAd from "@/app/components/pages/vendor-dashboard/ads/EditAd";
-import Loader from "@/app/components/general/Loader";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import LoadingDots from "@/app/components/general/LoadingDots";
 import Loading from "./loading";
@@ -32,6 +31,7 @@ export default function ManageAd({ params }: Props) {
 
       const res = await getAdById(token, ad);
       if (res.data) setAdData(res.data);
+      logger.log(res.data)
     } catch (err) {
       logger.error(err);
     } finally {

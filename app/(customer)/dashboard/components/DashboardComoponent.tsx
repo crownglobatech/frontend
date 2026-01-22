@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getCustomerAds, getCustomerAdsNoAuth } from "@/lib/api";
 import { CustomerAd, CustomerAdsResponse } from "@/lib/types";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { formatPrice } from "@/lib/utils";
 import CustomerHeader from "./CustomerHeader";
 import AdDisplay from "./AdDisplay";
 import Pagination from "./Pagination";

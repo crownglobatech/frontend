@@ -101,4 +101,7 @@ export const {
   logout,
   loadUserFromStorage
 } = authSlice.actions
+
+export const selectUser = (state: { auth: AuthState }) => state.auth.user
+
 export default authSlice.reducer

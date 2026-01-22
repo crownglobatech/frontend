@@ -5,6 +5,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import Image from "next/image";
+import { formatPrice } from "@/lib/utils";
 
 interface PreviewAdDialogProps {
     open: boolean;
@@ -71,7 +72,7 @@ export default function PreviewAdDialog({
                             {data.description || "No description provided."}
                         </p>
                         <p className="text-xl font-semibold text-[var(--primary-color)]">
-                            {data.price ? `₦${Number(data.price).toLocaleString()}` : "Price Not Set"}
+                            {data.price ? `₦${formatPrice(data.price)}` : "Price Not Set"}
                         </p>
                     </div>
 

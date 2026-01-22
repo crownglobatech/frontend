@@ -4,17 +4,17 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { MdDashboard } from "react-icons/md";
 import { TbHelpCircle, TbMessageCircle } from "react-icons/tb";
-import { Heart } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LogIn } from "lucide-react";
 import { LogOut } from "lucide-react";
+import { useSelector } from "react-redux";
+import { selectUser } from "@/app/features/auth/authSlice";
 
 export default function SideBarUser() {
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const user =
-    typeof window !== "undefined" ? localStorage.getItem("user") : null;
+  const user = useSelector(selectUser);
   const role =
     typeof window != "undefined" ? localStorage.getItem("role") : null;
 
@@ -85,8 +85,8 @@ export default function SideBarUser() {
                     <Link
                       href={href}
                       className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${isActive
-                          ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
-                          : "text-white/70 hover:text-white hover:opacity-100"
+                        ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
+                        : "text-white/70 hover:text-white hover:opacity-100"
                         }`}
                     >
                       <Icon size={20} />
@@ -110,8 +110,8 @@ export default function SideBarUser() {
                     <Link
                       href={href}
                       className={`flex gap-2 items-center px-3 py-2 rounded-md transition-all ${isActive
-                          ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
-                          : "text-white/70 hover:text-white hover:opacity-100"
+                        ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
+                        : "text-white/70 hover:text-white hover:opacity-100"
                         } text-[13px] leading-relaxed`}
                     >
                       <Icon size={20} />
