@@ -97,6 +97,8 @@ export default function Header() {
                     {servicesList.map((service) => (
                       <Link
                         key={service}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         href={`/dashboard?category=allied-services&search=${service}`}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[var(--secondary-color)] rounded-md transition-colors"
                       >

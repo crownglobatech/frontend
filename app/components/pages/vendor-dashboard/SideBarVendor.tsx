@@ -69,12 +69,12 @@ export default function SideBarVendor() {
               ease: [0, 0.71, 0.2, 1.01],
             }}
           >
-            <span className="font-thin text-[var(--neutral-white)]/70">
+            <Link href= '/provider/dashboard' className="font-thin text-[var(--neutral-white)]/70">
               Crown-
-            </span>
-            <span className="font-extrabold text-[var(--neutral-white)]">
+            </Link>
+            <Link href= '/provider/dashboard' className="font-extrabold text-[var(--neutral-white)]">
               Haven
-            </span>
+            </Link>
           </motion.div>
           <PanelRightClose
             color="white"

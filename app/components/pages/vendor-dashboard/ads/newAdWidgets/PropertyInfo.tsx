@@ -34,7 +34,6 @@ export default function PropertyInfoForm({ data, onChange }: PropertyInfoFormPro
             <option value=''>Select Listing Type</option>
             <option value='sale'>For Sale</option>
             <option value='rent'>For Rent</option>
-            <option value='lease'>For Lease</option>
           </select>
         </div>
 
@@ -51,6 +50,7 @@ export default function PropertyInfoForm({ data, onChange }: PropertyInfoFormPro
             name='size'
             min={0}
             value={data.size}
+            onWheel={e => e.currentTarget.blur()}
             onChange={e => onChange('size', e.target.value)}
             placeholder='e.g. 500'
             className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
@@ -73,6 +73,7 @@ export default function PropertyInfoForm({ data, onChange }: PropertyInfoFormPro
             min={0}
             name='bedrooms'
             value={data.bedrooms}
+            onWheel={e => e.currentTarget.blur()}
             onChange={e => onChange('bedrooms', e.target.value)}
             placeholder='e.g. 4'
             className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
@@ -92,6 +93,7 @@ export default function PropertyInfoForm({ data, onChange }: PropertyInfoFormPro
             type='number'
             min={0}
             value={data.bathrooms}
+            onWheel={e => e.currentTarget.blur()}
             onChange={e => onChange('bathrooms', e.target.value)}
             placeholder='e.g. 2'
             className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full font-semibold text-[12px]'
@@ -113,6 +115,7 @@ export default function PropertyInfoForm({ data, onChange }: PropertyInfoFormPro
           name='price'
           min={0}
           value={data.price}
+          onWheel={e => e.currentTarget.blur()}
           onChange={e => onChange('price', e.target.value)}
           placeholder='e.g. 50000000'
           className='bg-white px-4 py-2 border border-[var(--foundation-neutral-6)] rounded-sm font-semibold text-[12px]'

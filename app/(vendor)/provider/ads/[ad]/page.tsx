@@ -12,6 +12,7 @@ import Loading from "./loading";
 import { useRouter } from "next/navigation";
 import { Ad } from "@/lib/types";
 import { logger } from "@/lib/logger";
+import Link from "next/link";
 
 interface Props {
   params: Promise<{ ad: string }>;
@@ -135,7 +136,7 @@ export default function ManageAd({ params }: Props) {
       <div className="p-6">
         <div className="flex justify-between items-center">
           <h2 className="font-semibold text-[12px] text-[var(--foundation-neutral-6)]">
-            My Ad /{" "}
+            <Link href="/provider/ads">My Ad /{" "}</Link>
             <span className="text-black">Manage Ad: {adData.title}</span>
           </h2>
           <button

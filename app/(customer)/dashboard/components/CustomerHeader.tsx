@@ -61,10 +61,26 @@ export default function CustomerHeader({
     };
     isLoggedIn();
   }, [user, role]);
+
+  const servicesList = [
+    "House painters",
+    "Electricians",
+    "Carpenters",
+    "Estate legal practitioners",
+    "Surveyors",
+    "Developers",
+    "House agents",
+    "Interior decoration",
+    "Gardeners",
+    "Plumbers",
+    "Van rentals",
+    "Event source",
+    "Others",
+  ];
   return (
     <div>
       {/* --- Top Bar --- */}
-      <div className="flex justify-between gap-[50px] bg-white shadow-sm px-6 py-4">
+      <div className="flex justify-between gap-[50px] bg-white shadow-sm px-6 pt-4 pb-1">
         <div className="flex gap-2 w-full">
           <Input
             type="text"
@@ -95,9 +111,8 @@ export default function CustomerHeader({
         )}
       </div>
 
-      {/* --- Category Navigation --- */}
       <div className="z-[50] relative flex flex-col bg-white px-6 overflow-visible">
-        <div className="flex justify-between py-2 border-gray-300 border-b">
+        {/* <div className="flex justify-between py-2 border-gray-300 border-b">
           <div className="flex items-center gap-6">
             {[
               { key: "all", label: "All Listings" },
@@ -126,10 +141,10 @@ export default function CustomerHeader({
               </span>
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* --- Dropdown Filters --- */}
-        <div className="relative flex flex-wrap gap-4 mt-2 overflow-visible">
+        <div className="relative border-b border-gray-300 py-2 flex flex-wrap gap-4 overflow-visible">
           {/* Price Range */}
           <div className="relative w-[150px]">
             <Select
@@ -248,9 +263,11 @@ export default function CustomerHeader({
               </SelectTrigger>
               <SelectContent className="z-[9999]">
                 <SelectItem value="__empty__">Service Type</SelectItem>
-                <SelectItem value="sale">For Sale</SelectItem>
-                <SelectItem value="rent">For Rent</SelectItem>
-                <SelectItem value="lease">Lease</SelectItem>
+                <SelectItem value="sale">Sale</SelectItem>
+                <SelectItem value="rent">Rent</SelectItem>
+                {servicesList.map((_, i) => (
+                  <SelectItem key={i} value={_}>{_}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

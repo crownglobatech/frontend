@@ -265,6 +265,7 @@ export default function EditAd({ adData, onUpdate }: Props) {
             id="price"
             name="price"
             value={formData.price}
+            onWheel={e => e.currentTarget.blur()}
             onChange={handleChange}
             placeholder="50000000"
             className="px-2 py-1 border border-[--foundation-neutral-6] rounded-sm w-full text-[12px]"
@@ -284,6 +285,7 @@ export default function EditAd({ adData, onUpdate }: Props) {
             id="bedrooms"
             name="bedrooms"
             value={formData.bedrooms}
+            onWheel={e => e.currentTarget.blur()}
             onChange={handleChange}
             placeholder="4"
             className="px-2 py-1 border border-[--foundation-neutral-6] rounded-sm w-full text-[12px]"
@@ -302,6 +304,7 @@ export default function EditAd({ adData, onUpdate }: Props) {
             type="number"
             id="bathrooms"
             name="bathrooms"
+            onWheel={e => e.currentTarget.blur()}
             value={formData.bathrooms}
             onChange={handleChange}
             placeholder="4"

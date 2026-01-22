@@ -15,6 +15,8 @@ export default function AllAds() {
   const [filteredAds, setFilteredAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"all" | "newest" | "oldest">("all");
+
 
   useEffect(() => {
     const fetchAds = async () => {
@@ -39,24 +41,41 @@ export default function AllAds() {
   useEffect(() => {
     const query = searchQuery.toLowerCase().trim();
 
-    if (!query) {
-      setFilteredAds(ads);
-      return;
+    let result = ads;
+
+    // 🔍 search filter
+    if (query) {
+      result = ads.filter(
+        (ad) =>
+          ad.title?.toLowerCase().includes(query) ||
+          ad.area.toLowerCase().includes(query) ||
+          ad.business.business_name.toLowerCase().includes(query) ||
+          ad.description.toLowerCase().includes(query) ||
+          ad.listing_type.toLowerCase().includes(query) ||
+          ad.price.includes(query) ||
+          ad.street.toLowerCase().includes(query)
+      );
     }
 
-    const filtered = ads.filter(
-      (ad) =>
-        ad.title?.toLowerCase().includes(query) ||
-        ad.area.toLowerCase().includes(query) ||
-        ad.business.business_name.toLowerCase().includes(query) ||
-        ad.description.toLowerCase().includes(query) ||
-        ad.listing_type.toLowerCase().includes(query) ||
-        ad.price.includes(query) ||
-        ad.street.toLowerCase().includes(query)
-    );
+    //  sorting
+    if (sortBy === "newest") {
+      result = [...result].sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() -
+          new Date(a.created_at).getTime()
+      );
+    }
 
-    setFilteredAds(filtered);
-  }, [searchQuery, ads]);
+    if (sortBy === "oldest") {
+      result = [...result].sort(
+        (a, b) =>
+          new Date(a.created_at).getTime() -
+          new Date(b.created_at).getTime()
+      );
+    }
+
+    setFilteredAds(result);
+  }, [searchQuery, ads, sortBy]);
 
   if (loading) {
     return (
@@ -64,9 +83,9 @@ export default function AllAds() {
         <div className="top-0 z-[1000] sticky w-full">
           <HeaderBanner query={searchQuery} setQuery={setSearchQuery} />
         </div>
-        <div className="px-6 py-6">
+        {/* <div className="px-6 py-6">
           <AdFilter />
-        </div>
+        </div> */}
         <div className="px-6 mb-4">
           <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
@@ -85,7 +104,7 @@ export default function AllAds() {
       </div>
       {/* sort and filters */}
       <div className="px-6 py-6">
-        <AdFilter />
+        <AdFilter sortBy={sortBy} onChangeSort={setSortBy} />
       </div>
       {/* Ad Display */}
       <div className="px-6 mb-4">
@@ -115,6 +134,7 @@ export default function AllAds() {
                   status={listing.status}
                   title={listing.title}
                   rating={4.3}
+                  state={listing.state}
                 />
               </Link>
             ))}

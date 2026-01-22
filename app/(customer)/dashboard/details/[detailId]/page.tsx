@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { logger } from "@/lib/logger";
 import AdDetailsAnimator from "../../components/AdDetailsAnimator";
 import { formatPrice } from "@/lib/utils";
+import BackButton from "@/app/components/general/Back";
 
 interface Props {
   params: Promise<{ detailId: string }>;
@@ -42,9 +43,7 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
 
   return (
     <div>
-      {/* can be set to layout instead of repitition */}
-      <div className="top-0 z-[1000] sticky w-full">
-        {/*  Top Bar  */}
+      {/* <div className="top-0 z-[1000] sticky w-full">
         <div className="flex justify-between gap-[50px] bg-white shadow-sm px-6 py-4">
           <div className="flex gap-2 w-full">
             <Input
@@ -54,11 +53,12 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
             />
           </div>
         </div>
-      </div>
+      </div> */}
 
       <AdDetailsAnimator>
-        <div className="flex flex-col px-6">
+        <div className="flex flex-col px-6 py-2">
           {/* detail image */}
+          {/* <BackButton /> */}
           <div className="rounded-md w-full mt-2">
             <Image
               src={photos[0] || "/bg-overlay.png"}
@@ -73,7 +73,7 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
               <div className="flex items-center gap-1">
                 <CiLocationOn size={12} />
                 <p className="text-[10px] text-gray-500">
-                  {adData?.data.area || "Location not stated"}
+                  {adData?.data.area + ', ' + adData.data.state || "Location not stated"}
                 </p>
               </div>
             </div>

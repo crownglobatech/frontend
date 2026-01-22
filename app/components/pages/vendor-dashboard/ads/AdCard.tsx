@@ -14,6 +14,7 @@ interface ApartmentCardProps {
   rating: number;
   status: string;
   date: string;
+  state?: string
 }
 
 export default function ApartmentCard({
@@ -22,6 +23,7 @@ export default function ApartmentCard({
   location,
   price,
   beds,
+  state,
   baths,
   rating,
   date,
@@ -55,7 +57,7 @@ export default function ApartmentCard({
       <div className="space-y-2 p-3">
         <div className="flex items-center gap-1">
           <CiLocationOn size={12} />
-          <p className="text-[10px] text-gray-500">{location}</p>
+          <p className="text-[10px] text-gray-500">{location}, {state}</p>
         </div>
 
         <div className="flex justify-between">

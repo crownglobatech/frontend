@@ -1,22 +1,27 @@
-import { Select, SelectContent, SelectTrigger } from "@/components/ui/select";
-import { SelectItem } from "@radix-ui/react-select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Link from "next/link";
 import { MdAddCircleOutline } from "react-icons/md";
-export default function AdFilter() {
+
+interface FilterProps {
+  sortBy: "all" | "newest" | "oldest";
+  onChangeSort: (value: "all" | "newest" | "oldest") => void;
+}
+
+export default function AdFilter({ onChangeSort,sortBy }: FilterProps) {
   return (
     <div className="flex justify-between items-center w-full">
       <div className="flex items-center gap-2">
         <label htmlFor="filter" className="font-semibold text-black">
           Sort by:
         </label>
-        <Select>
+        <Select value={sortBy} onValueChange={onChangeSort}>
           <SelectTrigger className="bg-[#E9EFF6] cursor-pointer text-[var(--heading-color)] font-bold">
-            All Ads
+            <SelectValue placeholder="All Ads" />
           </SelectTrigger>
           <SelectContent className="bg-[var(--foundation-primary)] cursor-pointer">
-            <SelectItem value="All Ads">All Ads</SelectItem>
-            <SelectItem value="1">Ad 1</SelectItem>
-            <SelectItem value="2">Ad 2</SelectItem>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="newest">Newest</SelectItem>
+            <SelectItem value="oldest">Oldest</SelectItem>
           </SelectContent>
         </Select>
       </div>

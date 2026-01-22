@@ -97,7 +97,9 @@ export default function LandingPage() {
       // Actually, if search is empty after extraction, we don't need to pass ?search= param.
     }
 
-    router.push(`/dashboard?${params.toString()}`);
+    const url = `/dashboard?${params.toString()}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -181,7 +183,7 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* --- QUICK CATEGORIES & FILTER --- */}
+      {/* --- QUICK CATEGORIES & FILTER ---
       <section className="">
         <motion.div
           variants={staggerContainer}
@@ -200,10 +202,10 @@ export default function LandingPage() {
             <Services />
           </motion.div>
         </motion.div>
-      </section>
+      </section> */}
 
       {/* --- FEATURED PROPERTIES --- */}
-      <section className="flex flex-col items-center bg-[var(--foundation-primary)] py-12 md:py-16">
+      {/* <section className="flex flex-col items-center bg-[var(--foundation-primary)] py-12 md:py-16">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -264,10 +266,10 @@ export default function LandingPage() {
             event={() => router.push("/dashboard?category=all")}
           />
         </motion.div>
-      </section>
+      </section> */}
 
       {/* --- RELIABLE SERVICE (Desktop Only) --- */}
-      <section className="hidden md:flex flex-col items-center my-12 py-8">
+      {/* <section className="hidden md:flex flex-col items-center my-12 py-8">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -281,10 +283,10 @@ export default function LandingPage() {
         <div className="w-full px-16 max-w-[1400px]">
           <ServiceGallery />
         </div>
-      </section>
+      </section> */}
 
       {/* --- BANNER / CTA --- */}
-      <motion.section
+      {/* <motion.section
         variants={fadeInScale}
         initial="hidden"
         whileInView="visible"
@@ -311,9 +313,9 @@ export default function LandingPage() {
             event={() => router.push("/about#contact")}
           />
         </div>
-      </motion.section>
+      </motion.section> */}
 
-      <Footer />
+      {/* <Footer /> */}
     </main>
   );
 }
