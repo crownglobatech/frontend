@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import SideBarAdmin from "./components/SideBar";
 import { useRouter } from "next/navigation";
+import { SidebarProvider } from "./context/SidebarContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,18 +18,15 @@ export default function Wrapper({ children }: LayoutProps) {
       router.replace("/auth/login");
     }
   }, [token]);
-  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="flex min-h-screen">
-      <div className={`${collapsed ? "w-[10%]" : "w-1/5"} z-[1000]`}>
-        <SideBarAdmin collapsed={collapsed} setCollapsed={setCollapsed} />
+    <SidebarProvider>
+      <div className="flex min-h-screen relative">
+        <SideBarAdmin />
+        <section className="flex flex-col bg-white w-full md:w-[calc(100%-256px)] md:ml-[256px]">
+          {children}
+        </section>
       </div>
-      <section
-        className={`flex flex-col bg-white ${collapsed ? "w-full" : "w-4/5"}`}
-      >
-        {children}
-      </section>
-    </div>
+    </SidebarProvider>
   );
 }
