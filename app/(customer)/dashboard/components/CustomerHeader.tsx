@@ -1,4 +1,5 @@
 "use client";
+import ProfileDropdown from "@/app/components/general/ProfileDropDown";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -7,6 +8,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { Bell } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
@@ -31,6 +33,8 @@ export default function CustomerHeader({
   setFilters,
   totalResults,
 }: Props) {
+
+  const [openProfile, setOpenProfile] = useState(false)
   const handleFilterChange = (
     name: string,
     value: string | { min?: number; max?: number } | undefined
@@ -77,10 +81,11 @@ export default function CustomerHeader({
     "Event source",
     "Others",
   ];
+
   return (
     <div>
       {/* --- Top Bar --- */}
-      <div className="flex justify-between gap-[50px] bg-white shadow-sm px-6 pt-4 pb-1">
+      <div className="relative flex justify-between items-center gap-[50px] bg-white shadow-sm px-6 pt-4 pb-1">
         <div className="flex gap-2 w-full">
           <Input
             type="text"
@@ -92,21 +97,13 @@ export default function CustomerHeader({
         </div>
 
         {isLoggedIn && (
-          <div className="flex flex-row-reverse items-center gap-4">
-            <Image
-              src="/user.png"
-              alt="profile"
-              height={40}
-              width={40}
-              className="shadow-md rounded-full cursor-pointer"
-            />
-            <Image
-              src="/notify.png"
-              alt="notifications"
-              height={40}
-              width={40}
-              className="shadow-md rounded-full cursor-pointer"
-            />
+          <div className="relative flex flex-row-reverse items-center gap-4">
+            <div className="shadow-sm rounded-full">
+              <ProfileDropdown />
+            </div>
+            <div className="shadow-sm rounded-full cursor-pointer">
+              <Bell size={35}/>
+            </div>
           </div>
         )}
       </div>

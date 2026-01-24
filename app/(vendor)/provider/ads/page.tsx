@@ -28,6 +28,7 @@ export default function AllAds() {
         const adsData = data.data.data;
         setAds(adsData);
         setFilteredAds(adsData);
+        logger.log(adsData)
       } catch (err) {
         logger.error(err);
       } finally {
@@ -135,6 +136,7 @@ export default function AllAds() {
                   title={listing.title}
                   rating={4.3}
                   state={listing.state}
+                  category={listing?.category?.name}
                 />
               </Link>
             ))}

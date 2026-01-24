@@ -76,11 +76,6 @@ export default function SideBarVendor() {
               Haven
             </Link>
           </motion.div>
-          <PanelRightClose
-            color="white"
-            size={20}
-            className="opacity-80 hover:opacity-100 transition-all cursor-pointer"
-          />
         </div>
 
         {/* Navigation */}

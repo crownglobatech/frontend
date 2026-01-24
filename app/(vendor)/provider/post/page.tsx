@@ -1,4 +1,6 @@
 import NewAdContent from '@/app/components/pages/vendor-dashboard/ads/NewAdContent'
+import NotificationDropdown from '@/app/components/pages/vendor-dashboard/NotificationDropdown'
+import ProfileDropDown from '@/app/components/pages/vendor-dashboard/ProfileDropDown'
 import Image from 'next/image'
 export default function PostNewAd() {
   return (
@@ -11,22 +13,10 @@ export default function PostNewAd() {
           {/* Icons */}
           <div className='flex flex-row-reverse items-center gap-8'>
             <div className='shadow-sm rounded-full'>
-              <Image
-                src='/user.png'
-                alt='vendor profile avatar'
-                className='object-contain cursor-pointer'
-                height={40}
-                width={40}
-              />
+              <ProfileDropDown />
             </div>
             <div className='shadow-sm rounded-full'>
-              <Image
-                src='/notify.png'
-                alt='notification icon'
-                className='object-contain cursor-pointer'
-                height={40}
-                width={40}
-              />
+              <NotificationDropdown />
             </div>
           </div>
         </div>

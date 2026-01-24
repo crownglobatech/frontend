@@ -20,7 +20,7 @@ export default function EditAd({ adData, onUpdate }: Props) {
     bedrooms: adData.bedrooms || "",
     bathrooms: adData.bathrooms || "",
     listing_type: adData.listing_type || "",
-    category: adData.business.business_name || "",
+    category: adData.category.name || "",
   });
 
   const [imageData, setImageData] = useState<{
@@ -273,44 +273,48 @@ export default function EditAd({ adData, onUpdate }: Props) {
         </div>
 
         {/* Bedrooms */}
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="bedrooms"
-            className="font-semibold text-[13px] text-[var(--heading-color)]"
-          >
-            Bed Room <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            id="bedrooms"
-            name="bedrooms"
-            value={formData.bedrooms}
-            onWheel={e => e.currentTarget.blur()}
-            onChange={handleChange}
-            placeholder="4"
-            className="px-2 py-1 border border-[--foundation-neutral-6] rounded-sm w-full text-[12px]"
-          />
-        </div>
+        {adData.bedrooms && (
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="bedrooms"
+              className="font-semibold text-[13px] text-[var(--heading-color)]"
+            >
+              Bed Room <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              id="bedrooms"
+              name="bedrooms"
+              value={formData.bedrooms}
+              onWheel={e => e.currentTarget.blur()}
+              onChange={handleChange}
+              placeholder="4"
+              className="px-2 py-1 border border-[--foundation-neutral-6] rounded-sm w-full text-[12px]"
+            />
+          </div>
+        )}
 
         {/* Bathrooms */}
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="bathrooms"
-            className="font-semibold text-[13px] text-[var(--heading-color)]"
-          >
-            Bath Room <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            id="bathrooms"
-            name="bathrooms"
-            onWheel={e => e.currentTarget.blur()}
-            value={formData.bathrooms}
-            onChange={handleChange}
-            placeholder="4"
-            className="px-2 py-1 border border-[--foundation-neutral-6] rounded-sm w-full text-[12px]"
-          />
-        </div>
+        {adData.bathrooms && (
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="bathrooms"
+              className="font-semibold text-[13px] text-[var(--heading-color)]"
+            >
+              Bath Room <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              id="bathrooms"
+              name="bathrooms"
+              onWheel={e => e.currentTarget.blur()}
+              value={formData.bathrooms}
+              onChange={handleChange}
+              placeholder="4"
+              className="px-2 py-1 border border-[--foundation-neutral-6] rounded-sm w-full text-[12px]"
+            />
+          </div>
+        )}
 
         {/* Category */}
         <div className="flex flex-col gap-2">
@@ -329,26 +333,28 @@ export default function EditAd({ adData, onUpdate }: Props) {
         </div>
 
         {/* Listing */}
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="listing_type"
-            className="font-semibold text-[13px] text-[var(--heading-color)]"
-          >
-            Listing <span className="text-red-500">*</span>
-          </label>
-          <select
-            id="listing_type"
-            name="listing_type"
-            value={formData.listing_type}
-            onChange={handleChange}
-            className="p-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full text-[12px] capitalize"
-          >
-            <option value="Rent">Rent</option>
-            <option value="Sale">Sale</option>
-            <option value="Lease">Lease</option>
-            <option value="Shortlet">Shortlet</option>
-          </select>
-        </div>
+        {adData.listing_type && (
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="listing_type"
+              className="font-semibold text-[13px] text-[var(--heading-color)]"
+            >
+              Listing <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="listing_type"
+              name="listing_type"
+              value={formData.listing_type}
+              onChange={handleChange}
+              className="p-2 border border-[var(--foundation-neutral-6)] rounded-sm w-full text-[12px] capitalize"
+            >
+              <option value="Rent">Rent</option>
+              <option value="Sale">Sale</option>
+              <option value="Lease">Lease</option>
+              <option value="Shortlet">Shortlet</option>
+            </select>
+          </div>
+        )}
 
         {/* Images */}
         <div className="flex flex-col gap-2">

@@ -2,6 +2,8 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { FaSearch } from "react-icons/fa";
 import Rating from "@/app/components/general/Rating";
+import ProfileDropDown from "../ProfileDropDown";
+import NotificationDropdown from "../NotificationDropdown";
 
 interface Props {
   query: string;
@@ -32,22 +34,10 @@ export default function HeaderBanner({ query, setQuery }: Props) {
           <Rating rate={5} />
 
           <div className="shadow-sm rounded-full">
-            <Image
-              src="/user.png"
-              alt="vendor profile avatar"
-              className="object-contain cursor-pointer"
-              height={40}
-              width={40}
-            />
+            <ProfileDropDown />
           </div>
-          <div className="shadow-sm rounded-full">
-            <Image
-              src="/notify.png"
-              alt="notification icon"
-              className="object-contain cursor-pointer"
-              height={40}
-              width={40}
-            />
+          <div className="shadow-md rounded-full">
+            <NotificationDropdown />
           </div>
         </div>
       </div>

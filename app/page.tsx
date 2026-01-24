@@ -51,6 +51,7 @@ const fadeInScale: Variants = {
 };
 
 import { parseSmartSearch } from "@/lib/smartSearch";
+import { logger } from "@/lib/logger";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -66,7 +67,7 @@ export default function LandingPage() {
           setFeaturedAds(res.data.data.slice(0, 3));
         }
       } catch (e) {
-        console.error("Failed to fetch featured ads", e);
+        logger.error("Failed to fetch featured ads", e);
       } finally {
         setLoadingAds(false);
       }

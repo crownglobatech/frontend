@@ -21,6 +21,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   userId: null,
   pendingEmailVerify: false,
+  
 }
 
 const authSlice = createSlice({

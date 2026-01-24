@@ -13,6 +13,9 @@ import { useRouter } from "next/navigation";
 import { Ad } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import Link from "next/link";
+import ProfileDropDown from "@/app/components/pages/vendor-dashboard/ProfileDropDown";
+import NotificationDropDown from "@/app/(customer)/dashboard/components/NotificationDropDown";
+import NotificationDropdown from "@/app/components/pages/vendor-dashboard/NotificationDropdown";
 
 interface Props {
   params: Promise<{ ad: string }>;
@@ -112,22 +115,10 @@ export default function ManageAd({ params }: Props) {
               <Rating rate={5} />
 
               <div className="shadow-md rounded-full">
-                <Image
-                  src="/user.png"
-                  alt="vendor profile avatar"
-                  className="object-contain cursor-pointer"
-                  height={40}
-                  width={40}
-                />
+                <ProfileDropDown />
               </div>
               <div className="shadow-md rounded-full">
-                <Image
-                  src="/notify.png"
-                  alt="notification icon"
-                  className="object-contain cursor-pointer"
-                  height={40}
-                  width={40}
-                />
+               <NotificationDropdown />
               </div>
             </div>
           </div>

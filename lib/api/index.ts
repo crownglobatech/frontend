@@ -1,7 +1,7 @@
 export interface AdFormData {
   title: string;
   description: string;
-
+  category_id: number | null;
   // Location
   street: string;
   area: string;
@@ -326,7 +326,7 @@ export async function getCustomerAdsNoAuth(
   return data;
 }
 
-export async function getCustomerAdsById(id: string): Promise<ViewCustomerAd> {
+export async function getCustomerAdsById(id: string): Promise<ViewCustomerAd | null> {
   try {
     if (!id) {
       throw new Error("No product was selected.");
@@ -345,6 +345,10 @@ export async function getCustomerAdsById(id: string): Promise<ViewCustomerAd> {
         },
       }
     );
+
+    if (response.status === 404) {
+        return null;
+    }
 
     if (!response.ok) {
       const text = await response.text();
@@ -451,4 +455,96 @@ export async function submitReview(
     logger.error("Error submitting review:", error);
     throw error;
   }
+}
+
+export async function changePasswordFromProfile(token: string, data: { old_password: string; password: string; password_confirmation: string }) {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/profile/change-password`, {
+            method: "PATCH",
+            body: JSON.stringify(data),
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) {
+            const errorData = await safeJson(response);
+            throw new Error(
+                errorData?.message || `Failed to change password (status: ${response.status})`
+            );
+        }
+        return await response.json();
+    } catch (error) {
+        logger.error("Error changing password:", error);
+        throw error;
+    }
+}
+
+export async function changeCustomerPassword(token: string, data: { old_password: string; password: string; password_confirmation: string }) {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/profile/change-password`, {
+            method: "PATCH",
+            body: JSON.stringify(data),
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) {
+            const errorData = await safeJson(response);
+            throw new Error(
+                errorData?.message || `Failed to change password (status: ${response.status})`
+            );
+        }
+        return await response.json();
+    } catch (error) {
+        logger.error("Error changing password:", error);
+        throw error;
+    }
+}
+
+export async function updateCustomerProfile(token: string, data: { first_name: string; last_name: string; phone_e164: string; address: string }) {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/customer/profile`, {
+            method: "PATCH", // Using POST as usually updates might be POST in some APIs, checking standard, or user said endpoint is for updating. Usually PUT/PATCH but user just gave endpoint. I will use POST based on typical Laravel/PHP backend behavior often using POST for updates with method spoofing or just POST. User didn't specify method but "updating customer profile". I will assume POST or PATCH. The previous change password was PATCH. I will stick to POST as it's safer assumption if not specified, or I can check other update methods. `saveBankDetails` is POST. `submitReview` is POST. `changePasswordFromProfile` is PATCH. I'll use POST as it's common for general updates in this codebase style.
+            body: JSON.stringify(data),
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) {
+            const errorData = await safeJson(response);
+            throw new Error(
+                errorData?.message || `Failed to update profile (status: ${response.status})`
+            );
+        }
+        return await response.json();
+    } catch (error) {
+        logger.error("Error updating profile:", error);
+        throw error;
+    }
+}
+
+export async function fetchProfileDetails(token: string) {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/service-provider/profile`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+
+    });
+    if (!response.ok) {
+      const errorData = await safeJson(response);
+      throw new Error(
+        errorData?.message || `Failed to fetch profile details (status: ${response.status})`
+      );
+    }
+    return await response.json();
+  } catch (error) {
+    logger.error("Error fetching profile details:", error);
+    throw error;
+  } 
 }

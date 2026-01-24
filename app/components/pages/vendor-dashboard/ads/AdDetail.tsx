@@ -15,9 +15,9 @@ export default function AdDetails ({ adData }: Props) {
       <div className='bg-[var(--foundation-neutral-3)] p-6 rounded-md'>
         <EditContactInfo adData={adData} />
       </div>
-      <div className='bg-[var(--foundation-neutral-3)] p-6 rounded-md'>
+      {/* <div className='bg-[var(--foundation-neutral-3)] p-6 rounded-md'>
         <AdPerformaceSummary adData={adData} />
-      </div>
+      </div> */}
     </div>
   )
 }

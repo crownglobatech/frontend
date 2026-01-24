@@ -117,6 +117,7 @@ export default function AdDisplay({
                 providerVerified={ad.business.is_verified === 1}
                 status={ad.listing_type}
                 state={ad.state}
+                category={ad.business?.category?.name}
               />
             </Link>
           </div>

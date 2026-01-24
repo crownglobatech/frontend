@@ -1,4 +1,7 @@
 "use client";
+import ProfileDropdown from "@/app/components/general/ProfileDropDown";
+import Rating from "@/app/components/general/Rating";
+import NotificationDropdown from "@/app/components/pages/vendor-dashboard/NotificationDropdown";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 export default function ProfileDisplaySection() {
@@ -21,21 +24,14 @@ export default function ProfileDisplaySection() {
   return (
     <div>
       {isLoggedIn && (
-        <div className="flex flex-row-reverse items-center gap-4">
-          <Image
-            src="/user.png"
-            alt="profile"
-            height={40}
-            width={40}
-            className="shadow-md rounded-full cursor-pointer"
-          />
-          <Image
-            src="/notify.png"
-            alt="notifications"
-            height={40}
-            width={40}
-            className="shadow-md rounded-full cursor-pointer"
-          />
+        <div className='flex flex-row-reverse items-center gap-4'>
+          <Rating rate={5} />
+          <div className='shadow-sm rounded-full'>
+            <ProfileDropdown />
+          </div>
+          <div className='shadow-sm rounded-full'>
+            <NotificationDropdown />
+          </div>
         </div>
       )}
     </div>

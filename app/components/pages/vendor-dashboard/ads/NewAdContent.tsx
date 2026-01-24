@@ -32,6 +32,7 @@ export default function NewAdContent() {
   // const {user} = 
   const initialFormData = {
     title: "",
+    category_id: null,
     description: "",
     street: "",
     area: "",
@@ -61,16 +62,13 @@ export default function NewAdContent() {
 
     const requiredFields: [keyof typeof data, string][] = [
       ["title", "Title is required"],
+      ["category_id", "Category is required"],
       ["description", "Description is required"],
       ["street", "Street is required"],
       ["area", "Area is required"],
       ["lga", "LGA is required"],
       ["state", "State is required"],
       ["country", "Country is required"],
-      ["listing_type", "Listing type is required"],
-      ["size", "Size is required"],
-      ["bedrooms", "Number of bedrooms is required"],
-      ["bathrooms", "Number of bathrooms is required"],
       ["price", "Price is required"],
       ["email", "Email is required"],
     ];
@@ -218,7 +216,7 @@ export default function NewAdContent() {
       {/* Property Info */}
       <details
         open={openSection === "propInfo"}
-        className="bg-[var(--foundation-neutral-3)] px-6 py-8 rounded-sm"
+        className={`  bg-[var(--foundation-neutral-3)] px-6 py-8 rounded-sm ${Number(formData.category_id) !== 11 ? "hidden" : ""}`}
       >
         <summary
           onClick={(e) => {

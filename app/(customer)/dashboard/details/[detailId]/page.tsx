@@ -6,13 +6,11 @@ import ReviewCard from "../../components/ReviewCard";
 import CreateReview from "../../components/CreateReview";
 import MiniChatBox from "../../components/MiniChatBox";
 import { getCustomerAdsById } from "@/lib/api";
-import { notFound } from "next/navigation";
 import RelatedServicesSection from "./RelatedServicesSection";
-import { Input } from "@/components/ui/input";
-import { logger } from "@/lib/logger";
 import AdDetailsAnimator from "../../components/AdDetailsAnimator";
 import { formatPrice } from "@/lib/utils";
-import BackButton from "@/app/components/general/Back";
+import Link from "next/link";
+import ProfileDisplaySection from "./ProfileDisplaySection";
 
 interface Props {
   params: Promise<{ detailId: string }>;
@@ -22,43 +20,39 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
   let adData;
   try {
     adData = await getCustomerAdsById(detailId);
-    if (!adData) {
-      notFound();
-    }
-    logger.log(adData)
-  } catch (error: unknown) {
-    logger.error("Failed to fetch ad:", error);
-    if (error instanceof Error && error.message.includes("404")) {
-      notFound();
-    }
-    throw error;
+  } catch (error) {
+    console.error("Ad fetch error:", error);
+    return <div className="p-10 text-center text-red-500 font-bold">Failed to load ad details.</div>;
   }
+
+  if (!adData) {
+    return <div className="p-10 text-center text-red-500 font-bold">Ad not found (404)</div>;
+  }
+
   // Convert 0/1 to boolean
   const isMessagingCredible = adData?.data?.business?.is_verified === 1;
   const photos = Array.isArray(adData.data.photo_urls) ? adData.data.photo_urls : [];
   const vendorReviews = adData?.reviews || [];
-  const relatedServices = adData?.related_services || []
-  logger.log(relatedServices);
 
 
   return (
     <div>
-      {/* <div className="top-0 z-[1000] sticky w-full">
-        <div className="flex justify-between gap-[50px] bg-white shadow-sm px-6 py-4">
+      <div className="top-0 z-[1000] sticky w-full">
+        <div className="flex justify-between items-center gap-[50px] bg-white shadow-sm px-6 py-4">
           <div className="flex gap-2 w-full">
-            <Input
-              type="text"
-              placeholder="Search for homes and services"
-              className="px-4 py-2 border border-gray-300 rounded-sm w-full text-[12px] placeholder:text-[12px] focus:outline-none"
-            />
+            <h2 className=" text-[20px] font-semibold">Service Details</h2>
           </div>
+          <ProfileDisplaySection />
         </div>
-      </div> */}
+      </div>
 
       <AdDetailsAnimator>
         <div className="flex flex-col px-6 py-2">
           {/* detail image */}
-          {/* <BackButton /> */}
+          <p className="text-sm">
+            <Link href="/dashboard" className="text-[var(--primary-color)]">Dashboard / </Link>
+            <span className="text-[#64748B]">{adData?.data.title}</span>
+          </p>
           <div className="rounded-md w-full mt-2">
             <Image
               src={photos[0] || "/bg-overlay.png"}

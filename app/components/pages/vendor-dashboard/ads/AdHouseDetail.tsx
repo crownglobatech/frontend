@@ -62,10 +62,10 @@ export default function HouseDetail({ adData }: Props) {
               Category
             </h2>
             <p className="text-[14px] text-[var(--foundation-neutral-8)] capitalize">
-              {adData.business.business_name}
+              {adData.category.name}
             </p>
           </div>
-          <div>
+          <div className={`${adData.listing_type ? "" : "hidden"}`}>
             <h2 className="font-semibold text-[16px] text-[var(--heading color)]">
               Listing
             </h2>
@@ -73,7 +73,7 @@ export default function HouseDetail({ adData }: Props) {
               {adData.listing_type}
             </p>
           </div>
-          <div>
+          <div className={`${adData.bathrooms ? "" : "hidden"}`}>
             <h2 className="font-semibold text-[16px] text-[var(--heading color)]">
               Bath Room
             </h2>
@@ -82,7 +82,7 @@ export default function HouseDetail({ adData }: Props) {
               {adData.bathrooms}
             </p>
           </div>
-          <div>
+          <div className={`${adData.bedrooms ? "" : "hidden"}`}>
             <h2 className="font-semibold text-[16px] text-[var(--heading color)]">
               Bed Room
             </h2>

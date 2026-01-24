@@ -15,6 +15,7 @@ interface ApartmentCardProps {
   status: string;
   date: string;
   state?: string
+  category?: string
 }
 
 export default function ApartmentCard({
@@ -25,6 +26,7 @@ export default function ApartmentCard({
   beds,
   state,
   baths,
+  category,
   rating,
   date,
   status = "Active",
@@ -68,11 +70,14 @@ export default function ApartmentCard({
 
         {/* Details */}
         <div className="flex justify-between text-gray-600 text-sm">
-          <div className="flex items-center gap-1 text-[10px] text-[var(--foundation-neutral-8)]">
+          <div className={`flex items-center gap-1 text-[10px] ${beds ? ""  : "hidden"} text-[var(--foundation-neutral-8)]`}>
             <FaBed /> {beds} Bed Room
           </div>
-          <div className="flex items-center gap-1 text-[10px] text-[var(--foundation-neutral-8)]">
+          <div className={`flex items-center gap-1 text-[10px] ${baths ? "" : "hidden"} text-[var(--foundation-neutral-8)]`}>
             <FaBath /> {baths} Bath Room
+          </div>
+          <div className={`flex items-center gap-1 text-[10px] ${!beds && !baths && category ? "" : "hidden"} text-[var(--foundation-neutral-8)]`}>
+            {category}
           </div>
           <div className="flex items-center gap-1 text-[10px] text-[var(--foundation-neutral-8)]">
             <Calendar className="" size={10} /> {date}

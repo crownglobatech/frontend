@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import LoadingSpinner from "@/app/components/general/LoadingSpinner";
+import { logger } from "@/lib/logger";
 
 interface ChatHeaderProps {
   conversationId: string;
@@ -88,7 +89,7 @@ export default function ChatHeader({
         }
       }
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     } finally {
       setLoading(false);
     }

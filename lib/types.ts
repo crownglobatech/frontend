@@ -71,6 +71,12 @@ export interface Ad {
   created_at: string;
   updated_at: string;
   business_id: number;
+  category: {
+    id: number;
+    name: string;
+    created_at: string;
+    updated_at: string;
+  }
   business: {
     id: number;
     user_id: number;

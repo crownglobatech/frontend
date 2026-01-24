@@ -1,3 +1,5 @@
+import { logger } from "../logger";
+
 const base = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const getAdminAnalytics = async (token: string) => {
@@ -119,3 +121,17 @@ export const getAdminDashboardData = async (token: string) => {
     throw new Error("Unknown Error");
   }
 };
+
+
+export const getAllCategories = async () => {
+  try {
+    const response = await fetch(`${base}/api/categories`);
+  const data = await response.json();
+  if(!response.ok){
+    throw new Error (data.message || "Failed to fetch categories" )
+  }
+  return data.data;
+  } catch (error) {
+    logger.error(error)
+  }
+}
