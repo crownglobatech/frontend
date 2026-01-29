@@ -11,6 +11,8 @@ import {
 import { Bell } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { NIGERIAN_STATES } from "@/lib/constants";
+import Categories from "@/app/components/general/Categories";
 
 interface Props {
   currentCategory: string;
@@ -34,7 +36,6 @@ export default function CustomerHeader({
   totalResults,
 }: Props) {
 
-  const [openProfile, setOpenProfile] = useState(false)
   const handleFilterChange = (
     name: string,
     value: string | { min?: number; max?: number } | undefined
@@ -65,22 +66,7 @@ export default function CustomerHeader({
     };
     isLoggedIn();
   }, [user, role]);
-
-  const servicesList = [
-    "House painters",
-    "Electricians",
-    "Carpenters",
-    "Estate legal practitioners",
-    "Surveyors",
-    "Developers",
-    "House agents",
-    "Interior decoration",
-    "Gardeners",
-    "Plumbers",
-    "Van rentals",
-    "Event source",
-    "Others",
-  ];
+   const {categories} = Categories()
 
   return (
     <div>
@@ -198,21 +184,9 @@ export default function CustomerHeader({
               </SelectTrigger>
               <SelectContent className="z-[9999]">
                 <SelectItem value="__empty__">Location</SelectItem>
-                <SelectItem value="lekki">Lekki</SelectItem>
-                <SelectItem value="ikeja">Ikeja</SelectItem>
-                <SelectItem value="victoria island">Victoria Island</SelectItem>
-                <SelectItem value="abuja">Abuja</SelectItem>
-                <SelectItem value="yaba">Yaba</SelectItem>
-                <SelectItem value="surulere">Surulere</SelectItem>
-                <SelectItem value="ajah">Ajah</SelectItem>
-                <SelectItem value="ikoyi">Ikoyi</SelectItem>
-                <SelectItem value="magodo">Magodo</SelectItem>
-                <SelectItem value="maryland">Maryland</SelectItem>
-                <SelectItem value="gbagada">Gbagada</SelectItem>
-                <SelectItem value="port harcourt">Port Harcourt</SelectItem>
-                <SelectItem value="ibadan">Ibadan</SelectItem>
-                <SelectItem value="New York">New York</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                {NIGERIAN_STATES.map((state,index) => (
+                  <SelectItem key={index} value={state}>{state}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -260,10 +234,11 @@ export default function CustomerHeader({
               </SelectTrigger>
               <SelectContent className="z-[9999]">
                 <SelectItem value="__empty__">Service Type</SelectItem>
-                <SelectItem value="sale">Sale</SelectItem>
-                <SelectItem value="rent">Rent</SelectItem>
-                {servicesList.map((_, i) => (
-                  <SelectItem key={i} value={_}>{_}</SelectItem>
+                <SelectItem value="sale">House Sale</SelectItem>
+                <SelectItem value="rent">House Rent</SelectItem>
+                <SelectItem value="shortlet">Shortlets</SelectItem>
+                {categories.map((category, index) => (
+                  <SelectItem key={index} value={category.name}>{category.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

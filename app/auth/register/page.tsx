@@ -19,6 +19,8 @@ import EmailVerifyModal from "@/app/components/pages/auth/EmailVerifyModal";
 import VerificationSuccessModal from "@/app/components/pages/auth/VerificationSuccessModal";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import { logger } from "@/lib/logger";
+import Categories from "@/app/components/general/Categories";
+import { NIGERIAN_STATES } from "@/lib/constants";
 
 type RegisterResponse = {
   message: string;
@@ -184,6 +186,8 @@ export default function SignUp() {
       setLoading(false);
     }
   };
+
+  const {categories} = Categories()
 
   return (
     <div className="relative flex md:flex-row flex-col w-full min-h-screen">
@@ -509,9 +513,11 @@ export default function SignUp() {
                   <option value="" disabled>
                     Select Business Type
                   </option>
-                  <option value={1}>Category 1</option>
-                  <option value={2}>Category 2</option>
-                  {/* Add actual categories from backend */}
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="flex flex-col">
@@ -567,7 +573,7 @@ export default function SignUp() {
                       Select Country
                     </option>
                     <option value="NG">Nigeria</option>
-                    <option value="US">United States</option>
+                    <option value="Uk">United Kingdom</option>
                     {/* Add more countries */}
                   </select>
                 </div>
@@ -584,9 +590,11 @@ export default function SignUp() {
                     <option value="" disabled>
                       Select State
                     </option>
-                    <option value="OY">Oyo</option>
-                    <option value="LA">Lagos</option>
-                    {/* Add more states */}
+                    {NIGERIAN_STATES.map((state) => (
+                      <option key={state} value={state}>
+                        {state}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import Categories from "@/app/components/general/Categories"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
 import { getAllCategories } from "@/lib/api/admin"
 import { logger } from "@/lib/logger"
@@ -32,15 +33,7 @@ interface AdDetailFormProps {
 // ];
 
 export default function AdDetailForm({ data, onChange }: AdDetailFormProps) {
-  const [categories, setCategories] = useState<any[]>([]);
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const data = await getAllCategories();
-      setCategories(data);
-      logger.log(data)
-    }
-    fetchCategories()
-  }, [])
+const {categories} = Categories()
   return (
     <div className='flex flex-col gap-2 mt-4'>
       <div className='gap-4 grid grid-cols-1 md:grid-cols-2'>

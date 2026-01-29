@@ -7,6 +7,7 @@ import { X, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
+import Categories from "./Categories";
 
 export default function Header() {
   const pathname = usePathname();
@@ -41,6 +42,7 @@ export default function Header() {
     "Others",
   ];
 
+  const { categories } = Categories()
   return (
     <>
       <header className="relative z-[100] flex items-center justify-between rounded-md bg-[var(--neutral-white)] p-4">
@@ -75,8 +77,8 @@ export default function Header() {
           >
             <button
               className={`flex items-center gap-1 ${isActive("/services") || isServicesOpen
-                  ? "text-[var(--secondary-color)] font-semibold"
-                  : "text-[var(--neutral-black)]"
+                ? "text-[var(--secondary-color)] font-semibold"
+                : "text-[var(--neutral-black)]"
                 } hover:text-[var(--secondary-color)] transition-colors`}
             >
               Services
@@ -93,16 +95,16 @@ export default function Header() {
                   transition={{ duration: 0.2 }}
                   className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[280px]"
                 >
-                  <div className="bg-white shadow-xl rounded-md p-2 border border-gray-100 grid grid-cols-1 gap-1">
-                    {servicesList.map((service) => (
+                  <div className="bg-white shadow-xl rounded-md p-2 border border-gray-100 grid grid-cols-1 gap-1 max-h-[60vh] scrollbar-hide overflow-y-auto">
+                    {categories?.map((service, index) => (
                       <Link
-                        key={service}
+                        key={index}
                         target="_blank"
                         rel="noopener noreferrer"
-                        href={`/dashboard?category=allied-services&search=${service}`}
+                        href={`/dashboard?category=allied-services&search=${service.name}`}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[var(--secondary-color)] rounded-md transition-colors"
                       >
-                        {service}
+                        {service.name}
                       </Link>
                     ))}
                   </div>
@@ -111,6 +113,14 @@ export default function Header() {
             </AnimatePresence>
           </div>
 
+          <Link
+            href={`/dashboard?search=shortlet`}
+            className={
+              "text-[var(--neutral-black)] hover:text-[var(--secondary-color)] transition-colors"
+            }
+          >
+            Shortlet
+          </Link>
           <Link
             href="/about"
             className={
@@ -208,8 +218,8 @@ function MobileMenu({
           href="/"
           onClick={onClose}
           className={`text-xl ${isActive("/")
-              ? "font-bold text-[var(--secondary-color)]"
-              : "font-medium text-[var(--neutral-black)]"
+            ? "font-bold text-[var(--secondary-color)]"
+            : "font-medium text-[var(--neutral-black)]"
             }`}
         >
           Home
@@ -255,8 +265,8 @@ function MobileMenu({
           href="/about"
           onClick={onClose}
           className={`text-xl ${isActive("/about")
-              ? "font-bold text-[var(--secondary-color)]"
-              : "font-medium text-[var(--neutral-black)]"
+            ? "font-bold text-[var(--secondary-color)]"
+            : "font-medium text-[var(--neutral-black)]"
             }`}
         >
           About

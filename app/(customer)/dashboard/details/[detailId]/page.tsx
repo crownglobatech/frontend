@@ -11,6 +11,7 @@ import AdDetailsAnimator from "../../components/AdDetailsAnimator";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import ProfileDisplaySection from "./ProfileDisplaySection";
+import { logger } from "@/lib/logger";
 
 interface Props {
   params: Promise<{ detailId: string }>;
@@ -20,6 +21,7 @@ export default async function AdDetailsHomeScreen({ params }: Props) {
   let adData;
   try {
     adData = await getCustomerAdsById(detailId);
+    logger.log("Ad data:", adData);
   } catch (error) {
     console.error("Ad fetch error:", error);
     return <div className="p-10 text-center text-red-500 font-bold">Failed to load ad details.</div>;
