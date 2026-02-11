@@ -34,12 +34,12 @@ apiClient.interceptors.request.use((config) => {
 export const sendMessageCustomer = async (
   conversation_id: string,
   message: string,
-  attachments: File[] | []
+  attachments?: File[] | []
 ) => {
   const formData = new FormData()
   formData.append("conversation_id", conversation_id)
   formData.append("message", message)
-    attachments.forEach((file) => {
+    attachments?.forEach((file) => {
     formData.append("attachments[]", file, file.name);
   });
   console.log(attachments);
