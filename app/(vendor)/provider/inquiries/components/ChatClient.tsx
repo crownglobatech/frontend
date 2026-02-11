@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { subscribeToChat } from "@/services/pusher";
 import { ConversationItem, Message } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
+import MessageAttachment from "@/app/(customer)/messages/components/MessageAttachment";
 
 interface ChatClientProps {
   chatId: string;
@@ -59,11 +60,13 @@ export default function ChatClient({
     }
   }, [initialMessages.length]);
 
-  // Sort messages (oldest first)
-  const sortedMessages = [...initialMessages].sort(
-    (a, b) =>
-      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-  );
+  // Sort messages (oldest first, pending/null at bottom)
+  const sortedMessages = [...initialMessages].sort((a, b) => {
+    // If no created_at (pending), treat as newest (infinity)
+    const dateA = a.created_at ? new Date(a.created_at).getTime() : Number.MAX_SAFE_INTEGER;
+    const dateB = b.created_at ? new Date(b.created_at).getTime() : Number.MAX_SAFE_INTEGER;
+    return dateA - dateB;
+  });
 
   // Pusher subscription with stable callback reference
   useEffect(() => {
@@ -106,7 +109,7 @@ export default function ChatClient({
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 bg-[#f0f2f5] h-full">
         {sortedMessages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-500"> 
+          <div className="flex items-center justify-center h-full text-gray-500">
             <p className="text-lg">No messages yet. Start the conversation!</p>
           </div>
         ) : (
@@ -123,7 +126,7 @@ export default function ChatClient({
 
                 return (
                   <div
-                    key={msg.id || `temp-${index}-${msg.created_at}`}
+                    key={msg.client_uuid || msg.id || `temp-${index}`}
                     className={`flex ${isCurrentUser ? "justify-end" : "justify-start"
                       }`}
                   >
@@ -138,17 +141,40 @@ export default function ChatClient({
                           {msg.sender?.first_name} {msg.sender?.last_name}
                         </p>
                       )}
-                      <p className="text-sm break-words whitespace-pre-wrap">
+                      {msg.attachments?.map((file, i) => (
+                        <MessageAttachment key={file.id} attachment={file} />
+                      ))}
+                      <p className={`text-sm break-words whitespace-pre-wrap ${msg.attachments ? 'mt-2' : ''}`}>
                         {msg.message}
                       </p>
                       <span
-                        className={`text-[10px] mt-1 block ${isCurrentUser ? "opacity-60" : "opacity-80"
+                        className={`text-[10px] mt-1 flex items-center gap-1 ${isCurrentUser ? "opacity-60" : "opacity-80"
                           }`}
                       >
-                        {new Date(msg.created_at).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {msg.status === 'pending' || !msg.created_at ? (
+                          <>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <circle cx="12" cy="12" r="10" />
+                              <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            <span>Sending...</span>
+                          </>
+                        ) : (
+                          new Date(msg.created_at).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        )}
                       </span>
                     </div>
                   </div>

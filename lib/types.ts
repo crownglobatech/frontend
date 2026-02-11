@@ -268,13 +268,15 @@ export interface Sender {
 
 export interface Message {
   conversation_id: number;
-  id: number;
+  id: number | string;
   message: string; // your backend uses "message", not "content"
   sender_id: number;
-  sender: Sender;
-  created_at: string;
+  sender: User;
+  created_at: string | null;
   is_read: 0 | 1;
   client_uuid?: string;
+  attachments?: any[] | [];
+  status?: "sending" | "sent" | "error" | "pending";
 }
 // types/chat.ts or lib/types.ts
 
@@ -295,9 +297,9 @@ export interface ConversationItem {
   other_user: OtherUser;
   service_ad: ServiceAd;
   last_message: string;
-  last_message_at: string; // you can parse to Date later if needed
+  last_message_at: string | null; // you can parse to Date later if needed
   unread_count: number;
-  last_message_timestamp?: string;
+  last_message_timestamp?: string | null;
 }
 
 export interface ConversationsApiResponse {

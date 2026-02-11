@@ -3,7 +3,7 @@ import Image from 'next/image';
 interface MessageShowcaseCardProps {
   providerName?: string;
   lastMessageSnippet?: string;
-  timestamp?: string;
+  timestamp?: string | null;
   unreadCount?: number;
   isActive?: boolean;
 }
@@ -18,8 +18,11 @@ export default function MessageShowcaseCard({
 
   const hasUnread = unreadCount > 0;
 
-  const formatTimestamp = (timestamp?: string) => {
-    if (!timestamp) return '';
+  const formatTimestamp = (timestamp?: string | null) => {
+    if (!timestamp) {
+      // Return current time for pending messages
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
 
     const date = new Date(timestamp);
     const now = new Date();
@@ -55,8 +58,8 @@ export default function MessageShowcaseCard({
             {providerName || 'Unknown User'}
           </h2>
           <p className={`text-[14px] truncate ${hasUnread
-              ? 'text-black font-medium'
-              : 'text-[var(--text-body)]'
+            ? 'text-black font-medium'
+            : 'text-[var(--text-body)]'
             }`}>
             {lastMessageSnippet || 'No messages yet'}
           </p>
@@ -64,9 +67,28 @@ export default function MessageShowcaseCard({
       </div>
 
       <div className='flex flex-col items-end gap-1 flex-shrink-0'>
-        <span className='text-[12px] text-[var(--muted-text)] whitespace-nowrap'>
-          {timestamp?.includes('ago') ? timestamp : formatTimestamp(timestamp)}
-        </span>
+        <div className="flex items-center gap-1">
+          {!timestamp && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-[var(--muted-text)]"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          )}
+          <span className='text-[12px] text-[var(--muted-text)] whitespace-nowrap'>
+            {timestamp?.includes('ago') ? timestamp : formatTimestamp(timestamp)}
+          </span>
+        </div>
 
         {/* ONLY SHOW BADGE IF unreadCount > 0 */}
         {hasUnread && (

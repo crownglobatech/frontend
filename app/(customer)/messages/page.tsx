@@ -17,6 +17,7 @@ import { initPusher } from "@/services/pusher";
 import { logger } from "@/lib/logger";
 import { Suspense } from "react";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/app/store-hooks";
 
 function MessagesContent() {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
@@ -30,9 +31,12 @@ function MessagesContent() {
   const [selectedBookingId, setSelectedBookingId] = useState<
     number | undefined
   >(undefined);
-  // Get current user ID
-  const [currentUserId, setCurrentUserId] = useState<number | undefined>();
-  const [currentUserName, setCurrentUserName] = useState<string>("");
+
+  // Get current user from Redux
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const currentUserId = currentUser?.id;
+  const currentUserName = currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : "";
+
   const selectedChatRef = useRef<string | null>(null);
   const [allBookings, setAllBookings] = useState<any[]>([]);
   const [currentBooking, setCurrentBooking] = useState<null | any>(null);
@@ -45,23 +49,11 @@ function MessagesContent() {
     selectedChatRef.current = selectedChatId;
   }, [selectedChatId]);
 
-
-
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const userString = localStorage.getItem("user");
-      const role = localStorage.getItem("role");
-
-      if (!userString || !role) {
+      const token = localStorage.getItem("token");
+      if (!token) {
         router.push("/auth/login");
-        return;
-      }
-
-      if (userString) {
-        const user = JSON.parse(userString);
-        setCurrentUserId(user.id);
-        setCurrentUserName(`${user.first_name} ${user.last_name}`);
-        // console.log("👤 Current user ID:", user.id);
       }
     }
   }, [router]);
@@ -123,7 +115,9 @@ function MessagesContent() {
     setLoadingMessages(true);
     try {
       const messages = await fetchConversationMessages(chatId);
-      // console.log(" Fetched messages for chat", chatId, ":", messages.length);
+      console.log(" Fetched messages for chat", chatId, ":", messages.length);
+      console.log(messages);
+
       setSelectedMessages(messages);
     } catch (err) {
       logger.error(" Failed to load messages:", err);
@@ -148,6 +142,7 @@ function MessagesContent() {
     );
 
     fetchAndSetMessages(chatId);
+
   };
 
   useEffect(() => {
@@ -203,43 +198,47 @@ function MessagesContent() {
     []
   );
 
-  // Handle message sent by current user (optimistic update)
+  // Helper for sorting messages (null created_at goes to bottom)
+  const sortMessages = (msgs: Message[]) => {
+    return [...msgs].sort((a, b) => {
+      if (!a.created_at && !b.created_at) return 0;
+      if (!a.created_at) return 1;
+      if (!b.created_at) return -1;
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    });
+  };
+
+  // Handle message sent by current user (optimistic update and confirmation)
   const handleMessageSent = useCallback(
     (newMessage: Message) => {
       if (String(newMessage.conversation_id) === selectedChatId) {
         setSelectedMessages((prev) => {
-          // 1. Skip if real message already exists
-          if (newMessage.id && prev.some((m) => m.id === newMessage.id)) {
-            // console.log("[SENT] Message already exists, skipping");
+          // 1. Check if the REAL message ID already exists (deduplication)
+          if (newMessage.id && typeof newMessage.id === 'number' && prev.some((m) => m.id === newMessage.id)) {
+            // Remove lingering optimistic if exists (by client_uuid)
+            if (newMessage.client_uuid) {
+              return prev.filter(m => m.client_uuid !== newMessage.client_uuid || m.id === newMessage.id);
+            }
             return prev;
           }
-          // Replace optimistic message by client_uuid
-          const optIndex = prev.findIndex(
-            (m) => m.id && m.id === newMessage.id
-          );
 
-          if (optIndex !== -1) {
-            // console.log(
-            //   "[SENT] Replaced optimistic message with server-confirmed message"
-            // );
-            const updated = [...prev];
-            updated[optIndex] = newMessage;
-
-            // Always sort after mutation
-            return updated.sort(
-              (a, b) =>
-                new Date(a.created_at).getTime() -
-                new Date(b.created_at).getTime()
-            );
+          if (newMessage.client_uuid) {
+            const optIndex = prev.findIndex((m) => m.client_uuid === newMessage.client_uuid);
+            if (optIndex !== -1) {
+              // REPLACE: Swap optimistic with real (or updated status)
+              const updated = [...prev];
+              updated[optIndex] = newMessage;
+              return sortMessages(updated);
+            }
           }
 
-          // New message from this user
-          const updated = [...prev, newMessage];
-          return updated.sort(
-            (a, b) =>
-              new Date(a.created_at).getTime() -
-              new Date(b.created_at).getTime()
-          );
+          //  Check duplicate by ID again if client_uuid didn't match (e.g. unexpected flow)
+          if (newMessage.id && prev.some(m => m.id === newMessage.id)) {
+            return prev;
+          }
+
+          // Insert new
+          return sortMessages([...prev, newMessage]);
         });
       }
 
@@ -256,43 +255,29 @@ function MessagesContent() {
   const handleNewRemoteMessage = useCallback(
     (newMessage: Message) => {
       const chatId = String(newMessage.conversation_id);
-      // Update sidebar immediately
       const isOwnMessage = currentUserId === newMessage.sender_id;
       updateConversationSnippet(chatId, newMessage, isOwnMessage);
 
-      // Only update current chat
       if (chatId !== selectedChatId) return;
+
       setSelectedMessages((prev) => {
         // 1. Skip if real message already exists
         if (newMessage.id && prev.some((m) => m.id === newMessage.id)) {
-          logger.log("Duplicate prevented");
           return prev;
         }
 
-        //  Replace optimistic message by client_uuid
-        const optIndex = prev.findIndex((m) => m.id && m.id === newMessage.id);
-
-        if (optIndex !== -1) {
-          // console.log(
-          //   "Replaced optimistic message with server-confirmed message"
-          // );
-          const updated = [...prev];
-          updated[optIndex] = newMessage;
-
-          return updated.sort(
-            (a, b) =>
-              new Date(a.created_at).getTime() -
-              new Date(b.created_at).getTime()
-          );
+        // 2. Check if we can match by client_uuid (if backend includes it in Pusher event)
+        if (newMessage.client_uuid) {
+          const optIndex = prev.findIndex(m => m.client_uuid === newMessage.client_uuid);
+          if (optIndex !== -1) {
+            const updated = [...prev];
+            updated[optIndex] = newMessage;
+            return sortMessages(updated);
+          }
         }
 
-        // New real message
-        // console.log("New real message added");
-        const updated = [...prev, newMessage];
-        return updated.sort(
-          (a, b) =>
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
+        // 3. New real message
+        return sortMessages([...prev, newMessage]);
       });
     },
     [selectedChatId, currentUserId, updateConversationSnippet]
@@ -438,6 +423,19 @@ function MessagesContent() {
               currentBooking={currentBooking}
               conversations={conversations}
               paymentSummary={paymentSummary}
+              senderInfo={
+                currentUser
+                  ? {
+                    id: currentUser.id,
+                    first_name: currentUser.first_name,
+                    last_name: currentUser.last_name,
+                    role: currentUser.role,
+                    address: currentUser.address,
+                    email: currentUser.email,
+                    phone: currentUser.phone
+                  }
+                  : undefined
+              }
             />
           </>
         ) : (
