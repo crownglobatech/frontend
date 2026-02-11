@@ -1,7 +1,7 @@
 "use client";
 import { sendMessageCustomer } from "@/services/api";
 import { SendIcon } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MdAttachFile } from "react-icons/md";
 import { useNotification } from "@/app/contexts/NotificationProvider";
 import ProgressBar from "@/app/(customer)/messages/components/ProgressBar";
@@ -23,18 +23,30 @@ import {
 } from "@/components/ui/dialog";
 import { generateBookingTermsPDF } from "@/lib/pdfUtils";
 import { FaDownload } from "react-icons/fa";
+import { ConversationItem, User } from "@/lib/types";
 
 interface ChatFooterProps {
   chatId: string;
   onMessageSent: (message: any) => void;
-  currentBooking?: null | any;
+  bookingstatus?: string;
+  bookingId?: number;
+  bookingCode?: string;
+  currentBooking?: any | null;
+  conversations: ConversationItem[];
+  paymentSummary?: any | null;
+  senderInfo?: User
   onRejectBooking?: () => void;
 }
+
 
 export default function ChatFooter({
   chatId,
   currentBooking,
+  onMessageSent,
+  senderInfo,
+  onRejectBooking
 }: ChatFooterProps) {
+
   const Tooltip = dynamic(
     () => import("@/components/ui/tooltip").then(m => m.Tooltip),
     { ssr: false }
@@ -68,7 +80,9 @@ export default function ChatFooter({
     Array(steps.length).fill(false)
   );
   const [openTermsDialog, setOpenTermsDialog] = useState(false);
-
+  const [selectedFiles, setSelectedFiles] = useState<File[] | []>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   // Sync progress bar with bookingStatus
   useEffect(() => {
     if (!currentBooking?.status) return;
@@ -93,20 +107,54 @@ export default function ChatFooter({
   }, [currentBooking?.status]);
 
   const handleSendMessage = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() && selectedFiles.length === 0) return;
     const trimmedMessage = message.trim();
+
+    let tempId: string | undefined;
+
+    // Optimistic Update
+    if (senderInfo) {
+      tempId = crypto.randomUUID();
+      const attachments = selectedFiles.map((file, index) => ({
+        id: index, // temp id
+        file_path: previewUrls[index], // Use existing preview URL
+        file_type: file.type,
+      }));
+
+      const optimisticMessage = {
+        id: tempId,
+        client_uuid: tempId,
+        conversation_id: Number(chatId),
+        message: trimmedMessage,
+        sender_id: senderInfo.id,
+        sender: senderInfo,
+        created_at: null,
+        is_read: 0,
+        attachments: attachments,
+        status: "pending",
+      };
+
+      onMessageSent(optimisticMessage);
+    }
+
+    // Clear input immediately
+    setMessage("");
+    setSelectedFiles([]);
+    setPreviewUrls([]);
+
     try {
-      setLoading(true);
-      setMessage("");
-      setIsSending(true);
-      await sendMessageCustomer(String(chatId), trimmedMessage);
-      setIsSending(false);
+      // Don't block UI
+      const response = await sendMessageCustomer(String(chatId), trimmedMessage, selectedFiles);
+
+      if (senderInfo) {
+        onMessageSent({ ...response, client_uuid: tempId, status: "sent" });
+      }
     } catch (error: any) {
       logger.error("Error sending message:", error);
       notify(error.message || "Failed to send message", "error", "Send Failed");
-      setMessage(trimmedMessage);
+      // Optionally restore message?
     } finally {
-      setIsSending(false)
+      setIsSending(false);
       setLoading(false);
     }
   };
@@ -119,11 +167,11 @@ export default function ChatFooter({
   };
 
   const handleRejectBooking = async () => {
+    if (loadingAction) return;
     try {
       setLoadingAction("reject");
       if (!currentBooking) return;
-      await vendorRejectBooking(currentBooking.id);
-      // onRejectBooking?.();
+      await vendorRejectBooking(currentBooking.booking_code);
       notify("Booking cancelled successfully.", "success", "Booking Cancelled");
     } catch (error) {
       error &&
@@ -182,12 +230,79 @@ export default function ChatFooter({
     }
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    setSelectedFiles(prev => [...prev, ...files]);
+
+    // previews for images only
+    const newPreviews: string[] = [];
+
+    files.forEach(file => {
+      if (file.type.startsWith("image/")) {
+        newPreviews.push(URL.createObjectURL(file));
+      } else {
+        newPreviews.push("");
+      }
+    });
+
+    setPreviewUrls(prev => [...prev, ...newPreviews]);
+
+    // reset input so same file can be reselected
+    e.target.value = "";
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
   return (
     <div className="flex flex-col border-t">
-      {/* Message Input */}
+      {selectedFiles.length > 0 && (
+        <div className="px-4 pt-3 flex flex-wrap gap-2">
+          {selectedFiles.map((file, index) => (
+            <div
+              key={index}
+              className="relative border rounded-md p-2 bg-gray-50 w-[120px]"
+            >
+              {previewUrls[index] ? (
+                <img
+                  src={previewUrls[index]}
+                  className="h-24 w-full object-cover rounded-md"
+                />
+              ) : (
+                <div className="text-xs flex flex-col items-center justify-center h-24">
+                  <MdAttachFile size={20} />
+                  <span className="truncate w-full text-center">
+                    {file.name}
+                  </span>
+                </div>
+              )}
+
+              <button
+                onClick={() => removeFile(index)}
+                className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="flex gap-2 items-center bg-white w-full p-4">
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          multiple
+          onChange={handleFileSelect}
+        />
+
         <button className="ml-2 p-2 cursor-pointer">
-          <MdAttachFile color="black" size={25} />
+          {/* work on the attach file logic */}
+          <MdAttachFile color="black" size={25} onClick={() => fileInputRef.current?.click()} />
         </button>
         <input
           type="text"

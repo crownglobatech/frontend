@@ -89,9 +89,9 @@ export const getProviderBookings = async () => {
   logger.log(res.data.data);
   return res.data.data || res.data;
 };
-export const vendorRejectBooking = async (bookingId: number) => {
+export const vendorRejectBooking = async (booking_code: string | number) => {
   const res = await apiClient.post(
-    `/service-provider/bookings/${bookingId}/reject`
+    `/service-provider/bookings/${booking_code}/reject`
   );
   logger.log(res);
   return res;

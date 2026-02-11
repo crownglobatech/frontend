@@ -19,15 +19,14 @@ export default function AllMessages({
   // CRITICAL: Sort conversations by most recent message timestamp
   const sortedConversations = useMemo(() => {
     return [...conversations].sort((a, b) => {
+      // Treat null timestamp (optimistic/pending) as the MOST RECENT (top of list)
       const dateA = a.last_message_timestamp
         ? new Date(a.last_message_timestamp).getTime()
-        : 0;
-      // console.log(dateA);
+        : Number.MAX_SAFE_INTEGER;
+
       const dateB = b.last_message_timestamp
         ? new Date(b.last_message_timestamp).getTime()
-        : 0;
-      // console.log(dateB);
-      // console.log(dateB-dateA);
+        : Number.MAX_SAFE_INTEGER;
 
       return dateB - dateA; // Most recent first
     });

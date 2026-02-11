@@ -1,4 +1,3 @@
-import Footer from '@/app/components/general/Footer'
 import SideBarUser from '@/app/components/pages/user_dashboard/SideBar'
 import React from 'react'
 import AuthLoader from '../components/general/AuthLoader'
@@ -13,12 +12,12 @@ export default function UserDashboardLayout ({ children }: LayoutProps) {
     <AuthLoader />
       <div className='flex min-h-screen'>
         {/* sidebar (left) */}
-        <div className='w-1/5'>
+        <div className='md:w-1/5'>
           <SideBarUser />
         </div>
 
         {/* content space (right) */}
-        <section className='flex flex-col bg-white w-4/5'>{children}</section>
+        <section className='flex flex-col bg-white w-full md:w-4/5'>{children}</section>
       </div>
       {/* <Footer /> */}
     </>

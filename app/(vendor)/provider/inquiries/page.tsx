@@ -30,6 +30,7 @@ export default function VendorMessages() {
   // Get current user ID
   const [currentUserId, setCurrentUserId] = useState<number | undefined>();
   const [currentUserName, setCurrentUserName] = useState<string>("");
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const selectedChatRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export default function VendorMessages() {
         const user = JSON.parse(userString);
         setCurrentUserId(user.id);
         setCurrentUserName(`${user.first_name} ${user.last_name}`);
+        setCurrentUser(user);
       }
     }
   }, []);
@@ -231,13 +233,27 @@ export default function VendorMessages() {
       // Add message to active view if it belongs to the currently open chat
       if (String(newMessage.conversation_id) === selectedChatId) {
         setSelectedMessages((prev) => {
-          // Check if already exists (shouldn't for optimistic, but just in case)
-          const exists = prev.some((m) => m.id === newMessage.id);
-          if (exists) {
-            // console.log(" [SENT] Message already exists, skipping");
+          // 1. Check if the REAL message ID already exists (deduplication)
+          if (newMessage.id && typeof newMessage.id === 'number' && prev.some((m) => m.id === newMessage.id)) {
+            // Remove lingering optimistic if exists (by client_uuid)
+            if (newMessage.client_uuid) {
+              return prev.filter(m => m.client_uuid !== newMessage.client_uuid || m.id === newMessage.id);
+            }
             return prev;
           }
-          // console.log(" [SENT] Adding to UI");
+
+          // 2. Find optimistic message by client_uuid
+          if (newMessage.client_uuid) {
+            const optIndex = prev.findIndex((m) => m.client_uuid === newMessage.client_uuid);
+            if (optIndex !== -1) {
+              // REPLACE: Swap optimistic with real (or updated status)
+              const updated = [...prev];
+              updated[optIndex] = newMessage;
+              return updated; // Sorting handles itself or we need to sort? Optimistic usually at bottom.
+            }
+          }
+
+          // 3. New message? Just append.
           return [...prev, newMessage];
         });
       }
@@ -268,25 +284,18 @@ export default function VendorMessages() {
           // console.log("Duplicate prevented");
           return prev;
         }
-        // Find optimistic message by EXACT text match + time proximity
-        const optIndex = prev.findIndex(
-          (m) =>
-            (m.id === undefined || m.id < 0) &&
-            m.message === newMessage.message &&
-            Math.abs(
-              new Date(m.created_at).getTime() -
-              new Date(newMessage.created_at).getTime()
-            ) < 8000
-        );
 
-        if (optIndex !== -1) {
-          // console.log("Replaced optimistic message");
-          const updated = [...prev];
-          updated[optIndex] = newMessage;
-          return updated;
+        // 2. Check if we can match by client_uuid (if backend includes it in Pusher event)
+        if (newMessage.client_uuid) {
+          const optIndex = prev.findIndex(m => m.client_uuid === newMessage.client_uuid);
+          if (optIndex !== -1) {
+            const updated = [...prev];
+            updated[optIndex] = newMessage;
+            return updated;
+          }
         }
-        // New message from someone else
-        // console.log("New real message added");
+
+        // 3. New message from someone else
         return [...prev, newMessage];
       });
     },
@@ -330,10 +339,12 @@ export default function VendorMessages() {
               />
             </div>
             <ChatFooter
+              conversations={conversations}
               chatId={selectedChatId}
               onMessageSent={handleMessageSent}
               currentBooking={currentBooking}
               onRejectBooking={handleReftechBookings}
+              senderInfo={currentUser}
             />
           </>
         ) : (

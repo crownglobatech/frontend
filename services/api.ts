@@ -8,7 +8,7 @@ const baseUrl =
 export const apiClient = axios.create({
   baseURL: baseUrl + "/api",
   headers: {
-    "Content-Type": "application/json",
+    // "Content-Type": "application/json",
     Accept: "application/json",
   },
 });
@@ -33,14 +33,20 @@ apiClient.interceptors.request.use((config) => {
 // ALL YOUR FUNCTIONS — NOW COMPLETE
 export const sendMessageCustomer = async (
   conversation_id: string,
-  message: string
+  message: string,
+  attachments: File[] | []
 ) => {
+  const formData = new FormData()
+  formData.append("conversation_id", conversation_id)
+  formData.append("message", message)
+    attachments.forEach((file) => {
+    formData.append("attachments[]", file, file.name);
+  });
+  console.log(attachments);
+  
   const res = await apiClient.post(
     `/customer/chats/${conversation_id}/messages`,
-    {
-      conversation_id: Number(conversation_id), // Laravel sometimes needs it
-      message,
-    }
+    formData
   );
   return res.data.data || res.data;
 };

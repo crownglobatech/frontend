@@ -56,13 +56,13 @@ export const subscribeToChat = (
   const channel = pusher.subscribe(channelName);
   // Bind to the FULL Laravel event name from your dashboard
   channel.bind("App\\Events\\MessageSent", (data: { message: Message }) => {
-    // console.log("Pusher data received:", data);
+    console.log("Pusher data received:", data);
     onMessage(data.message);
   });
 
   // Optional: Fallback bind to short name if your backend is inconsistent
   channel.bind("MessageSent", (data: { message: Message }) => {
-    // console.log("Fallback short name triggered:", data);
+    console.log("Fallback short name triggered:", data);
     onMessage(data.message);
   });
   channel.bind("pusher:subscription_succeeded", () => {

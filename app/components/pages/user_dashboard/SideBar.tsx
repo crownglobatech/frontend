@@ -47,7 +47,7 @@ export default function SideBarUser() {
   const isActiveRoute = (href: string) => pathname.startsWith(href);
 
   return (
-    <div className="top-0 sticky flex flex-col bg-[var(--primary-color)] px-4 py-6 h-screen">
+    <div className="top-0 sticky hidden md:flex flex-col bg-[var(--primary-color)] px-4 py-6 h-screen">
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="flex justify-between items-center">

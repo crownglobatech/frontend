@@ -6,6 +6,7 @@ import { ConversationItem, Message } from "@/lib/types";
 import { useAppSelector } from "@/app/store-hooks";
 import { fetchAllConversations } from "@/services/api";
 import { logger } from "@/lib/logger";
+import MessageAttachment from "./MessageAttachment";
 
 interface ChatClientProps {
   chatId: string;
@@ -47,22 +48,16 @@ export default function ChatClient({
       logger.warn(" No chatId provided to ChatClient");
       return;
     }
-    // console.log(`Subscribing to private-conversation.${chatId}`);
     const cleanup = subscribeToChat(chatId, (msg: Message) => {
-      // CRITICAL FIX: Force conversation_id because backend doesn't send it
       const messageWithChatId: Message = {
         ...msg,
         conversation_id: Number(chatId), // THIS IS THE MAGIC LINE
       };
-
       // console.log("Pusher message received → forcing conversation_id:", chatId);
       onNewRemoteMessageRef.current(messageWithChatId);
     });
 
     return () => {
-      // console.log(
-      //   `🔌 [ChatClient] Unsubscribing from private-conversation.${chatId}`
-      // );
       cleanup?.();
     };
   }, [chatId]);
@@ -85,10 +80,14 @@ export default function ChatClient({
     }
   }, [initialMessages]);
 
-  const sortedMessages = [...initialMessages].sort(
-    (a, b) =>
-      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-  );
+  const sortedMessages = [...initialMessages].sort((a, b) => {
+    if (!a.created_at && !b.created_at) return 0;
+    if (!a.created_at) return 1;
+    if (!b.created_at) return -1;
+    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+  });
+
+  console.log(sortedMessages);
 
   const adTitle = currentConversation?.service_ad.title;
   const adPrice = currentConversation?.service_ad.price;
@@ -113,10 +112,11 @@ export default function ChatClient({
           {sortedMessages.map((msg) => {
             const isMe =
               currentUserId !== undefined && msg.sender?.id === currentUserId;
+            const isSending = msg.status === "sending" || msg.status === "pending";
 
             return (
               <div
-                key={msg.id || `temp-${msg.created_at}`}
+                key={msg.client_uuid || msg.id}
                 className={`flex ${isMe ? "justify-end" : "justify-start"}`}
               >
                 <div
@@ -130,18 +130,72 @@ export default function ChatClient({
                       {msg?.sender?.first_name} {msg?.sender?.last_name}
                     </p>
                   )}
-                  <p className="btext-sm break-words whitespace-pre-wrap">
-                    {msg.message}
-                  </p>
+                  {msg.attachments?.map((file, i) => (
+                    <div key={file.id || i} className="relative">
+                      <div className={isSending ? "opacity-50 blur-sm" : ""}>
+                        <MessageAttachment attachment={file} />
+                      </div>
+                      {isSending && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
                   <p
-                    className={`text-[10px] mt-1 block ${isMe ? "opacity-60" : "opacity-80"
+                    className={`text-sm break-words whitespace-pre-wrap ${msg.attachments ? "mt-2" : ""
                       }`}
                   >
-                    {new Date(msg.created_at).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {msg.message}
                   </p>
+                  <div className="flex items-center justify-end gap-1 mt-1">
+                    <p
+                      className={`text-[10px] block ${isMe ? "opacity-60" : "opacity-80"
+                        }`}
+                    >
+                      {isSending || !msg.created_at ? "Sending..." : new Date(msg.created_at).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                    {isMe && (
+                      <span className="opacity-70">
+                        {isSending ? (
+                          // Clock icon for sending
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                          </svg>
+                        ) : (
+                          // Double check/sent icon (simplified)
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M20 6 9 17l-5-5" />
+                          </svg>
+                        )}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             );
