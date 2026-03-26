@@ -61,7 +61,7 @@ export default function NotificationDropdown() {
                         width={40}
                         className="object-contain"
                     /> */}
-                    <Bell size={35}  className=""/>
+                    <Bell size={24} className="" />
                     {hasNotifications && (
                         <div className="top-0 right-0 absolute bg-red-500 rounded-full w-3 h-3 border-2 border-white" />
                     )}

@@ -1,7 +1,7 @@
 import NewAdContent from '@/app/components/pages/vendor-dashboard/ads/NewAdContent'
 import NotificationDropdown from '@/app/components/pages/vendor-dashboard/NotificationDropdown'
 import ProfileDropDown from '@/app/components/pages/vendor-dashboard/ProfileDropDown'
-import Image from 'next/image'
+
 export default function PostNewAd() {
   return (
     <div>

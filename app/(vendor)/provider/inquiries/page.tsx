@@ -13,13 +13,12 @@ import ChatClient from "./components/ChatClient";
 import { initPusher } from "@/services/pusher";
 import { getProviderBookings } from "@/lib/api/bookings";
 import { logger } from "@/lib/logger";
+import { useQuery } from "@tanstack/react-query";
 
 export default function VendorMessages() {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedMessages, setSelectedMessages] = useState<Message[]>([]);
-  const [loadingConversations, setLoadingConversations] =
-    useState<boolean>(false);
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [allBookings, setAllBookings] = useState<any[]>([]);
   const [currentBooking, setCurrentBooking] = useState(null);
@@ -49,22 +48,30 @@ export default function VendorMessages() {
     }
   }, []);
 
-  // Load conversations
+  const {
+    data: conversationsData,
+    isLoading: isLoadingConversations,
+    isError: isConversationsError,
+    error: conversationsError,
+  } = useQuery<ConversationItem[]>({
+    queryKey: ["vendor-conversations"],
+    queryFn: fetchAllConversations,
+    staleTime: 5 * 1000,
+    refetchInterval: 10 * 1000,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
+  });
+
   useEffect(() => {
-    const load = async () => {
-      setLoadingConversations(true);
-      try {
-        const data = await fetchAllConversations();
-        setConversations(data);
-      } catch (err) {
-        // do better error handling
-        logger.error(" Failed to load conversations:", err);
-      } finally {
-        setLoadingConversations(false);
-      }
-    };
-    load();
-  }, []);
+    if (conversationsData) {
+      setConversations(conversationsData);
+    }
+  }, [conversationsData]);
+
+  useEffect(() => {
+    if (!isConversationsError) return;
+    logger.error(" Failed to load conversations:", conversationsError);
+  }, [conversationsError, isConversationsError]);
 
   // get all bookings
   useEffect(() => {
@@ -314,7 +321,7 @@ export default function VendorMessages() {
         <ChatPane
           conversations={conversations}
           onSelectChat={handleSelectChat}
-          loading={loadingConversations}
+          loading={isLoadingConversations}
           selectedChatId={selectedChatId}
         />
       </div>

@@ -1,6 +1,6 @@
 'use client'
-import React, { createContext, useContext, useState } from 'react'
-import Notification from '../components/general/Notification'
+import React, { createContext, useContext } from 'react'
+import { Toaster, toast } from 'sonner'
 
 interface NotificationContextType {
   notify: (
@@ -23,39 +23,47 @@ export const useNotification = () => {
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   children
 }) => {
-  const [notifications, setNotifications] = useState<
-    { id: string; message: string; title?: string; type?: 'success' | 'error' | 'info' | 'resume' | 'paused' }[]
-  >([])
+  const defaultTitles: Record<
+    'success' | 'error' | 'info' | 'resume' | 'paused',
+    string
+  > = {
+    success: 'Success!',
+    error: 'Error!',
+    info: 'Info',
+    resume: 'Success!',
+    paused: 'Paused'
+  }
 
   const notify = (
     message: string,
     type: 'success' | 'error' | 'info' | 'resume' | 'paused' = 'info',
     title?: string
   ) => {
-    const id = crypto.randomUUID()
-    setNotifications(prev => [...prev, { id, message, type, title }])
+    const resolvedTitle = title ?? defaultTitles[type]
+    const options = { description: message, duration: 4000 }
 
-    setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== id))
-    }, 4000)
+    if (type === 'success' || type === 'resume') {
+      toast.success(resolvedTitle, options)
+      return
+    }
+
+    if (type === 'error') {
+      toast.error(resolvedTitle, options)
+      return
+    }
+
+    if (type === 'paused') {
+      toast.warning(resolvedTitle, options)
+      return
+    }
+
+    toast.info(resolvedTitle, options)
   }
 
   return (
     <NotificationContext.Provider value={{ notify }}>
       {children}
-      <div className='top-4 right-4 z-[9999] fixed flex flex-col gap-3'>
-        {notifications.map(n => (
-          <Notification
-            key={n.id}
-            title={n.title}
-            message={n.message}
-            type={n.type}
-            onClose={() =>
-              setNotifications(prev => prev.filter(notif => notif.id !== n.id))
-            }
-          />
-        ))}
-      </div>
+      <Toaster position='top-right' richColors closeButton />
     </NotificationContext.Provider>
   )
 }

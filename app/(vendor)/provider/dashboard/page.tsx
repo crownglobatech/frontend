@@ -10,38 +10,43 @@ import { useEffect, useState } from "react";
 import CustomerRecentActivities from "./components/RecentActivities";
 import CustomerRatingAndFeedbacks from "./components/Ratings";
 import { logger } from "@/lib/logger";
+import { useQuery } from "@tanstack/react-query";
 
 export default function VendorDashboard() {
   const { notify } = useNotification();
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [dashbaordData, setDashboardData] = useState<DashboardResponse>();
   const [filter, setFilter] = useState("this_week");
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) throw new Error("User not authenticated");
-        // Pass the filter to the API call
-        const res = await getDashboardData(token, filter);
-        setDashboardData(res);
-      } catch (error: unknown) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to fetch data";
-        notify(errorMessage, "error", "Error");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDashboardData();
-  }, [filter]); // Re-fetch when filter changes
+  const {
+    data: dashboardData,
+    isLoading,
+    isFetching,
+    isError,
+    error
+  } = useQuery<DashboardResponse>({
+    queryKey: ["vendor-dashboard", filter],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("User not authenticated");
+      return getDashboardData(token, filter);
+    },
+    staleTime: 60 * 1000
+  });
 
-  if (loading && !dashbaordData) {
-    return <div className="h-screen flex items-center justify-center"><Loader /></div>;
+  useEffect(() => {
+    if (!isError) return;
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to fetch data";
+    notify(errorMessage, "error", "Error");
+  }, [error, isError, notify]);
+
+  if (isLoading && !dashboardData) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
-  logger.log(dashbaordData?.data)
+  logger.log(dashboardData?.data);
 
   return (
     <>
@@ -59,9 +64,9 @@ export default function VendorDashboard() {
               Recent Activities
             </h2>
             <div className="flex flex-1 justify-start items-start">
-              {dashbaordData?.data?.recent_activities && (
+              {dashboardData?.data?.recent_activities && (
                 <CustomerRecentActivities
-                  recentActivities={dashbaordData?.data?.recent_activities}
+                  recentActivities={dashboardData?.data?.recent_activities}
                 />
               )}
             </div>
@@ -71,10 +76,10 @@ export default function VendorDashboard() {
           {/* ad chart */}
           <div className="mt-4 w-[60%] border border-[var(--foundation-neutral-6)] rounded-md">
             <AdChart
-              data={dashbaordData?.data.views_over_time}
+              data={dashboardData?.data?.views_over_time}
               selectedTimeRange={filter}
               onTimeRangeChange={setFilter}
-              loading={loading}
+              loading={isFetching}
             />
           </div>
           {/* ratings */}
@@ -84,7 +89,7 @@ export default function VendorDashboard() {
             </h2>
             <div className="flex flex-1 justify-center items-center">
               <CustomerRatingAndFeedbacks
-                ratings_feedbacks={dashbaordData?.data.ratings_feedbacks}
+                ratings_feedbacks={dashboardData?.data?.ratings_feedbacks}
               />
             </div>
           </div>

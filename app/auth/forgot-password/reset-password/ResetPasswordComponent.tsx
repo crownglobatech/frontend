@@ -2,7 +2,7 @@
 import LoadingDots from "@/app/components/general/LoadingDots";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { logger } from "@/lib/logger";
 
 export default function ResetPasswordComponent() {

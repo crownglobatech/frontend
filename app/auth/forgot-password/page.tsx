@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import LoadingDots from "@/app/components/general/LoadingDots";
 
 export default function ForgotPassword() {

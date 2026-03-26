@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import { toast } from 'react-toastify'
+import { toast } from 'sonner'
 import LoadingDots from '../../general/LoadingDots'
 import { logger } from '@/lib/logger'
 

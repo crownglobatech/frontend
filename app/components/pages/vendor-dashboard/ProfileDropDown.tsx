@@ -46,7 +46,7 @@ export default function ProfileDropDown() {
             <MyProfile open={showProfileDialog} onOpenChange={setShowProfileDialog} />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <div className="relative h-10 w-10 cursor-pointer rounded-full overflow-hidden border border-gray-200 hover:ring-2 hover:ring-[var(--primary-color)] transition-all">
+                    <div className="relative h-8 w-8 cursor-pointer rounded-full overflow-hidden border border-gray-200 hover:ring-2 hover:ring-[var(--primary-color)] transition-all">
                         <Avatar className="h-full w-full">
                             <AvatarImage src={userInformation?.last_name || ""} alt={userInformation?.first_name || "User"} className="object-cover rounded-full " />
                             <AvatarFallback className="bg-[var(--primary-color)] text-white font-semibold rounded-full ">
