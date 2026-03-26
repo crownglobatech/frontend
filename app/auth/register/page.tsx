@@ -1,10 +1,9 @@
 "use client";
 import Nav from "@/app/components/pages/auth/SignupNav";
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { AppDispatch, RootState } from "@/app/store";
 import { motion } from "motion/react";
 import {
@@ -50,11 +49,10 @@ export default function SignUp() {
   const [businessCountry, setBusinessCountry] = useState("");
 
   const { pendingEmailVerify, userId } = useSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.auth,
   );
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { notify } = useNotification();
@@ -81,7 +79,7 @@ export default function SignUp() {
     try {
       //  send request to backend
       const res = await fetch(
-        "https://crownglobaltechltd.com/newbackend/api/auth/register",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/register`,
         {
           method: "POST",
           headers: {
@@ -97,7 +95,7 @@ export default function SignUp() {
             phone_e164: `+${fullPhone}`,
             role: "customer",
           }),
-        }
+        },
       );
       // error validation
       if (!res.ok) {
@@ -168,7 +166,7 @@ export default function SignUp() {
             business_country: businessCountry,
           }),
           credentials: "include",
-        }
+        },
       );
 
       if (!res.ok) {
@@ -187,7 +185,7 @@ export default function SignUp() {
     }
   };
 
-  const {categories} = Categories()
+  const { categories } = Categories();
 
   return (
     <div className="relative flex md:flex-row flex-col w-full min-h-screen">
@@ -397,7 +395,11 @@ export default function SignUp() {
                   onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
-                  {showPasswordConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPasswordConfirm ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
                 </button>
               </div>
             </div>
@@ -457,171 +459,166 @@ export default function SignUp() {
                 )}
               </div>
             </div>
-          </form >
-        )
-        }
-        {
-          pendingEmailVerify && (
-            <EmailVerifyModal
-              userEmail={email}
-              onOpenChange={(open) =>
-                dispatch(setPendingEmailVerify({ verify: open }))
-              }
-              open={pendingEmailVerify}
-              onSuccess={() => {
-                dispatch(setPendingEmailVerify({ verify: false }));
-                setShowSuccessModal(true);
-              }}
-            />
-          )
-        }
+          </form>
+        )}
+        {pendingEmailVerify && (
+          <EmailVerifyModal
+            userEmail={email}
+            onOpenChange={(open) =>
+              dispatch(setPendingEmailVerify({ verify: open }))
+            }
+            open={pendingEmailVerify}
+            onSuccess={() => {
+              dispatch(setPendingEmailVerify({ verify: false }));
+              setShowSuccessModal(true);
+            }}
+          />
+        )}
         <VerificationSuccessModal
           open={showSuccessModal}
           onOpenChange={setShowSuccessModal}
         />
 
         {/* Provider Step */}
-        {
-          step === "provider" && (
-            <form
-              className="flex flex-col gap-4 mx-auto mt-16 max-w-[500px]"
-              onSubmit={handleProviderSubmit}
-            >
+        {step === "provider" && (
+          <form
+            className="flex flex-col gap-4 mx-auto mt-16 max-w-[500px]"
+            onSubmit={handleProviderSubmit}
+          >
+            <div className="flex flex-col">
+              <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
+                Business Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Business name"
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                required
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
+                Business Type / Category <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={categoryId || ""}
+                onChange={(e) => setCategoryId(Number(e.target.value))}
+                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                required
+              >
+                <option value="" disabled>
+                  Select Business Type
+                </option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
+                Business Address 1 <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Address line 1"
+                value={businessAddress1}
+                onChange={(e) => setBusinessAddress1(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                required
+              />
+            </div>
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
               <div className="flex flex-col">
                 <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
-                  Business Name <span className="text-red-500">*</span>
+                  Business Address 2
                 </label>
                 <input
                   type="text"
-                  placeholder="Business name"
-                  value={businessName}
-                  onChange={(e) => setBusinessName(e.target.value)}
+                  value={businessAddress2}
+                  onChange={(e) => setBusinessAddress2(e.target.value)}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                  required
                 />
               </div>
               <div className="flex flex-col">
                 <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
-                  Business Type / Category <span className="text-red-500">*</span>
+                  City <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={businessCity}
+                  onChange={(e) => setBusinessCity(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  required
+                />
+              </div>
+            </div>
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+              <div className="flex flex-col">
+                <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
+                  Country <span className="text-red-500">*</span>
                 </label>
                 <select
-                  value={categoryId || ""}
-                  onChange={(e) => setCategoryId(Number(e.target.value))}
+                  value={businessCountry}
+                  onChange={(e) => setBusinessCountry(e.target.value)}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm"
                   required
                 >
                   <option value="" disabled>
-                    Select Business Type
+                    Select Country
                   </option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
+                  <option value="NG">Nigeria</option>
+                  <option value="Uk">United Kingdom</option>
+                  {/* Add more countries */}
                 </select>
               </div>
               <div className="flex flex-col">
                 <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
-                  Business Address 1 <span className="text-red-500">*</span>
+                  State <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  placeholder="Address line 1"
-                  value={businessAddress1}
-                  onChange={(e) => setBusinessAddress1(e.target.value)}
+                <select
+                  value={businessState}
+                  onChange={(e) => setBusinessState(e.target.value)}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm"
                   required
-                />
-              </div>
-              <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
-                <div className="flex flex-col">
-                  <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
-                    Business Address 2
-                  </label>
-                  <input
-                    type="text"
-                    value={businessAddress2}
-                    onChange={(e) => setBusinessAddress2(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
-                    City <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={businessCity}
-                    onChange={(e) => setBusinessCity(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
-                <div className="flex flex-col">
-                  <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
-                    Country <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={businessCountry}
-                    onChange={(e) => setBusinessCountry(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                    required
-                  >
-                    <option value="" disabled>
-                      Select Country
-                    </option>
-                    <option value="NG">Nigeria</option>
-                    <option value="Uk">United Kingdom</option>
-                    {/* Add more countries */}
-                  </select>
-                </div>
-                <div className="flex flex-col">
-                  <label className="mb-1 font-semibold text-[var(--heading-color)] text-sm">
-                    State <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={businessState}
-                    onChange={(e) => setBusinessState(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                    required
-                  >
-                    <option value="" disabled>
-                      Select State
-                    </option>
-                    {NIGERIAN_STATES.map((state) => (
-                      <option key={state} value={state}>
-                        {state}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="flex justify-between mt-6">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep("general");
-                    setIsAProvider(false);
-                  }}
-                  className="px-6 py-2 border border-gray-300 rounded-md text-sm cursor-pointer"
                 >
-                  Previous
-                </button>
-                <button
-                  type="submit"
-                  className="bg-[var(--primary-color)] px-6 py-2 rounded-md font-semibold text-white text-sm cursor-pointer"
-                  disabled={loading}
-                >
-                  {loading ? <LoadingDots /> : "Submit"}
-                </button>
+                  <option value="" disabled>
+                    Select State
+                  </option>
+                  {NIGERIAN_STATES.map((state) => (
+                    <option key={state} value={state}>
+                      {state}
+                    </option>
+                  ))}
+                </select>
               </div>
-              {/* {error && <p className='text-red-600'>{error}</p>} */}
-            </form>
-          )
-        }
-      </motion.div >
-    </div >
+            </div>
+            <div className="flex justify-between mt-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setStep("general");
+                  setIsAProvider(false);
+                }}
+                className="px-6 py-2 border border-gray-300 rounded-md text-sm cursor-pointer"
+              >
+                Previous
+              </button>
+              <button
+                type="submit"
+                className="bg-[var(--primary-color)] px-6 py-2 rounded-md font-semibold text-white text-sm cursor-pointer"
+                disabled={loading}
+              >
+                {loading ? <LoadingDots /> : "Submit"}
+              </button>
+            </div>
+            {/* {error && <p className='text-red-600'>{error}</p>} */}
+          </form>
+        )}
+      </motion.div>
+    </div>
   );
 }

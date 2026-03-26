@@ -88,7 +88,7 @@ export default function CustomerHeader({
               <ProfileDropdown />
             </div>
             <div className="shadow-sm rounded-full cursor-pointer">
-              <Bell size={35}/>
+              <Bell size={24} />
             </div>
           </div>
         )}

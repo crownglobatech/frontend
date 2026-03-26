@@ -20,7 +20,7 @@ export default function EditAd({ adData, onUpdate }: Props) {
     bedrooms: adData.bedrooms || "",
     bathrooms: adData.bathrooms || "",
     listing_type: adData.listing_type || "",
-    category: adData.category.name || "",
+    category: adData.category?.name || "",
   });
 
   const [imageData, setImageData] = useState<{

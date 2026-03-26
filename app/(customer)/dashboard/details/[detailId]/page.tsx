@@ -1,3 +1,4 @@
+"use client";
 import { CiLocationOn } from "react-icons/ci";
 import { BedDouble, Bath } from "lucide-react";
 import Image from "next/image";
@@ -12,23 +13,50 @@ import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import ProfileDisplaySection from "./ProfileDisplaySection";
 import { logger } from "@/lib/logger";
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "./loading";
+import { ViewCustomerAd } from "@/lib/types";
 
-interface Props {
-  params: Promise<{ detailId: string }>;
-}
-export default async function AdDetailsHomeScreen({ params }: Props) {
-  const { detailId } = await params;
-  let adData;
-  try {
-    adData = await getCustomerAdsById(detailId);
-    logger.log("Ad data:", adData);
-  } catch (error) {
-    console.error("Ad fetch error:", error);
-    return <div className="p-10 text-center text-red-500 font-bold">Failed to load ad details.</div>;
+export default function AdDetailsHomeScreen() {
+  const params = useParams<{ detailId: string }>();
+  const detailId =
+    typeof params.detailId === "string" ? params.detailId : params.detailId?.[0];
+
+  const {
+    data: adData,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<ViewCustomerAd | null>({
+    queryKey: ["customer-ad-detail", detailId],
+    queryFn: async () => {
+      if (!detailId) throw new Error("Missing ad id.");
+      return getCustomerAdsById(detailId);
+    },
+    enabled: Boolean(detailId),
+    staleTime: 60 * 1000,
+  });
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError) {
+    logger.error("Ad fetch error:", error);
+    return (
+      <div className="p-10 text-center text-red-500 font-bold">
+        Failed to load ad details.
+      </div>
+    );
   }
 
   if (!adData) {
-    return <div className="p-10 text-center text-red-500 font-bold">Ad not found (404)</div>;
+    return (
+      <div className="p-10 text-center text-red-500 font-bold">
+        Ad not found (404)
+      </div>
+    );
   }
 
   // Convert 0/1 to boolean

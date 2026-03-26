@@ -1,43 +1,51 @@
 "use client";
-import Loader from "@/app/components/general/Loader";
 import ApartmentCardSkeleton from "@/app/components/general/ApartmentCardSkeleton";
 import AdCard from "@/app/components/pages/vendor-dashboard/ads/AdCard";
 import AdFilter from "@/app/components/pages/vendor-dashboard/ads/AdFilter";
 import HeaderBanner from "@/app/components/pages/vendor-dashboard/ads/HeaderBanner";
 import { getAllAds } from "@/lib/api";
-import { Ad } from "@/lib/types";
+import { Ad, AllAdsResponse } from "@/lib/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { logger } from "@/lib/logger";
+import { useQuery } from "@tanstack/react-query";
+import { useNotification } from "@/app/contexts/NotificationProvider";
 
 export default function AllAds() {
+  const { notify } = useNotification();
   const [ads, setAds] = useState<Ad[]>([]);
   const [filteredAds, setFilteredAds] = useState<Ad[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"all" | "newest" | "oldest">("all");
 
+  const {
+    data: adsData,
+    isLoading,
+    isError,
+    error
+  } = useQuery<AllAdsResponse>({
+    queryKey: ["all-ads"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("User not authenticated");
+      return getAllAds(token);
+    },
+    staleTime: 60 * 1000
+  });
 
   useEffect(() => {
-    const fetchAds = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) throw new Error("User not authenticated");
+    if (adsData?.data?.data) {
+      setAds(adsData.data.data);
+    }
+  }, [adsData]);
 
-        const data = await getAllAds(token);
-        const adsData = data.data.data;
-        setAds(adsData);
-        setFilteredAds(adsData);
-        logger.log(adsData)
-      } catch (err) {
-        logger.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAds();
-  }, []);
+  useEffect(() => {
+    if (!isError) return;
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to fetch ads";
+    notify(errorMessage, "error", "Error");
+    logger.error(errorMessage);
+  }, [error, isError, notify]);
 
   useEffect(() => {
     const query = searchQuery.toLowerCase().trim();
@@ -78,15 +86,12 @@ export default function AllAds() {
     setFilteredAds(result);
   }, [searchQuery, ads, sortBy]);
 
-  if (loading) {
+  if (isLoading && ads.length === 0) {
     return (
       <>
         <div className="top-0 z-[1000] sticky w-full">
           <HeaderBanner query={searchQuery} setQuery={setSearchQuery} />
         </div>
-        {/* <div className="px-6 py-6">
-          <AdFilter />
-        </div> */}
         <div className="px-6 mb-4">
           <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (

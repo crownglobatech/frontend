@@ -7,13 +7,14 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CustomerHeader from "./CustomerHeader";
 import AdDisplay from "./AdDisplay";
 import Pagination from "./Pagination";
+import { useQuery } from "@tanstack/react-query";
 
 export default function DashboardComponent() {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null | undefined>(undefined);
   const [error, setError] = useState<string | null>("");
   const searchParams = useSearchParams();
   const [category, setCategory] = useState<string>(
-    searchParams.get("category") || "all"
+    searchParams.get("category") || "all",
   );
   const [query, setQuery] = useState<string>(searchParams.get("search") || "");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -43,12 +44,11 @@ export default function DashboardComponent() {
     return initialFilters;
   });
   const [ads, setAds] = useState<CustomerAd[] | null>(null);
-  const [loading, setLoading] = useState(false);
   const [totalResults, setTotalResults] = useState<number | null>(0);
   const router = useRouter();
   const pathname = usePathname();
   const [paginatedAds, setPaginatedAds] = useState<CustomerAdsResponse | null>(
-    null
+    null,
   );
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
@@ -106,46 +106,66 @@ export default function DashboardComponent() {
     return params;
   };
 
+  // main function
+  const {
+    data: adsResponse,
+    isLoading,
+    isFetching,
+    isError,
+    error: queryError,
+  } = useQuery<CustomerAdsResponse>({
+    queryKey: ["customer-ads", category, query, filters, currentPage, token],
+    queryFn: async () => {
+      if (token) {
+        return getCustomerAds(token, category, currentPage, { query, filters });
+      }
+      return getCustomerAdsNoAuth(category, { query, filters });
+    },
+    enabled: token !== undefined,
+    staleTime: 60 * 1000,
+    refetchInterval: 20 * 1000,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
+  });
+
+  useEffect(() => {
+    const params = buildQueryParams();
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [category, query, filters, currentPage, pathname, router]);
+
+  useEffect(() => {
+    setError(null);
+    if (adsResponse?.data) {
+      setAds(adsResponse.data.data ?? []);
+      setLastPage(Number(adsResponse.data.last_page) || 1);
+      setTotalResults(Number(adsResponse.data.total) || 0);
+      setPaginatedAds(adsResponse);
+    }
+  }, [adsResponse]);
+
+  useEffect(() => {
+    if (!isError) return;
+    setError(
+      !navigator.onLine
+        ? "No internet connection"
+        : queryError instanceof Error
+          ? queryError.message
+          : "Failed to load listings. Please try again.",
+    );
+  }, [isError, queryError]);
+
+  useEffect(() => {
+    if (isInitialLoad && !adsResponse) {
+      setAds(null);
+    }
+  }, [isInitialLoad, adsResponse]);
+
   useEffect(() => {
     if (token === undefined) return;
-    const fetchAds = async () => {
-      setLoading(true);
-      setError(null);
-
-      if (isInitialLoad) {
-        setAds(null);
-      }
-      const params = buildQueryParams();
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-      try {
-        let res;
-        if (token) {
-          res = await getCustomerAds(token, category, currentPage, {
-            query,
-            filters,
-          });
-        } else {
-          res = await getCustomerAdsNoAuth(category, { query, filters });
-        }
-        if (res?.data) {
-          setAds(res.data.data ?? []);
-          setLastPage(Number(res.data.last_page) || 1);
-          setTotalResults(Number(res.data.total) || 0);
-          setPaginatedAds(res);
-        }
-      } catch (err) {
-        setError(
-          !navigator.onLine
-            ? "No internet connection"
-            : "Failed to load listings. Please try again."
-        );
-      } finally {
-        setLoading(false);
-        setIsInitialLoad(false);
-      }
-    };
-    fetchAds();
-  }, [category, query, filters, currentPage]);
+    if (!isLoading && !isFetching) {
+      setIsInitialLoad(false);
+    }
+  }, [isLoading, isFetching, token]);
 
   return (
     <div className="">
@@ -163,7 +183,7 @@ export default function DashboardComponent() {
       <div className="px-6">
         <AdDisplay
           ads={ads}
-          loading={loading}
+          loading={isLoading}
           error={error}
           isInitialLoad={isInitialLoad}
         />

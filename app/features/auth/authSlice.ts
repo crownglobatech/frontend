@@ -70,8 +70,12 @@ const authSlice = createSlice({
       state.token = null
       state.isAuthenticated = false
       state.error = null
+      state.loading = false
+      state.userId = null
+      state.pendingEmailVerify = false
       localStorage.removeItem('token')
       localStorage.removeItem('role')
+      localStorage.removeItem('user')
       Cookies.remove('token')
       Cookies.remove('role')
     },

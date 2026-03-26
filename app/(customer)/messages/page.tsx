@@ -18,13 +18,12 @@ import { logger } from "@/lib/logger";
 import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/app/store-hooks";
+import { useQuery } from "@tanstack/react-query";
 
 function MessagesContent() {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedMessages, setSelectedMessages] = useState<Message[]>([]);
-  const [loadingConversations, setLoadingConversations] =
-    useState<boolean>(true);
   const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
   const [bookingstatus, setBookingstatus] = useState<string>("");
   const [isBooking, setIsBooking] = useState<boolean>(false);
@@ -58,22 +57,30 @@ function MessagesContent() {
     }
   }, [router]);
 
-  // Load conversations
+  const {
+    data: conversationsData,
+    isLoading: isLoadingConversations,
+    isError: isConversationsError,
+    error: conversationsError,
+  } = useQuery<ConversationItem[]>({
+    queryKey: ["customer-conversations"],
+    queryFn: fetchAllConversations,
+    staleTime: 5 * 1000,
+    refetchInterval: 10 * 1000,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
+  });
+
   useEffect(() => {
-    const load = async () => {
-      setLoadingConversations(true);
-      try {
-        const data = await fetchAllConversations();
-        // console.log(" Loaded conversations:", data.length);
-        setConversations(data);
-      } catch (err) {
-        logger.error(" Failed to load conversations:", err);
-      } finally {
-        setLoadingConversations(false);
-      }
-    };
-    load();
-  }, []);
+    if (conversationsData) {
+      setConversations(conversationsData);
+    }
+  }, [conversationsData]);
+
+  useEffect(() => {
+    if (!isConversationsError) return;
+    logger.error(" Failed to load conversations:", conversationsError);
+  }, [conversationsError, isConversationsError]);
 
   // useeffect for notification pusher channel
   useEffect(() => {
@@ -147,7 +154,7 @@ function MessagesContent() {
 
   useEffect(() => {
     if (!urlConversationId) return;
-    if (loadingConversations) return;
+    if (isLoadingConversations) return;
     if (selectedChatId) return;
     // check if conversation exists
     const exists = conversations.some(
@@ -166,7 +173,7 @@ function MessagesContent() {
       );
       router.replace("/messages");
     }
-  }, [urlConversationId, conversations, loadingConversations, selectedChatId]);
+  }, [urlConversationId, conversations, isLoadingConversations, selectedChatId]);
 
   // Update conversation snippet in sidebar
   const updateConversationSnippet = useCallback(
@@ -379,7 +386,7 @@ function MessagesContent() {
 
 
   // ... inside component
-  if (loadingConversations) {
+  if (isLoadingConversations) {
     return (
       <div className="flex justify-center h-screen items-center">
         <LoadingSpinner size="lg" variant="primary" />
@@ -394,7 +401,7 @@ function MessagesContent() {
         <ChatPane
           conversations={conversations}
           onSelectChat={handleSelectChat}
-          loading={loadingMessages}
+          loading={isLoadingConversations}
           selectedChatId={selectedChatId}
         />
       </div>

@@ -23,7 +23,7 @@ export default function HouseDetail({ adData }: Props) {
           } capitalize`}
         >
           {adData.status === "approved" ? "active" : adData.status}
-        </div>
+        </div> 
       </div>
       <div className="relative">
         {/* overlay */}
@@ -62,7 +62,7 @@ export default function HouseDetail({ adData }: Props) {
               Category
             </h2>
             <p className="text-[14px] text-[var(--foundation-neutral-8)] capitalize">
-              {adData.category.name}
+              {adData.category?.name}
             </p>
           </div>
           <div className={`${adData.listing_type ? "" : "hidden"}`}>

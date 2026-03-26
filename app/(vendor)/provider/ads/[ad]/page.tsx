@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Rating from "@/app/components/general/Rating";
 import { use, useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -10,12 +9,12 @@ import { useNotification } from "@/app/contexts/NotificationProvider";
 import LoadingDots from "@/app/components/general/LoadingDots";
 import Loading from "./loading";
 import { useRouter } from "next/navigation";
-import { Ad } from "@/lib/types";
+import { Ad, vendorAd } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import Link from "next/link";
 import ProfileDropDown from "@/app/components/pages/vendor-dashboard/ProfileDropDown";
-import NotificationDropDown from "@/app/(customer)/dashboard/components/NotificationDropDown";
 import NotificationDropdown from "@/app/components/pages/vendor-dashboard/NotificationDropdown";
+import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   params: Promise<{ ad: string }>;
@@ -23,30 +22,39 @@ interface Props {
 
 export default function ManageAd({ params }: Props) {
   const { ad } = use(params);
-  const [loading, setLoading] = useState(true);
-  const [adData, setAdData] = useState<Ad>();
+  const [isDeleting, setIsDeleting] = useState(false);
   const { notify } = useNotification();
   const router = useRouter();
 
-  const fetchAd = async () => {
-    try {
+  const {
+    data: adData,
+    isLoading,
+    isError,
+    error,
+    refetch
+  } = useQuery<vendorAd, Error, Ad>({
+    queryKey: ["vendor-ad", ad],
+    queryFn: async () => {
       const token = Cookies.get("token");
       if (!token) throw new Error("User not authenticated.");
+      return getAdById(token, ad);
+    },
+    select: (res) => res.data,
+    staleTime: 60 * 1000,
+    enabled: Boolean(ad)
+  });
 
-      const res = await getAdById(token, ad);
-      if (res.data) setAdData(res.data);
-      logger.log(res.data)
-    } catch (err) {
-      logger.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
   useEffect(() => {
-    fetchAd();
-  }, [ad]);
+    if (!isError) return;
+    notify(error?.message ?? "Failed to fetch ad", "error", "Error");
+    logger.error(error);
+  }, [error, isError, notify]);
 
-  if (loading) return <Loading />;
+  useEffect(() => {
+    if (adData) logger.log(adData);
+  }, [adData]);
+
+  if (isLoading) return <Loading />;
   if (!adData)
     return (
       <div className="flex justify-center items-center p-6 text-[var(--danger-color)]">
@@ -56,12 +64,12 @@ export default function ManageAd({ params }: Props) {
 
   // handle Delete Ad
   const handleDeleteAd = async () => {
-    setLoading(true);
+    setIsDeleting(true);
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this ad? This action cannot be undone."
     );
     if (!confirmDelete) {
-      setLoading(false);
+      setIsDeleting(false);
       return;
     }
 
@@ -69,7 +77,7 @@ export default function ManageAd({ params }: Props) {
       const token = localStorage.getItem("token");
       if (!token) {
         notify("User not authenticated.", "error");
-        setLoading(false);
+        setIsDeleting(false);
         return;
       }
 
@@ -98,8 +106,12 @@ export default function ManageAd({ params }: Props) {
       logger.error(error);
       notify("Something went wrong while deleting the ad.", "error");
     } finally {
-      setLoading(false);
+      setIsDeleting(false);
     }
+  };
+
+  const handleRefreshAd = () => {
+    void refetch();
   };
 
   return (
@@ -134,7 +146,7 @@ export default function ManageAd({ params }: Props) {
             onClick={handleDeleteAd}
             className="px-4 py-2 border border-[var(--danger-color)] rounded-md min-h-[40px] font-semibold text-[12px] text-[var(--danger-color)] cursor-pointer"
           >
-            {loading ? <LoadingDots /> : "Delete Ad"}
+            {isDeleting ? <LoadingDots /> : "Delete Ad"}
           </button>
         </div>
 
@@ -143,7 +155,7 @@ export default function ManageAd({ params }: Props) {
             <AdDetails adData={adData} />
           </div>
           <div className="w-[30%]">
-            <EditAd adData={adData} onUpdate={fetchAd} />
+            <EditAd adData={adData} onUpdate={handleRefreshAd} />
           </div>
         </div>
       </div>
