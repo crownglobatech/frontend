@@ -31,7 +31,7 @@ export default function StepFormThree ({ onValidityChange }: StepFormTwoProps) {
     }))
   }
   return (
-    <div className='bg-[var(--foundation-neutral-4)] shadow-md mx-auto p-6 rounded-md w-[70%]'>
+    <div className='bg-[var(--foundation-neutral-4)] shadow-md mx-auto p-6 rounded-md w-full md:w-[70%]'>
       <h2 className='mb-4 font-bold text-lg'>Bank Information</h2>
 
       <div className='flex flex-col'>

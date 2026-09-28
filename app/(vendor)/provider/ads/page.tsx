@@ -89,7 +89,7 @@ export default function AllAds() {
   if (isLoading && ads.length === 0) {
     return (
       <>
-        <div className="top-0 z-[1000] sticky w-full">
+        <div className="top-0 z-40 sticky w-full">
           <HeaderBanner query={searchQuery} setQuery={setSearchQuery} />
         </div>
         <div className="px-6 mb-4">
@@ -105,7 +105,7 @@ export default function AllAds() {
 
   return (
     <>
-      <div className="top-0 z-[1000] sticky w-full">
+      <div className="top-0 z-40 sticky w-full">
         <HeaderBanner query={searchQuery} setQuery={setSearchQuery} />
       </div>
       {/* sort and filters */}

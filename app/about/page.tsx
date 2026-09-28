@@ -35,7 +35,7 @@ export default function AboutPage() {
                         transition={{ duration: 0.6 }}
                         className="text-4xl md:text-6xl font-bold text-white mb-4"
                     >
-                        About Crown-Haven
+                        About Assure Homes
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -61,7 +61,7 @@ export default function AboutPage() {
                             Who We Are
                         </h2>
                         <p className="text-gray-600 text-lg leading-relaxed">
-                            Crown-Haven is a premier real estate platform dedicated to simplifying the property journey for buyers, sellers, and renters. We bridge the gap between people and places, ensuring a seamless experience rooted in integrity and excellence.
+                            Assure Homes is a premier real estate platform dedicated to simplifying the property journey for buyers, sellers, and renters. We bridge the gap between people and places, ensuring a seamless experience rooted in integrity and excellence.
                         </p>
                         <p className="text-gray-600 text-lg leading-relaxed">
                             Our mission is to empower individuals to make informed real estate decisions through our comprehensive database of verified listings and expert allied services.
@@ -116,8 +116,8 @@ export default function AboutPage() {
                             </div>
                             <h3 className="font-bold text-xl text-[var(--heading-color)]">Email Us</h3>
                             <p className="text-gray-500">For general inquiries and support</p>
-                            <a href="mailto:info@crownhaven.com" className="font-semibold text-[var(--primary-color)] hover:underline">
-                                info@crownhaven.com
+                            <a href="mailto:info@assurehomes.com" className="font-semibold text-[var(--primary-color)] hover:underline">
+                                info@assurehomes.com
                             </a>
                         </motion.div>
 
@@ -158,7 +158,7 @@ export default function AboutPage() {
                             Are you an agent, developer, or service provider? Join our network and reach thousands of potential clients.
                         </p>
                         <a
-                            href="mailto:partners@crownhaven.com?subject=Partnership Inquiry"
+                            href="mailto:partners@assurehomes.com?subject=Partnership Inquiry"
                             className="inline-block bg-[var(--secondary-color)] text-white font-bold py-4 px-8 rounded-md hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                         >
                             Join Our Network

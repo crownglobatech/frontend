@@ -50,16 +50,16 @@ export default function VendorDashboard() {
 
   return (
     <>
-      <div className="top-0 sticky w-full z-10">
+      <div className="top-0 sticky w-full z-40">
         <HeaderBanner />
       </div>
       <div className="flex flex-col gap-2 px-6 py-4">
-        <div className="flex gap-4 mt-2">
-          <div className="mt-2 w-[60%]">
+        <div className="flex flex-col md:flex-row gap-4 mt-2">
+          <div className="mt-2 w-full md:w-[60%]">
             <QuickActions />
           </div>
           {/* notifications */}
-          <div className="flex flex-col mt-2 p-4 border border-[var(--foundation-neutral-6)] rounded-md w-[40%] min-h-[50%]">
+          <div className="flex flex-col mt-2 p-4 border border-[var(--foundation-neutral-6)] rounded-md w-full md:w-[40%] min-h-[50%]">
             <h2 className="mb-4 font-semibold text-[16px] text-[var(--heading-color)]">
               Recent Activities
             </h2>
@@ -72,9 +72,9 @@ export default function VendorDashboard() {
             </div>
           </div>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           {/* ad chart */}
-          <div className="mt-4 w-[60%] border border-[var(--foundation-neutral-6)] rounded-md">
+          <div className="mt-4 w-full md:w-[60%] border border-[var(--foundation-neutral-6)] rounded-md">
             <AdChart
               data={dashboardData?.data?.views_over_time}
               selectedTimeRange={filter}
@@ -83,7 +83,7 @@ export default function VendorDashboard() {
             />
           </div>
           {/* ratings */}
-          <div className="flex flex-col mt-2 p-4 border border-[var(--foundation-neutral-6)] rounded-md w-[40%] min-h-[50%]">
+          <div className="flex flex-col mt-2 p-4 border border-[var(--foundation-neutral-6)] rounded-md w-full md:w-[40%] min-h-[50%]">
             <h2 className="mb-4 font-semibold text-[16px] text-[var(--heading-color)]">
               Ratings & Feedbacks
             </h2>

@@ -39,7 +39,7 @@ export default function PasswordResetSuccess () {
         </h2>
         <p className='text-[14px] text-[var(--foundation-neutral)] text-center'>
           Your password has been updated. You can now log in with your new
-          password and continue exploring Crown-Haven.
+          password and continue exploring Assure Homes.
         </p>
       </div>
 

@@ -3,16 +3,14 @@ import { MailIcon, PhoneCallIcon } from "lucide-react";
 import Image from "next/image";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import CreateFeedback from "./CreateFeedback";
+import Header from "@/app/components/pages/vendor-dashboard/Header";
 export default function VendorFaq() {
   return (
     <div className="flex flex-col">
-      <div className="top-0 z-[1000] sticky bg-white shadow-lg px-6 py-4 w-full">
-        <div className="flex justify-between items-center">
-          <h2 className="font-semibold text-[20px] text-[var(--heading-color)]">
-            Help & Support
-          </h2>
-          {/* Icons */}
-          <div className="flex flex-row-reverse items-center gap-8">
+      <Header
+        pageTitle="Help & Support"
+        actions={
+          <>
             <div className="shadow-md rounded-full">
               <Image
                 src="/user.png"
@@ -31,11 +29,11 @@ export default function VendorFaq() {
                 width={40}
               />
             </div>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
       {/* content */}
-      <div className="px-20 pb-4">
+      <div className="px-4 md:px-20 pb-4">
         {/* intro */}
         <div className="mx-auto mt-4">
           <div className="flex flex-col items-center gap-4">
@@ -53,7 +51,7 @@ export default function VendorFaq() {
               <input
                 type="text"
                 placeholder="Search topics, or questions..."
-                className="py-1.5 pl-4 border border-[var(--foundation-color)] rounded-sm w-[400px] text-[14px] text-[var(--foundation-neutral-6)]"
+                className="py-1.5 pl-4 border border-[var(--foundation-color)] rounded-sm w-full max-w-[400px] text-[14px] text-[var(--foundation-neutral-6)]"
               />
               <FaMagnifyingGlass
                 className="top-2 right-4 absolute text-[#BFBFBF]"
@@ -166,7 +164,7 @@ export default function VendorFaq() {
                   Get in touch with us via email for urgent request/queries
                 </p>
                 <span className="text-[13px] text-[var(--primary-color)] underline">
-                  support@crown-haven.com
+                  support@assure-homes.com
                 </span>
               </div>
             </div>

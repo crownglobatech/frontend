@@ -27,13 +27,14 @@ export default function VerificationSuccessModal ({
       >
         <DialogHeader>
           <DialogTitle className='flex flex-col items-center text-center'>
-            <Image
-              src='/success.png'
-              alt='success image'
-              width={250}
-              height={250}
-              className='object-contain'
-            />
+            <div className='relative mx-auto w-[150px] h-[150px] md:w-[250px] md:h-[250px]'>
+              <Image
+                src='/success.png'
+                alt='success image'
+                fill
+                className='object-contain'
+              />
+            </div>
           </DialogTitle>
           <DialogDescription className='flex flex-col items-center gap-4'>
             <div className='flex flex-col items-center'>
@@ -42,7 +43,7 @@ export default function VerificationSuccessModal ({
               </span>
               <p className='text-[13px] text-[var(--foundation-neutral)] text-center'>
                 Your email has been successfully verified. Welcome to
-                Crown-Haven let’s get started!
+                Assure Homes let’s get started!
               </p>
             </div>
             <Button

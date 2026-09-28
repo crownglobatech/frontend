@@ -479,7 +479,7 @@ export default function ChatFooter({
                   "{currentBooking?.reference_terms || "No reference provided"}"
                 </p>
               </div>
-              <span className="block">Note: CrownHaven will not be responsible for any transactions done outside this platform</span>
+              <span className="block">Note: Assure Homes will not be responsible for any transactions done outside this platform</span>
 
             </DialogDescription>
           </DialogHeader>

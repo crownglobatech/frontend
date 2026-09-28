@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Loading() {
     return (
         <>
-            <div className="top-0 z-[1000] sticky w-full">
+            <div className="top-0 z-40 sticky w-full">
                 <div className="bg-white shadow-lg px-6 py-4 w-full">
                     {/* Top bar Skeleton */}
                     <div className="flex justify-between items-center">

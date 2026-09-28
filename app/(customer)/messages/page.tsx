@@ -19,6 +19,9 @@ import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/app/store-hooks";
 import { useQuery } from "@tanstack/react-query";
+import { useIsMobile } from "@/app/hooks/useIsMobile";
+import Header from "@/app/components/pages/user_dashboard/Header";
+import { ChevronLeft } from "lucide-react";
 
 function MessagesContent() {
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
@@ -30,6 +33,8 @@ function MessagesContent() {
   const [selectedBookingId, setSelectedBookingId] = useState<
     number | undefined
   >(undefined);
+
+  const isMobile = useIsMobile();
 
   // Get current user from Redux
   const currentUser = useAppSelector((state) => state.auth.user);
@@ -394,22 +399,39 @@ function MessagesContent() {
     );
   }
 
+  const showListPane = !isMobile || !selectedChatId;
+  const showChatPane = !isMobile || !!selectedChatId;
+
   return (
-    <div className="flex bg-white h-screen">
+    <div className="flex flex-col h-screen bg-white">
+      {showListPane && <Header pageTitle="Messages" />}
+      <div className="flex flex-1 overflow-hidden">
       {/* Left: Chat List */}
-      <div className="w-2/5 border-r h-screen">
-        <ChatPane
-          conversations={conversations}
-          onSelectChat={handleSelectChat}
-          loading={isLoadingConversations}
-          selectedChatId={selectedChatId}
-        />
-      </div>
+      {showListPane && (
+        <div className="w-full md:w-2/5 border-r h-full">
+          <ChatPane
+            conversations={conversations}
+            onSelectChat={handleSelectChat}
+            loading={isLoadingConversations}
+            selectedChatId={selectedChatId}
+          />
+        </div>
+      )}
 
       {/* Right: Message Window */}
-      <div className="flex flex-col w-3/5 bg-[#f0f2f5]">
+      {showChatPane && (
+      <div className="flex flex-col w-full md:w-3/5 bg-[#f0f2f5]">
         {selectedChatId ? (
           <>
+            {isMobile && (
+              <button
+                onClick={() => setSelectedChatId(null)}
+                className="flex items-center gap-1 px-4 py-2 bg-white border-b text-sm text-gray-700"
+              >
+                <ChevronLeft size={18} />
+                Back
+              </button>
+            )}
             <ChatHeader
               conversationId={selectedChatId}
               onBookNow={handleBookNow}
@@ -450,6 +472,8 @@ function MessagesContent() {
             <p className="text-xl">Select a conversation to start chatting</p>
           </div>
         )}
+      </div>
+      )}
       </div>
     </div>
   );

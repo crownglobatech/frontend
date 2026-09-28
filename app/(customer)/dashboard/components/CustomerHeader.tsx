@@ -8,11 +8,12 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { Bell } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { NIGERIAN_STATES } from "@/lib/constants";
 import Categories from "@/app/components/general/Categories";
+import { useSidebar } from "@/app/(customer)/context/SidebarContext";
 
 interface Props {
   currentCategory: string;
@@ -67,11 +68,12 @@ export default function CustomerHeader({
     isLoggedIn();
   }, [user, role]);
    const {categories} = Categories()
+   const { toggleSidebar } = useSidebar();
 
   return (
     <div>
       {/* --- Top Bar --- */}
-      <div className="relative flex justify-between items-center gap-[50px] bg-white shadow-sm px-6 pt-4 pb-1">
+      <div className="relative flex justify-between items-center gap-4 md:gap-[50px] bg-white shadow-sm px-6 pt-4 pb-1">
         <div className="flex gap-2 w-full">
           <Input
             type="text"
@@ -82,16 +84,24 @@ export default function CustomerHeader({
           />
         </div>
 
-        {isLoggedIn && (
-          <div className="relative flex flex-row-reverse items-center gap-4">
-            <div className="shadow-sm rounded-full">
-              <ProfileDropdown />
+        <div className="relative flex items-center gap-4">
+          {isLoggedIn && (
+            <div className="relative flex flex-row-reverse items-center gap-4">
+              <div className="shadow-sm rounded-full">
+                <ProfileDropdown />
+              </div>
+              <div className="shadow-sm rounded-full cursor-pointer">
+                <Bell size={24} />
+              </div>
             </div>
-            <div className="shadow-sm rounded-full cursor-pointer">
-              <Bell size={24} />
-            </div>
-          </div>
-        )}
+          )}
+          <button
+            onClick={toggleSidebar}
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+          >
+            <Menu className="h-6 w-6 text-gray-600" />
+          </button>
+        </div>
       </div>
 
       <div className="z-[50] relative flex flex-col bg-white px-6 overflow-visible">

@@ -14,8 +14,12 @@ import { initPusher } from "@/services/pusher";
 import { getProviderBookings } from "@/lib/api/bookings";
 import { logger } from "@/lib/logger";
 import { useQuery } from "@tanstack/react-query";
+import { useIsMobile } from "@/app/hooks/useIsMobile";
+import { ChevronLeft } from "lucide-react";
+import Header from "@/app/components/pages/vendor-dashboard/Header";
 
 export default function VendorMessages() {
+  const isMobile = useIsMobile();
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [selectedMessages, setSelectedMessages] = useState<Message[]>([]);
@@ -314,22 +318,39 @@ export default function VendorMessages() {
     setBookingstatus("cancelled");
   };
 
+  const showListPane = !isMobile || !selectedChatId;
+  const showChatPane = !isMobile || !!selectedChatId;
+
   return (
-    <div className="flex bg-white h-screen">
+    <div className="flex flex-col h-screen bg-white">
+      {showListPane && <Header pageTitle="Messages" />}
+      <div className="flex flex-1 overflow-hidden">
       {/* Left: Chat List */}
-      <div className="w-full sm:w-2/5 border-r h-screen overflow-y-auto">
-        <ChatPane
-          conversations={conversations}
-          onSelectChat={handleSelectChat}
-          loading={isLoadingConversations}
-          selectedChatId={selectedChatId}
-        />
-      </div>
+      {showListPane && (
+        <div className="w-full sm:w-2/5 border-r h-full overflow-y-auto">
+          <ChatPane
+            conversations={conversations}
+            onSelectChat={handleSelectChat}
+            loading={isLoadingConversations}
+            selectedChatId={selectedChatId}
+          />
+        </div>
+      )}
 
       {/* Right: Message Window */}
+      {showChatPane && (
       <div className="flex flex-col w-full sm:w-3/5 bg-[#f0f2f5]">
         {selectedChatId ? (
           <>
+            {isMobile && (
+              <button
+                onClick={() => setSelectedChatId(null)}
+                className="flex items-center gap-1 px-4 py-2 bg-white border-b text-sm text-gray-700"
+              >
+                <ChevronLeft size={18} />
+                Back
+              </button>
+            )}
             <ChatHeader
               conversationId={selectedChatId}
               conversations={conversations}
@@ -359,6 +380,8 @@ export default function VendorMessages() {
             <p className="text-xl">Select a conversation to start chatting</p>
           </div>
         )}
+      </div>
+      )}
       </div>
     </div>
   );

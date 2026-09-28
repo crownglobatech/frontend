@@ -72,7 +72,7 @@ export default function UserTable() {
     <>
       <div className="bg-white p-4 rounded-sm">
         {/* Search & Filter */}
-        <div className="flex justify-between items-center gap-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-8">
           <div className="relative w-full">
             <Input
               value={searchTerm}

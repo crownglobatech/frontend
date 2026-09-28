@@ -1,12 +1,14 @@
 "use client"
 import { useSelector } from 'react-redux'
 import { RootState } from '@/app/store'
-import Rating from '../../general/Rating'
+import { Menu } from 'lucide-react'
 import NotificationDropdown from './NotificationDropdown'
 import ProfileDropDown from './ProfileDropDown'
+import { useSidebar } from '@/app/(vendor)/context/SidebarContext'
 
 export default function HeaderBanner() {
   const { user } = useSelector((state: RootState) => state.auth)
+  const { toggleSidebar } = useSidebar()
 
   return (
     <div className='bg-white shadow-lg px-6 py-4 w-full'>
@@ -19,7 +21,12 @@ export default function HeaderBanner() {
         </div>
         {/* icons */}
         <div className='flex flex-row-reverse items-center gap-4'>
-          <Rating rate={5} />
+          <button
+            onClick={toggleSidebar}
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+          >
+            <Menu className="h-6 w-6 text-gray-600" />
+          </button>
           <div className='shadow-sm rounded-full'>
             <ProfileDropDown />
           </div>

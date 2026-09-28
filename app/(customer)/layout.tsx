@@ -1,6 +1,8 @@
+'use client'
 import SideBarUser from '@/app/components/pages/user_dashboard/SideBar'
 import React from 'react'
 import AuthLoader from '../components/general/AuthLoader'
+import { SidebarProvider } from './context/SidebarContext'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -8,8 +10,8 @@ interface LayoutProps {
 
 export default function UserDashboardLayout ({ children }: LayoutProps) {
   return (
-    <>
-    <AuthLoader />
+    <SidebarProvider>
+      <AuthLoader />
       <div className='flex min-h-screen'>
         {/* sidebar (left) */}
         <div className='md:w-1/5'>
@@ -20,6 +22,6 @@ export default function UserDashboardLayout ({ children }: LayoutProps) {
         <section className='flex flex-col bg-white w-full md:w-4/5'>{children}</section>
       </div>
       {/* <Footer /> */}
-    </>
+    </SidebarProvider>
   )
 }

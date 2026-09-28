@@ -1,15 +1,18 @@
+"use client";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { FaSearch } from "react-icons/fa";
-import Rating from "@/app/components/general/Rating";
+import { Menu } from "lucide-react";
 import ProfileDropDown from "../ProfileDropDown";
 import NotificationDropdown from "../NotificationDropdown";
+import { useSidebar } from "@/app/(vendor)/context/SidebarContext";
 
 interface Props {
   query: string;
   setQuery: (query: string) => void;
 }
 export default function HeaderBanner({ query, setQuery }: Props) {
+  const { toggleSidebar } = useSidebar();
   return (
     <div className="bg-white shadow-sm px-6 py-4 w-full">
       {/* Top bar */}
@@ -31,7 +34,12 @@ export default function HeaderBanner({ query, setQuery }: Props) {
 
         {/* Icons */}
         <div className="flex flex-row-reverse items-center gap-4">
-          <Rating rate={5} />
+          <button
+            onClick={toggleSidebar}
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+          >
+            <Menu className="h-6 w-6 text-gray-600" />
+          </button>
 
           <div className="shadow-sm rounded-full">
             <ProfileDropDown />

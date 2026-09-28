@@ -66,7 +66,7 @@ export default function SideBarAdmin() {
       >
         {/* Header */}
         <div className="flex h-16 items-center justify-between mt-4 px-4">
-          <h1 className="text-[18px] font-bold">Crown-Haven</h1>
+          <h1 className="text-[18px] font-bold">Assure Homes</h1>
           {/* Close button for mobile */}
           <button onClick={closeSidebar} className="md:hidden p-1 rounded-md hover:bg-gray-100">
             <X size={20} />

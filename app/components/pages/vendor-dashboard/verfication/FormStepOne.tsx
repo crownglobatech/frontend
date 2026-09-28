@@ -41,10 +41,10 @@ export default function StepFormOne ({ onValidityChange }: StepFormOneProps) {
   }
 
   return (
-    <div className='bg-[var(--foundation-neutral-4)] shadow-md mx-auto p-6 rounded-md w-[70%]'>
+    <div className='bg-[var(--foundation-neutral-4)] shadow-md mx-auto p-6 rounded-md w-full md:w-[70%]'>
       <h2 className='mb-4 font-bold text-lg'>Personal Information (KYB)</h2>
 
-      <div className='gap-4 grid grid-cols-2'>
+      <div className='gap-4 grid grid-cols-1 sm:grid-cols-2'>
         <div className='flex flex-col'>
           <label className='mb-1 font-semibold text-[var(--foundation-neutral)] text-sm'>
             First Name <span className='text-red-500'>*</span>

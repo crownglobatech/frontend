@@ -4,6 +4,7 @@ import ProgressBar from '@/app/components/pages/vendor-dashboard/verfication/Pro
 import StepFormOne from '@/app/components/pages/vendor-dashboard/verfication/FormStepOne'
 import StepFormTwo from '@/app/components/pages/vendor-dashboard/verfication/FormStepTwo'
 import StepFormThree from '@/app/components/pages/vendor-dashboard/verfication/FormStepThree'
+import Header from '@/app/components/pages/vendor-dashboard/Header'
 
 export default function VendorOnboarding () {
   const steps = ['Personal Info', 'Business Info', 'Review']
@@ -34,7 +35,9 @@ export default function VendorOnboarding () {
   }
 
   return (
-    <div className='flex flex-col items-center bg-white p-8 min-h-screen'>
+    <div className='flex flex-col bg-white min-h-screen'>
+      <Header pageTitle="Verification" />
+      <div className='flex flex-col items-center p-8'>
       <ProgressBar
         steps={steps}
         currentStep={currentStep}
@@ -51,7 +54,7 @@ export default function VendorOnboarding () {
         <StepFormThree onValidityChange={handleStepValidity} />
       )}
 
-      <div className='flex justify-between items-center mt-6 w-[70%] max-w-2xl'>
+      <div className='flex justify-between items-center mt-6 w-full md:w-[70%] max-w-2xl'>
         {/* Previous Step Button */}
         {currentStep > 0 ? (
           <button
@@ -77,6 +80,7 @@ export default function VendorOnboarding () {
         >
           {currentStep === steps.length - 1 ? 'Submit' : 'Next Step →'}
         </button>
+      </div>
       </div>
     </div>
   )

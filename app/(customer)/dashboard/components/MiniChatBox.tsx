@@ -108,7 +108,7 @@ export default function MiniChatBox({ userId, isMesagingCredible }: MiniChatBoxP
               Signup to request service
             </Link>
             <p className="text-[var(--heading-color)] mt-1 text-[12px] font-normal">
-              Create an account or sign in to connect directly with verified vendors on Crown-Haven
+              Create an account or sign in to connect directly with verified vendors on Assure Homes
             </p>
           </div>
         )}

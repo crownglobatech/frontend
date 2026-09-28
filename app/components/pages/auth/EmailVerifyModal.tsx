@@ -152,7 +152,7 @@ export default function EmailVerifyModal({
               </div>
 
               {/* OTP inputs */}
-              <div className='flex justify-center gap-3 mb-4'>
+              <div className='flex justify-center gap-2 sm:gap-3 mb-4'>
                 {otp.map((digit, index) => (
                   <input
                     key={index}
@@ -164,7 +164,7 @@ export default function EmailVerifyModal({
                     }}
                     onChange={e => handleChange(e.target.value, index)}
                     onKeyDown={e => handleKeyDown(e, index)}
-                    className='border border-gray-300 rounded-md focus:outline-none focus:ring-[#004AAD] focus:ring-2 w-12 h-12 font-medium text-lg text-center'
+                    className='border border-gray-300 rounded-md focus:outline-none focus:ring-[#004AAD] focus:ring-2 w-9 h-9 sm:w-12 sm:h-12 font-medium text-lg text-center'
                   />
                 ))}
               </div>

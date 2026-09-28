@@ -1,15 +1,17 @@
 "use client";
-import { LogIn, LogOut, PanelRightClose, Settings } from "lucide-react";
-import { motion } from "motion/react";
+import { LogIn, LogOut, PanelRightClose, Settings, X } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { MdAddCircleOutline, MdDashboard } from "react-icons/md";
 import { TbHelpCircle, TbMessageCircle } from "react-icons/tb";
 import { usePathname } from "next/navigation";
 import { MdCampaign, MdAnalytics } from "react-icons/md";
 import { useEffect, useState } from "react";
+import { useSidebar } from "@/app/(vendor)/context/SidebarContext";
 
 export default function SideBarVendor() {
   const pathname = usePathname();
+  const { isSidebarOpen, closeSidebar } = useSidebar();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const user =
     typeof window !== "undefined" ? localStorage.getItem("user") : null;
@@ -56,7 +58,26 @@ export default function SideBarVendor() {
   ];
 
   return (
-    <div className="top-0 sticky flex flex-col bg-[var(--primary-color)] px-4 py-6 h-screen">
+    <>
+      {/* Overlay for mobile */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            exit={{ opacity: 0 }}
+            onClick={closeSidebar}
+            className="fixed inset-0 bg-black z-[999] md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      <div
+        className={`fixed md:sticky top-0 flex flex-col bg-[var(--primary-color)] px-4 py-6 h-screen z-[1000] w-64 md:w-full
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0 transition-transform duration-300 ease-in-out
+        `}
+      >
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -70,12 +91,16 @@ export default function SideBarVendor() {
             }}
           >
             <Link href= '/provider/dashboard' className="font-thin text-[var(--neutral-white)]/70">
-              Crown-
+              Assure
             </Link>
             <Link href= '/provider/dashboard' className="font-extrabold text-[var(--neutral-white)]">
-              Haven
+              Homes
             </Link>
           </motion.div>
+          {/* Close button for mobile */}
+          <button onClick={closeSidebar} className="md:hidden p-1 rounded-md hover:bg-white/10">
+            <X size={20} className="text-white" />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -92,6 +117,7 @@ export default function SideBarVendor() {
                   <li key={href}>
                     <Link
                       href={href}
+                      onClick={closeSidebar}
                       className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${
                         isActive
                           ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
@@ -118,6 +144,7 @@ export default function SideBarVendor() {
                   <li key={href}>
                     <Link
                       href={href}
+                      onClick={closeSidebar}
                       className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${
                         isActive
                           ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
@@ -136,6 +163,7 @@ export default function SideBarVendor() {
           </nav>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

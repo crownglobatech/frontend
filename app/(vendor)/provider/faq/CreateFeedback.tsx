@@ -17,7 +17,7 @@ export default function CreateFeedback() {
  flex flex-col gap-2 bg-[var(--foundation-neutral-3)] shadow-lg mt-2 px-4 py-6 rounded-sm`}
     >
       <h2 className="font-semibold text-[12px] text-[var(--text-body)]">
-        Help us improve the crown-haven
+        Help us improve Assure Homes
       </h2>
       <div className="flex flex-col gap-1">
         <h2 className="text--[var(--foundation-neutral-8)] text-[10px]">

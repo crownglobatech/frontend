@@ -1,6 +1,6 @@
 "use client";
-import { Icon, PanelRightClose } from "lucide-react";
-import { motion } from "motion/react";
+import { Icon, PanelRightClose, X } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { MdDashboard } from "react-icons/md";
 import { TbHelpCircle, TbMessageCircle } from "react-icons/tb";
@@ -10,9 +10,11 @@ import { LogIn } from "lucide-react";
 import { LogOut } from "lucide-react";
 import { useSelector } from "react-redux";
 import { selectUser } from "@/app/features/auth/authSlice";
+import { useSidebar } from "@/app/(customer)/context/SidebarContext";
 
 export default function SideBarUser() {
   const pathname = usePathname();
+  const { isSidebarOpen, closeSidebar } = useSidebar();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const user = useSelector(selectUser);
   const role =
@@ -47,7 +49,26 @@ export default function SideBarUser() {
   const isActiveRoute = (href: string) => pathname.startsWith(href);
 
   return (
-    <div className="top-0 sticky hidden md:flex flex-col bg-[var(--primary-color)] px-4 py-6 h-screen">
+    <>
+      {/* Overlay for mobile */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            exit={{ opacity: 0 }}
+            onClick={closeSidebar}
+            className="fixed inset-0 bg-black z-[999] md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      <div
+        className={`fixed md:sticky top-0 flex flex-col bg-[var(--primary-color)] px-4 py-6 h-screen z-[1000] w-64 md:w-full
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0 transition-transform duration-300 ease-in-out
+        `}
+      >
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -61,12 +82,16 @@ export default function SideBarUser() {
             }}
           >
             <Link href={isLoggedIn ? '/dashboard' : '/'} className="font-thin text-[var(--neutral-white)]/70">
-              Crown-
+              Assure
             </Link>
             <Link href={isLoggedIn ? '/dashboard' : '/'} className="font-extrabold text-[var(--neutral-white)]">
-              Haven
+              Homes
             </Link>
           </motion.div>
+          {/* Close button for mobile */}
+          <button onClick={closeSidebar} className="md:hidden p-1 rounded-md hover:bg-white/10">
+            <X size={20} className="text-white" />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -79,6 +104,7 @@ export default function SideBarUser() {
                   <li key={href}>
                     <Link
                       href={href}
+                      onClick={closeSidebar}
                       className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${isActive
                         ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
                         : "text-white/70 hover:text-white hover:opacity-100"
@@ -104,6 +130,7 @@ export default function SideBarUser() {
                   <li key={href}>
                     <Link
                       href={href}
+                      onClick={closeSidebar}
                       className={`flex gap-2 items-center px-3 py-2 rounded-md transition-all ${isActive
                         ? "bg-[var(--secondary-color)] text-[var(--heading-color)] font-semibold"
                         : "text-white/70 hover:text-white hover:opacity-100"
@@ -119,6 +146,7 @@ export default function SideBarUser() {
           </nav>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

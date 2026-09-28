@@ -123,7 +123,7 @@ export default function MyProfile({ open, onOpenChange }: MyProfileProps) {
                         </DialogHeader>
 
                         <div className="px-6 py-4 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-bold text-gray-700">First Name</label>
                                     <Input
@@ -144,7 +144,7 @@ export default function MyProfile({ open, onOpenChange }: MyProfileProps) {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-xs font-bold text-gray-700">Email Address</label>
                                     <div className="relative">

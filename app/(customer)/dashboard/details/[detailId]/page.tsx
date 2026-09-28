@@ -12,6 +12,7 @@ import AdDetailsAnimator from "../../components/AdDetailsAnimator";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 import ProfileDisplaySection from "./ProfileDisplaySection";
+import Header from "@/app/components/pages/user_dashboard/Header";
 import { logger } from "@/lib/logger";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -67,14 +68,7 @@ export default function AdDetailsHomeScreen() {
 
   return (
     <div>
-      <div className="top-0 z-[1000] sticky w-full">
-        <div className="flex justify-between items-center gap-[50px] bg-white shadow-sm px-6 py-4">
-          <div className="flex gap-2 w-full">
-            <h2 className=" text-[20px] font-semibold">Service Details</h2>
-          </div>
-          <ProfileDisplaySection />
-        </div>
-      </div>
+      <Header pageTitle="Service Details" actions={<ProfileDisplaySection />} />
 
       <AdDetailsAnimator>
         <div className="flex flex-col px-6 py-2">
@@ -146,7 +140,7 @@ export default function AdDetailsHomeScreen() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 mt-6 mb-8 w-[60%]">
+          <div className="flex flex-col gap-4 mt-6 mb-8 w-full md:w-[60%]">
             {/* service description */}
             <div className="flex flex-col items-start gap-2">
               <h2 className="font-semibold text-[18px] text-black">

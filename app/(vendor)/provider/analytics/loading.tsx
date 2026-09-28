@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Loading() {
     return (
         <div>
-            <div className='top-0 sticky w-full z-[999]'>
+            <div className='top-0 sticky w-full z-40'>
                 {/* HeadBanner Skeleton */}
                 <div className="bg-white shadow-sm px-6 py-4 w-full">
                     <div className="flex justify-between items-center">
@@ -19,7 +19,7 @@ export default function Loading() {
             <div className='p-6'>
                 {/* metrics and charts */}
                 <div className='gap-4 grid grid-cols-1 md:grid-cols-2 w-full'>
-                    <div className='gap-4 grid grid-cols-2'>
+                    <div className='gap-4 grid grid-cols-1 sm:grid-cols-2'>
                         {/* 4 Metric Cards */}
                         {[...Array(4)].map((_, index) => (
                             <div
@@ -42,9 +42,9 @@ export default function Loading() {
                 </div>
 
                 {/* Analytics Table Skeleton */}
-                <div className="mt-8 border border-[var(--foundation-neutral-6)] rounded-md overflow-hidden">
+                <div className="mt-8 border border-[var(--foundation-neutral-6)] rounded-md overflow-x-auto">
                     {/* Table Header */}
-                    <div className="bg-gray-50 p-4 border-b">
+                    <div className="bg-gray-50 p-4 border-b min-w-[500px]">
                         <div className="grid grid-cols-5 gap-4">
                             <Skeleton className="w-full h-6" />
                             <Skeleton className="w-full h-6" />
@@ -54,7 +54,7 @@ export default function Loading() {
                         </div>
                     </div>
                     {/* Table Rows */}
-                    <div className="p-4 space-y-4">
+                    <div className="p-4 space-y-4 min-w-[500px]">
                         {[...Array(5)].map((_, i) => (
                             <div key={i} className="grid grid-cols-5 gap-4">
                                 <Skeleton className="w-full h-4" />

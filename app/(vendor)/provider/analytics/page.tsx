@@ -71,13 +71,13 @@ export default function Analytics() {
 
   return (
     <div>
-      <div className="top-0 sticky w-full z-[999]">
+      <div className="top-0 sticky w-full z-40">
         <HeadBanner />
       </div>
       <div className="p-6">
         {/* metrics and charts */}
         <div className="gap-4 grid grid-cols-1 md:grid-cols-2 w-full">
-          <div className="gap-4 grid grid-cols-2">
+          <div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
             {metrics.map((metric, index) => {
               return (
                 <div

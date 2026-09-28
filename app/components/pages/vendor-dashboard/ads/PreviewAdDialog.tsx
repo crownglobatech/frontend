@@ -47,7 +47,7 @@ export default function PreviewAdDialog({
                 <div className="flex flex-col gap-6 p-6">
                     {/* Images */}
                     {data.photos.length > 0 ? (
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                             {data.photos.map((file, index) => (
                                 <div key={index} className="relative aspect-square bg-gray-100 rounded-md overflow-hidden">
                                     <Image
@@ -76,7 +76,7 @@ export default function PreviewAdDialog({
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
                         {/* Property Details */}
                         <div className="space-y-4">
                             <h4 className="font-semibold text-gray-900 border-b pb-2">Property Details</h4>
